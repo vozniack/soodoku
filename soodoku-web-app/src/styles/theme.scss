@@ -1,0 +1,63 @@
+// Basic colors
+
+$white: rgb(255, 255, 255);
+$black: rgb(0, 0, 0);
+
+// Theme
+
+$primary: var(--primary);
+$primary-container: var(--primary-container);
+
+$secondary: var(--secondary);
+$secondary-container: var(--secondary-container);
+
+$success: var(--success);
+$success-container: var(--success-container);
+
+$error: var(--error);
+$error-container: var(--error-container);
+
+$surface: var(--surface);
+$surface-container: var(--surface-container);
+
+$neutral: var(--neutral);
+
+// Actual themes
+
+[theme="theme-light"] {
+  --primary: #715c0c;
+  --primary-container: #fee086;
+
+  --secondary: #685e40;
+  --secondary-container: #f1e1bb;
+
+  --success: #46664b;
+  --success-container: #c7ecca;
+
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+
+  --surface: #fff8f0;
+  --surface-container: #f5eddf;
+
+  --neutral: #7d7667;
+}
+
+[theme="theme-dark"] {
+  --primary: #e1c46d;
+  --primary-container: #564500;
+
+  --secondary: #d4c5a1;
+  --secondary-container: #50462a;
+
+  --success: #accfaf;
+  --success-container: #2e4e35;
+
+  --error: #ffb4ab;
+  --error-container: #93000a;
+
+  --surface: #18120b;
+  --surface-container: #251f17;
+
+  --neutral: #979080;
+}
