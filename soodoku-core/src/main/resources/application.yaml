@@ -1,0 +1,33 @@
+server:
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: soodoku-core
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/soodoku_db
+    username: soodoku_admin
+    password: admin
+
+  flyway:
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    table: schema_version
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+
+logging:
+  level:
+    dev.vozniack.soodoku.core: DEBUG
+
+soodoku:
+  security:
+    jwt:
+      secret: 656uzf9s3JhPGu1HSj6nkhV8-Jc-TH43C5Wd5p_BH9Zfbq03n4hWMFlskVP6_tZScNWBOmUAmNxgPVTuOmv6lw
+      expiration: 1800000
