@@ -19,5 +19,7 @@ jobs:
           java-version: '23'
           distribution: 'temurin'
           cache: maven
+      - name: Build soodoku-game with Maven
+        run: mvn -B package --file soodoku-game/pom.xml
       - name: Build soodoku-core with Maven
         run: mvn -B package --file soodoku-core/pom.xml
