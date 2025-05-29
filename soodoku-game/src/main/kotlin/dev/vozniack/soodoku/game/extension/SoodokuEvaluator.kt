@@ -13,8 +13,7 @@ private fun Soodoku.findRowConflicts(): List<Soodoku.Conflict> = (0..8).flatMap 
 }
 
 private fun Soodoku.findColConflicts(): List<Soodoku.Conflict> = (0..8).flatMap { col ->
-    (0..8)
-        .map { row -> row to board[row][col] }
+    (0..8).map { row -> row to board[row][col] }
         .filter { it.second != 0 }
         .groupBy({ it.second }, { it.first })
         .toConflicts(Soodoku.Conflict.Type.COL, col) { row -> row to col }
