@@ -2,56 +2,43 @@ package dev.vozniack.soodoku.game.extension
 
 import dev.vozniack.soodoku.game.Soodoku
 
-internal fun Soodoku.generate(difficulty: Soodoku.Difficulty): Soodoku {
+internal fun Soodoku.generate(difficulty: Soodoku.Difficulty): Soodoku = apply {
 
-    fun fill(): Boolean {
-        for (row in 0..8) {
-            for (col in 0..8) {
-                if (board[row][col] == 0) {
-                    val values = (1..9).shuffled()
+    fun fillBoard(): Boolean = (0..8).flatMap { row -> (0..8).map { col -> row to col } }
+        .firstOrNull { (row, col) -> board[row][col] == 0 }
+        ?.let { (row, col) ->
+            (1..9).shuffled().any { value ->
+                if (isMoveValid(row, col, value)) {
+                    board[row][col] = value
 
-                    for (value in values) {
-                        if (isMoveValid(row, col, value)) {
-                            board[row][col] = value
-
-                            if (fill()) {
-                                return true
-                            }
-
-                            board[row][col] = 0
-                        }
+                    if (fillBoard()) {
+                        return@let true
                     }
 
-                    return false
+                    board[row][col] = 0
                 }
-            }
-        }
 
-        return true
-    }
+                false
+            }.also { if (!it) return@also }
+        } ?: true
 
-    fill()
-
+    fillBoard()
     cleanCells(difficulty)
     saveLockCells()
-
-    return this
 }
 
-private fun Soodoku.cleanCells(difficulty: Soodoku.Difficulty): Soodoku {
-    val cells = (0 until 81).shuffled()
+private fun Soodoku.cleanCells(difficulty: Soodoku.Difficulty): Soodoku = apply {
     var removed = 0
 
-    for (cell in cells) {
-        if (removed >= difficulty.emptyCells) {
-            break
-        }
+    (0 until 81).shuffled()
+        .map { it / 9 to it % 9 }
+        .filter { (row, col) -> board[row][col] != 0 }
+        .forEach { (row, col) ->
+            if (removed >= difficulty.emptyCells) {
+                return@forEach
+            }
 
-        val row = cell / 9
-        val col = cell % 9
-        val backup = board[row][col]
-
-        if (backup != 0) {
+            val backup = board[row][col]
             board[row][col] = 0
 
             if (hasUniqueSolution()) {
@@ -60,9 +47,6 @@ private fun Soodoku.cleanCells(difficulty: Soodoku.Difficulty): Soodoku {
                 board[row][col] = backup
             }
         }
-    }
-
-    return this
 }
 
 private fun Soodoku.hasUniqueSolution(): Boolean {
@@ -70,33 +54,31 @@ private fun Soodoku.hasUniqueSolution(): Boolean {
     var count = 0
 
     fun solve(): Boolean {
-        for (row in 0..8) {
-            for (col in 0..8) {
-                if (copy[row][col] == 0) {
-                    for (value in 1..9) {
-                        if (Soodoku(copy, lock).isMoveValid(row, col, value)) {
-                            copy[row][col] = value
+        for (i in 0 until 81) {
+            val row = i / 9
+            val col = i % 9
 
-                            if (solve()) {
-                                if (count++ > 1) return true
-                            }
+            if (copy[row][col] == 0) {
+                for (value in 1..9) {
+                    if (Soodoku(copy, lock).isMoveValid(row, col, value)) {
+                        copy[row][col] = value
 
-                            copy[row][col] = 0
+                        if (solve()) {
+                            return true
                         }
-                    }
 
-                    return false
+                        copy[row][col] = 0
+                    }
                 }
+
+                return false
             }
         }
 
-        count++
-
-        return false
+        return ++count > 1
     }
 
     solve()
-
     return count == 1
 }
 
