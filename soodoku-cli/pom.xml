@@ -33,6 +33,15 @@
 			<artifactId>kotlin-stdlib</artifactId>
 			<version>${kotlin.version}</version>
 		</dependency>
+
+		<!-- Kotlin Test Junit5 -->
+
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-test-junit5</artifactId>
+			<version>${kotlin.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
