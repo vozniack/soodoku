@@ -5,14 +5,15 @@ import { Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ACTION_SET_THEME } from '../../store/app/app.actions';
 import { SELECT_THEME } from '../../store/app/app.selectors';
+import { Theme } from './theme.const';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
 
-  theme!: string;
-  themeChange: Subject<string> = new Subject();
+  theme!: Theme;
+  themeChange: Subject<Theme> = new Subject();
 
   constructor(private store: Store) {
     this.applyTheme();
@@ -22,11 +23,11 @@ export class ThemeService {
     this.store.pipe(
       takeUntilDestroyed(),
       select(SELECT_THEME),
-      tap((theme: string) => document.body.setAttribute('theme', this.theme = theme))
+      tap((theme: Theme) => document.body.setAttribute('theme', this.theme = theme))
     ).subscribe();
   }
 
-  public setTheme(theme: string) {
+  public setTheme(theme: Theme) {
     this.store.dispatch(ACTION_SET_THEME({theme: this.theme = theme}));
     this.themeChange.next(this.theme);
   }

@@ -1,3 +1,10 @@
 <div class="main-wrapper">
-  <soo-content></soo-content>
+  <soo-toolbar></soo-toolbar>
+
+  <div class="content-wrapper">
+    <soo-home *ngIf="view === View.HOME"></soo-home>
+    <soo-game *ngIf="view === View.GAME"></soo-game>
+    <soo-leaderboard *ngIf="view === View.LEADERBOARD"></soo-leaderboard>
+    <soo-profile *ngIf="view === View.PROFILE"></soo-profile>
+  </div>
 </div>

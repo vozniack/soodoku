@@ -1,5 +1,9 @@
+import { View } from '../../core/view/view.const';
+import { Theme } from '../../core/theme/theme.const';
+
 export interface SoodokuState {
-  theme: string;
+  view: View;
+  theme: Theme;
   user: UserState;
 }
 
