@@ -1,10 +1,16 @@
-<div class="column-container gap-small">
-  <div class="row-container center">
-    <soo-logo></soo-logo>
-  </div>
+<div class="toolbar-wrapper">
+  <div class="column-container gap center">
+    <div class="row-container">
+      <soo-logo></soo-logo>
+    </div>
 
-  <div class="row-container center">
-    <h2>A game about placing the numbers</h2>
+    <div class="row-container gap center">
+      <button (click)="setView(View.HOME)">Home</button>
+      <button (click)="setView(View.GAME)">Game</button>
+      <button (click)="setView(View.LEADERBOARD)">Leaderboard</button>
+      <button (click)="setView(View.PROFILE)">Profile</button>
+    </div>
   </div>
 </div>
 
+<hr>
