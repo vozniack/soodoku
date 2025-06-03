@@ -1,1 +1,4 @@
-<h1>Game</h1>
+<div class="column-container gap" @fadeInAnimation>
+  <soo-game-info></soo-game-info>
+  <soo-game-board [board]="board" [locks]="locks" [conflicts]="conflicts"></soo-game-board>
+</div>

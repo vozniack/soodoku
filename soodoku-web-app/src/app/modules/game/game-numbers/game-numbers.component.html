@@ -1,0 +1,20 @@
+<div class="game-numbers row-container space-between">
+  <div class="row-container">
+    <ng-container *ngFor="let i of [].constructor(9)">
+    <span class="number"
+          [style.min-width.px]="8" [style.min-height.px]="8"
+          [style.max-width.px]="50" [style.max-height.px]="50"
+          [style.width.px]="cellSize" [style.height.px]="cellSize">
+      {{ i + 1}}
+    </span>
+    </ng-container>
+  </div>
+
+
+  <span class="number clean"
+        [style.min-width.px]="8" [style.min-height.px]="8"
+        [style.max-width.px]="50" [style.max-height.px]="50"
+        [style.width.px]="cellSize" [style.height.px]="cellSize">
+      {{ 'x' }}
+    </span>
+</div>
