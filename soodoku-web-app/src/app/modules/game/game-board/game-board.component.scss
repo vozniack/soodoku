@@ -6,14 +6,18 @@
   grid-row-gap: 0;
   grid-column: 0;
 
-  width: 100%;
-
   box-shadow: 0 0 12px color-mix(in srgb, $neutral 25%, transparent);
 
   .cell {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    min-width: 20px;
+    min-height: 20px;
+
+    max-width: 64px;
+    max-height: 64px;
 
     font-size: 24px;
     color: $neutral;

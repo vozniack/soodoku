@@ -31,7 +31,7 @@ export class GameBoardComponent implements OnInit {
 
   activate(row: number, col: number) {
     if (!this.isLocked(row, col)) {
-      this.active = {row, col};
+      this.active = this.active?.row == row && this.active?.col == col ? undefined : {row, col};
     }
   }
 
@@ -66,7 +66,7 @@ export class GameBoardComponent implements OnInit {
 
   private calculateCellSize(): void {
     const width = (window.innerWidth < 1000 ? window.innerWidth : 1000) - 100;
-    const height = window.innerHeight - 320;
+    const height = window.innerHeight - 356;
 
     this.cellSize = height > width ? width / 9 : height / 9;
   }

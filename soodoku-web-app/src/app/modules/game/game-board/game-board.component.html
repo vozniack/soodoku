@@ -1,20 +1,18 @@
 <div class="game-board">
-  <ng-container *ngFor="let row of board; let rowIndex = index">
-    <ng-container *ngFor="let cell of row; let colIndex = index">
-      <div class="cell"
-           [style.min-width.px]="24" [style.min-height.px]="24"
-           [style.max-width.px]="64" [style.max-height.px]="64"
-           [style.width.px]="cellSize" [style.height.px]="cellSize"
+    <ng-container *ngFor="let row of board; let rowIndex = index">
+        <ng-container *ngFor="let cell of row; let colIndex = index">
+            <div class="cell"
+                 [style.width.px]="cellSize" [style.height.px]="cellSize"
 
-           [class.active]="isActive(rowIndex, colIndex)"
-           [class.active-related]="isActiveRelated(rowIndex, colIndex)"
-           [class.conflict-related]="isConflictRelated(rowIndex, colIndex)"
-           [class.conflict]="isConflict(rowIndex, colIndex)"
-           [class.locked]="isLocked(rowIndex, colIndex)"
+                 [class.active]="isActive(rowIndex, colIndex)"
+                 [class.active-related]="isActiveRelated(rowIndex, colIndex)"
+                 [class.conflict-related]="isConflictRelated(rowIndex, colIndex)"
+                 [class.conflict]="isConflict(rowIndex, colIndex)"
+                 [class.locked]="isLocked(rowIndex, colIndex)"
 
-           (click)="activate(rowIndex, colIndex)">
-        {{ cell !== 0 ? cell : '' }}
-      </div>
+                 (click)="activate(rowIndex, colIndex)">
+                {{ cell !== 0 ? cell : '' }}
+            </div>
+        </ng-container>
     </ng-container>
-  </ng-container>
 </div>

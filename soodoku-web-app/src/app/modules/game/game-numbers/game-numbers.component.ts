@@ -10,6 +10,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 })
 export class GameNumbersComponent implements OnInit {
 
+  numbers: string[] = [...Array(9).keys()].map(i => (i + 1).toString()).concat('x');
   cellSize: number = 16;
 
   ngOnInit(): void {
@@ -25,8 +26,8 @@ export class GameNumbersComponent implements OnInit {
 
   private calculateCellSize(): void {
     const width = (window.innerWidth < 1000 ? window.innerWidth : 1000) - 100;
-    const height = window.innerHeight - 320;
+    const height = window.innerHeight - 356;
 
-    this.cellSize = height > width ? width / 10 : height / 10;
+    this.cellSize = (height > width ? width / 10 : height / 10) - 2;
   }
 }
