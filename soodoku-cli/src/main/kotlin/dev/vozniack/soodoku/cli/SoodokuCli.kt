@@ -1,11 +1,11 @@
 package dev.vozniack.soodoku.cli
 
-import dev.vozniack.soodoku.game.Soodoku
-import dev.vozniack.soodoku.game.exception.SoodokuMoveException
-import dev.vozniack.soodoku.game.extension.move
-import dev.vozniack.soodoku.game.extension.print
-import dev.vozniack.soodoku.game.extension.solve
-import dev.vozniack.soodoku.game.extension.status
+import dev.vozniack.soodoku.lib.Soodoku
+import dev.vozniack.soodoku.lib.exception.SoodokuMoveException
+import dev.vozniack.soodoku.lib.extension.move
+import dev.vozniack.soodoku.lib.extension.print
+import dev.vozniack.soodoku.lib.extension.solve
+import dev.vozniack.soodoku.lib.extension.status
 import kotlin.system.exitProcess
 
 class SoodokuCli {
