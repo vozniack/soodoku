@@ -1,4 +1,4 @@
-name: continuous-integration
+name: ci-builder
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  maven-build:
+  maven:
 
     runs-on: ubuntu-latest
 
@@ -26,7 +26,7 @@ jobs:
       - name: Build soodoku-core with Maven
         run: mvn -B install --file soodoku-core/pom.xml
 
-  nodejs-build:
+  nodejs:
 
     runs-on: ubuntu-latest
 
