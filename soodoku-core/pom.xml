@@ -11,9 +11,9 @@
 	</parent>
 
 	<groupId>dev.vozniack</groupId>
-	<artifactId>soodoku</artifactId>
+	<artifactId>soodoku-core</artifactId>
 	<version>0.1</version>
-	<name>soodoku</name>
+	<name>soodoku-core</name>
 	<description>A classic Number Place game</description>
 
 	<properties>

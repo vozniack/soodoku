@@ -4,27 +4,17 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>dev.vozniack.soodoku</groupId>
-	<artifactId>soodoku-cli</artifactId>
+	<artifactId>soodoku-lib</artifactId>
 	<version>0.1</version>
-	<name>soodoku-cli</name>
-	<description>A classic Number Place game CLI</description>
+	<name>soodoku-lib</name>
+	<description>A classic Number Place game</description>
 
 	<properties>
 		<java.version>23</java.version>
 		<kotlin.version>2.1.20</kotlin.version>
-
-		<soodoku.game.version>0.1</soodoku.game.version>
 	</properties>
 
 	<dependencies>
-
-		<!-- SoodokuLib -->
-
-		<dependency>
-			<groupId>dev.vozniack.soodoku</groupId>
-			<artifactId>soodoku-lib</artifactId>
-			<version>0.1</version>
-		</dependency>
 
 		<!-- Kotlin Stdlib -->
 
