@@ -1,1 +1,43 @@
-<h1>Home</h1>
+<div class="home-wrapper column-container gap" @fadeInAnimation>
+  <soo-logo></soo-logo>
+
+  <div class="section" (click)="setView(View.GAME)">
+    <div class="button row-container center">
+      <soo-icon [name]="'play_arrow'" [size]="48"></soo-icon>
+    </div>
+
+    <div class="row-container center">
+      <span class="text">New game</span>
+    </div>
+  </div>
+
+  <div class="section" (click)="setView(View.MY_GAMES)">
+    <div class="button row-container center">
+      <soo-icon [name]="'list_alt'" [size]="40"></soo-icon>
+    </div>
+
+    <div class="row-container center">
+      <span class="text">My games</span>
+    </div>
+  </div>
+
+  <div class="section" (click)="setView(View.LEADERBOARD)">
+    <div class="button row-container center">
+      <soo-icon [name]="'leaderboard'" [size]="40"></soo-icon>
+    </div>
+
+    <div class="row-container center">
+      <span class="text">Leaderboard</span>
+    </div>
+  </div>
+
+  <div class="section" (click)="setView(View.PROFILE)">
+    <div class="button row-container center">
+      <soo-icon [name]="'person'" [size]="40"></soo-icon>
+    </div>
+
+    <div class="row-container center">
+      <span class="text">Profile</span>
+    </div>
+  </div>
+</div>

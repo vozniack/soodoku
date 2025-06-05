@@ -2,7 +2,6 @@
     <ng-container *ngFor="let row of board; let rowIndex = index">
         <ng-container *ngFor="let cell of row; let colIndex = index">
             <div class="cell"
-                 [style.width.px]="cellSize" [style.height.px]="cellSize"
 
                  [class.active]="isActive(rowIndex, colIndex)"
                  [class.active-related]="isActiveRelated(rowIndex, colIndex)"

@@ -3,13 +3,13 @@ import { ViewAwareComponent } from '../../core/view/view.component';
 import { ViewService } from '../../core/view/view.service';
 
 @Component({
-  selector: 'soo-profile',
+  selector: 'soo-my-games',
   standalone: true,
   imports: [],
-  templateUrl: './profile.component.html',
-  styleUrl: './profile.component.scss'
+  templateUrl: './my-games.component.html',
+  styleUrl: './my-games.component.scss'
 })
-export class ProfileComponent extends ViewAwareComponent {
+export class MyGamesComponent extends ViewAwareComponent {
 
   constructor(viewService: ViewService) {
     super(viewService);
