@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LogoComponent } from '../../core/logo/logo.component';
+import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { ViewAwareComponent } from '../../core/view/view.component';
 import { ViewService } from '../../core/view/view.service';
 import { fadeInAnimation } from '../../shared/animations/fade-in-animation';

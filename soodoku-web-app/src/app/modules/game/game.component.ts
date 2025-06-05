@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LogoComponent } from '../../core/logo/logo.component';
+import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { fadeInAnimation } from '../../shared/animations/fade-in-animation';
 import { GameControlComponent } from './game-control/game-control.component';
 import { GameInfoComponent } from './game-info/game-info.component';
@@ -15,7 +15,7 @@ import { GameNumbersComponent } from './game-numbers/game-numbers.component';
   styleUrl: './game.component.scss',
   animations: [fadeInAnimation]
 })
-export class GameComponent  {
+export class GameComponent {
 
   board: number[][] = [
     [5, 7, 0, 6, 7, 0, 9, 1, 2],

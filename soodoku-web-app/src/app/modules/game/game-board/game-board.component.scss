@@ -24,6 +24,10 @@
 
     transition: 0.05s ease-in-out background-color, 0.05s ease-in-out border-color;
 
+    &.xs {
+      font-size: 20px;
+    }
+
     &:hover {
       &:not(.locked) {
         cursor: pointer;

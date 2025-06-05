@@ -1,6 +1,5 @@
-<div class="game-numbers-wrapper {{breakpoint}}">
-  <ng-container *ngFor="let number of numbers">
-    <span class="number {{breakpoint}}" *ngIf="number > 0">{{ number }}</span>
-    <soo-icon class="number {{breakpoint}}" [name]="'close'" *ngIf="number == 0"></soo-icon>
+<div class="game-numbers-wrapper {{ breakpoint }}">
+  <ng-container *ngFor="let number of numbers; let i = index">
+    <span class="number {{breakpoint}}" [class.second-row]="breakpoint === 'xs' && i >= 5">{{ number }}</span>
   </ng-container>
 </div>

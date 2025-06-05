@@ -10,5 +10,5 @@ import { Component, Input } from '@angular/core';
 export class LogoComponent {
 
   @Input() width: string = '100%';
-  @Input() height: string = 'auto';
+  @Input() height: string = '100%';
 }

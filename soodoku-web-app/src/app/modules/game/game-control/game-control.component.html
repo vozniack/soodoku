@@ -1,7 +1,7 @@
-<div class="row-container center gap">
-    <button>Undo</button>
-    <button>Hint</button>
-    <button>Sketch</button>
-    <button (click)="setView(View.HOME)">Surrender</button>
-    <button>New game</button>
+<div class="game-control-wrapper row-container center {{breakpoint}}">
+  <button><soo-icon [name]="'undo'" [size]="32"></soo-icon></button>
+  <button><soo-icon [name]="'ink_eraser'" [size]="32"></soo-icon></button>
+  <button><soo-icon [name]="'lightbulb'" [size]="32"></soo-icon></button>
+  <button><soo-icon [name]="'draw'" [size]="32"></soo-icon></button>
+  <button (click)="setView(View.HOME)"><soo-icon [name]="'flag'" [size]="32"></soo-icon></button>
 </div>

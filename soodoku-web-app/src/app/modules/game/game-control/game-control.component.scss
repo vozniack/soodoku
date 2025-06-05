@@ -1,0 +1,22 @@
+@import 'theme.scss';
+
+.game-control-wrapper {
+  gap: 16px;
+
+  button {
+    color: $primary;
+    background: color-mix(in srgb, $secondary-container 50%, transparent);
+
+    border: none;
+    border-radius: 12px;
+
+    padding: 4px 8px;
+
+    transition: 0.1s ease-in-out background-color;
+
+    &:hover {
+      cursor: pointer;
+      background: $primary-container;
+    }
+  }
+}

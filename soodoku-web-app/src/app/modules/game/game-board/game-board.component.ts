@@ -1,5 +1,10 @@
 import { NgForOf } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Store } from '@ngrx/store';
+import { tap } from 'rxjs/operators';
+import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
+import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
 import { Cell, Conflict } from './game-board.interface';
 
 @Component({
@@ -15,7 +20,16 @@ export class GameBoardComponent {
   @Input() locks: [number, number][] = [];
   @Input() conflicts: Conflict[] = [];
 
+  breakpoint!: Breakpoint;
+
   active?: Cell;
+
+  constructor(private store: Store) {
+    this.store.select(SELECT_BREAKPOINT).pipe(
+      takeUntilDestroyed(),
+      tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)
+    ).subscribe();
+  }
 
   // Action methods
 
