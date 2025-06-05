@@ -18,6 +18,8 @@
     justify-content: center;
 
     font-size: 24px;
+
+    background: none;
     color: $neutral;
 
     aspect-ratio: 1 / 1;
@@ -59,10 +61,12 @@
 
     // Different styles
 
-    &:hover {
-      &:not(.locked) {
-        cursor: pointer;
-        background-color: $primary-container;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        &:not(.locked) {
+          cursor: pointer;
+          background-color: $primary-container;
+        }
       }
     }
 

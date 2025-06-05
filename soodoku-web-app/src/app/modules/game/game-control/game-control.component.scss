@@ -12,10 +12,17 @@
 
     padding: 4px 8px;
 
-    transition: 0.1s ease-in-out background-color;
+    transition: 0.05s ease-in-out background-color;
+    touch-action: manipulation;
 
-    &:hover {
-      cursor: pointer;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        cursor: pointer;
+        background: $primary-container;
+      }
+    }
+
+    &:active {
       background: $primary-container;
     }
   }

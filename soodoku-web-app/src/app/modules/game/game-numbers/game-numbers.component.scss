@@ -13,6 +13,8 @@
     align-items: center;
     justify-content: center;
 
+    background: none;
+
     font-size: 20px;
     color: $neutral;
 
@@ -23,16 +25,23 @@
     border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
     box-shadow: 0 0 12px color-mix(in srgb, $neutral 10%, transparent);
 
-    transition: 0.1s ease-in-out background-color;
+    transition: 0.05s ease-in-out background-color;
+    touch-action: manipulation;
 
     &.xs {
       width: calc(100% / 6);
       aspect-ratio: 1.5 / 1;
     }
 
-    &:hover {
-      cursor: pointer;
-      background-color: $primary-container;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        cursor: pointer;
+        background: $primary-container;
+      }
+    }
+
+    &:active {
+      background: $primary-container;
     }
   }
 }

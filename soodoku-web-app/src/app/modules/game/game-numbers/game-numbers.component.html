@@ -1,5 +1,8 @@
 <div class="game-numbers-wrapper {{ breakpoint }}">
   <ng-container *ngFor="let number of numbers; let i = index">
-    <span class="number {{breakpoint}}" [class.second-row]="breakpoint === 'xs' && i >= 5">{{ number }}</span>
+    <button class="number {{breakpoint}}"
+            [class.second-row]="breakpoint === 'xs' && i >= 5">
+      {{ number }}
+    </button>
   </ng-container>
 </div>

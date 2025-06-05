@@ -1,7 +1,7 @@
 <div class="game-board">
   <ng-container *ngFor="let row of board; let rowIndex = index">
     <ng-container *ngFor="let cell of row; let colIndex = index">
-      <div class="cell {{breakpoint}}"
+      <button class="cell {{breakpoint}}"
 
            [class.active]="isActive(rowIndex, colIndex)"
            [class.active-related]="isActiveRelated(rowIndex, colIndex)"
@@ -11,7 +11,7 @@
 
            (click)="activate(rowIndex, colIndex)">
         {{ cell !== 0 ? cell : '' }}
-      </div>
+      </button>
     </ng-container>
   </ng-container>
 </div>
