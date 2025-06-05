@@ -1,5 +1,7 @@
 import { NgForOf, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { BreakpointAwareComponent } from '../../../core/breakpoint/breakpoint.component';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 
 @Component({
@@ -9,7 +11,11 @@ import { IconComponent } from '../../../shared/components/icon/icon.component';
   templateUrl: './game-numbers.component.html',
   styleUrl: './game-numbers.component.scss'
 })
-export class GameNumbersComponent{
+export class GameNumbersComponent extends BreakpointAwareComponent {
 
   numbers: number[] = [...Array(9).keys()].map(i => i + 1).concat(0);
+
+  constructor(store: Store) {
+    super(store);
+  }
 }

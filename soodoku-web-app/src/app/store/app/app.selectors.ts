@@ -12,6 +12,10 @@ export const SELECT_THEME = createSelector(
   SELECT_APP_STATE, state => state.theme
 );
 
+export const SELECT_BREAKPOINT = createSelector(
+  SELECT_APP_STATE, state => state.breakpoint
+);
+
 export const SELECT_USER_STATE = createSelector(
   SELECT_APP_STATE, state => state.user
 );

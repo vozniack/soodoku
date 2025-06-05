@@ -8,6 +8,10 @@
 
   box-shadow: 0 0 12px color-mix(in srgb, $neutral 25%, transparent);
 
+  &.xs {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
   .number {
     display: flex;
     align-items: center;
@@ -19,6 +23,11 @@
     aspect-ratio: 1 / 1;
 
     border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
+
+    &.xs {
+      font-size: 24px;
+      aspect-ratio: 1.25 / 1;
+    }
 
     &:hover {
       cursor: pointer;

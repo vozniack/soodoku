@@ -83,6 +83,10 @@ h1, h2, h3, h4 {
   &.gap {
     gap: 16px;
   }
+
+  &.gap-big {
+    gap: 24px;
+  }
 }
 
 .row-container {
