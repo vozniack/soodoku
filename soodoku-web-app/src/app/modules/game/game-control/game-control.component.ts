@@ -18,6 +18,7 @@ import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
 export class GameControlComponent extends ViewAwareComponent {
 
   breakpoint!: Breakpoint;
+  hints: number = 3;
 
   constructor(private store: Store, viewService: ViewService) {
     super(viewService);
