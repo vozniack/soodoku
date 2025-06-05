@@ -1,5 +1,5 @@
 import { NgForOf } from '@angular/common';
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Cell, Conflict } from './game-board.interface';
 
 @Component({
@@ -9,23 +9,13 @@ import { Cell, Conflict } from './game-board.interface';
   templateUrl: './game-board.component.html',
   styleUrl: './game-board.component.scss'
 })
-export class GameBoardComponent implements OnInit {
+export class GameBoardComponent {
 
   @Input() board: number[][] = [];
   @Input() locks: [number, number][] = [];
   @Input() conflicts: Conflict[] = [];
 
   active?: Cell;
-  cellSize: number = 64;
-
-  ngOnInit(): void {
-    this.calculateCellSize();
-  }
-
-  @HostListener('window:resize')
-  resize(): void {
-    this.calculateCellSize();
-  }
 
   // Action methods
 
@@ -60,14 +50,5 @@ export class GameBoardComponent implements OnInit {
 
   isLocked(row: number, col: number): boolean {
     return this.locks.some(([r, c]) => r === row && c === col);
-  }
-
-  // Supporting methods
-
-  private calculateCellSize(): void {
-    const width = (window.innerWidth < 1000 ? window.innerWidth : 1000) - 100;
-    const height = window.innerHeight - 356;
-
-    this.cellSize = height > width ? width / 9 : height / 9;
   }
 }

@@ -19,7 +19,9 @@
 body {
   padding: 0;
   margin: 0;
-  height: 100vh;
+
+  height: calc(var(--vh, 1vh) * 100);
+  max-height: calc(var(--vh, 1vh) * 100);
 
   background: $surface;
   color: $primary;
@@ -80,6 +82,10 @@ h1, h2, h3, h4 {
 
   &.gap {
     gap: 16px;
+  }
+
+  &.gap-big {
+    gap: 24px;
   }
 }
 

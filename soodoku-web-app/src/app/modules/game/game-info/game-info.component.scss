@@ -1,24 +1,19 @@
-.game-info {
-  position: relative;
+.game-info-wrapper {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  width: 100%;
 
   .side {
-    flex: 1;
-    display: flex;
-    align-items: center;
-  }
+    &.left {
+      justify-content: flex-start;
+    }
 
-  .right {
-    justify-content: flex-end;
+    &.right {
+      justify-content: flex-end;
+    }
   }
 
   .center {
-    position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    text-align: center;
   }
 }

@@ -1,7 +1,6 @@
-<div class="game-numbers row-container center">
-    <ng-container *ngFor="let number of numbers">
-        <span class="number" [style.width.px]="cellSize" [style.height.px]="cellSize">
-            {{ number }}
-        </span>
-    </ng-container>
+<div class="game-numbers-wrapper {{breakpoint}}">
+  <ng-container *ngFor="let number of numbers">
+    <span class="number {{breakpoint}}" *ngIf="number > 0">{{ number }}</span>
+    <soo-icon class="number {{breakpoint}}" [name]="'close'" *ngIf="number == 0"></soo-icon>
+  </ng-container>
 </div>

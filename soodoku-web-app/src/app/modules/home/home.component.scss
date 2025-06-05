@@ -1,0 +1,41 @@
+@import 'theme.scss';
+
+soo-logo {
+  margin: 48px 0;
+}
+
+.home-wrapper {
+  align-items: center;
+
+  .section {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+    max-width: 400px;
+
+    background: $primary-container;
+    border: 1px solid color-mix(in srgb, $neutral 25%, transparent);
+
+    .button {
+      border: 1px solid color-mix(in srgb, $neutral 25%, transparent);
+
+      width: 64px;
+      height: 64px;
+      padding: 4px;
+
+      background: color-mix(in srgb, $black 10%, transparent);
+    }
+
+    .text {
+      font-size: 24px;
+      padding: 8px 24px;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+

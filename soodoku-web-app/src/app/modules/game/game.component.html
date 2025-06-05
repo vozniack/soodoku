@@ -1,4 +1,9 @@
-<div class="column-container gap" @fadeInAnimation>
+<div class="game-wrapper column-container gap-big" @fadeInAnimation>
+  <div class="row-container space-between">
+    <soo-logo [width]="'168px'"></soo-logo>
+    <button>Profile</button>
+  </div>
+
   <soo-game-info></soo-game-info>
   <soo-game-board [board]="board" [locks]="locks" [conflicts]="conflicts"></soo-game-board>
   <soo-game-control></soo-game-control>

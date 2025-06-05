@@ -2,9 +2,11 @@
 
 .game-board {
   display: grid;
-  grid-template-columns: repeat(9, 0fr);
+  grid-template-columns: repeat(9, 1fr);
   grid-row-gap: 0;
   grid-column: 0;
+
+  aspect-ratio: 1 / 1;
 
   box-shadow: 0 0 12px color-mix(in srgb, $neutral 25%, transparent);
 
@@ -13,14 +15,10 @@
     align-items: center;
     justify-content: center;
 
-    min-width: 20px;
-    min-height: 20px;
-
-    max-width: 64px;
-    max-height: 64px;
-
     font-size: 24px;
     color: $neutral;
+
+    aspect-ratio: 1 / 1;
 
     border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
 

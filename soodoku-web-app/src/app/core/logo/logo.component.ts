@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'soo-logo',
@@ -8,4 +8,7 @@ import { Component } from '@angular/core';
   styleUrl: './logo.component.scss'
 })
 export class LogoComponent {
+
+  @Input() width: string = '100%';
+  @Input() height: string = 'auto';
 }

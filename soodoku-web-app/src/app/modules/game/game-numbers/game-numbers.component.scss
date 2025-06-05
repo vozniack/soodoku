@@ -1,6 +1,16 @@
 @import 'theme.scss';
 
-.game-numbers {
+.game-numbers-wrapper {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-row-gap: 0;
+  grid-column: 0;
+
+  box-shadow: 0 0 12px color-mix(in srgb, $neutral 25%, transparent);
+
+  &.xs {
+    grid-template-columns: repeat(5, 1fr);
+  }
 
   .number {
     display: flex;
@@ -10,16 +20,13 @@
     font-size: 20px;
     color: $neutral;
 
-    min-width: 20px;
-    min-height: 20px;
-
-    max-width: 56px;
-    max-height: 56px;
+    aspect-ratio: 1 / 1;
 
     border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
 
-    &.active {
-
+    &.xs {
+      font-size: 24px;
+      aspect-ratio: 1.25 / 1;
     }
 
     &:hover {
