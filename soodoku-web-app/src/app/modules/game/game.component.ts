@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { fadeInAnimation } from '../../shared/animations/fade-in-animation';
 import { GameControlComponent } from './game-control/game-control.component';
@@ -10,7 +11,7 @@ import { GameNumbersComponent } from './game-numbers/game-numbers.component';
 @Component({
   selector: 'soo-game',
   standalone: true,
-  imports: [GameInfoComponent, GameBoardComponent, GameControlComponent, GameNumbersComponent, LogoComponent],
+  imports: [GameInfoComponent, GameBoardComponent, GameControlComponent, GameNumbersComponent, LogoComponent, AvatarComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss',
   animations: [fadeInAnimation]
