@@ -1,4 +1,4 @@
-<div class="game-wrapper column-container gap-big" @fadeInAnimation>
+<div class="game-wrapper column-container" @fadeInAnimation>
   <div class="row-container" [class.center]="breakpoint != 'xs'" [class.space-between]="breakpoint == 'xs'">
     <soo-logo [width]="breakpoint == 'xs' || breakpoint == 'sm' ? '128px' : '192px'"></soo-logo>
     <soo-avatar *ngIf="breakpoint == 'xs'" [username]="'anonymous'"></soo-avatar>
@@ -7,5 +7,9 @@
   <soo-game-info></soo-game-info>
   <soo-game-board [board]="board" [locks]="locks" [conflicts]="conflicts"></soo-game-board>
   <soo-game-numbers></soo-game-numbers>
+  <soo-game-control *ngIf="breakpoint != 'xl'"></soo-game-control>
+</div>
+
+<div class="game-control column-container" *ngIf="breakpoint == 'xl'" @fadeInAnimation>
   <soo-game-control></soo-game-control>
 </div>

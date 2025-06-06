@@ -18,7 +18,7 @@
     font-size: 20px;
     color: $neutral;
 
-    width: calc((100% - (8 * 10px)) / 9);
+    width: calc((100% - 64px) / 9);
     aspect-ratio: 1.25 / 1;
 
     border-radius: 8px;
@@ -29,7 +29,7 @@
     touch-action: manipulation;
 
     &.xs {
-      width: calc(100% / 6);
+      width: calc((100% + 24px) / 6);
       aspect-ratio: 1.5 / 1;
     }
 
