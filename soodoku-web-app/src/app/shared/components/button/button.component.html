@@ -1,0 +1,13 @@
+<button [disabled]="disabled"
+        class="button {{size}}"
+        [class.disabled]="disabled"
+        [style.width]="width"
+        [style.max-width]="maxWidth">
+
+  <soo-icon class="icon-left" *ngIf="iconLeft" [name]="iconLeft" [size]="getIconSize()"></soo-icon>
+
+  <soo-icon *ngIf="icon" [name]="icon" [size]="getIconSize()"></soo-icon>
+  <span *ngIf="!icon">{{ text }}</span>
+
+  <soo-icon class="icon-right" *ngIf="iconRight" [name]="iconRight" [size]="getIconSize()"></soo-icon>
+</button>

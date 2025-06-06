@@ -1,4 +1,4 @@
-import {Action, ActionReducer} from '@ngrx/store';
+import { Action, ActionReducer } from '@ngrx/store';
 
 export function persistState<S, A extends Action = Action>(reducer: ActionReducer<S, A>) {
 

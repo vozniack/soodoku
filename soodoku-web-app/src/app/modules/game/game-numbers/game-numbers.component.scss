@@ -1,37 +1,47 @@
 @import 'theme.scss';
 
 .game-numbers-wrapper {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-row-gap: 0;
-  grid-column: 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
 
-  box-shadow: 0 0 12px color-mix(in srgb, $neutral 25%, transparent);
-
-  &.xs {
-    grid-template-columns: repeat(5, 1fr);
-  }
+  justify-content: center;
 
   .number {
     display: flex;
     align-items: center;
     justify-content: center;
 
+    background: none;
+
     font-size: 20px;
     color: $neutral;
 
-    aspect-ratio: 1 / 1;
+    width: calc((100% - 64px) / 9);
+    aspect-ratio: 1.25 / 1;
 
+    border-radius: 8px;
     border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, $neutral 10%, transparent);
+
+    transition: 0.05s ease-in-out background-color;
+    touch-action: manipulation;
 
     &.xs {
-      font-size: 24px;
-      aspect-ratio: 1.25 / 1;
+      width: calc((100% + 24px) / 6);
+      aspect-ratio: 1.5 / 1;
     }
 
-    &:hover {
-      cursor: pointer;
-      background-color: $primary-container;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        cursor: pointer;
+        background: $primary-container;
+      }
+    }
+
+    &:active {
+      background: $primary-container;
     }
   }
 }

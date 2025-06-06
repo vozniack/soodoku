@@ -1,17 +1,16 @@
 <div class="game-board">
-    <ng-container *ngFor="let row of board; let rowIndex = index">
-        <ng-container *ngFor="let cell of row; let colIndex = index">
-            <div class="cell"
+  <ng-container *ngFor="let row of board; let rowIndex = index">
+    <ng-container *ngFor="let cell of row; let colIndex = index">
+      <button class="cell {{breakpoint}}"
+           [class.active]="isActive(rowIndex, colIndex)"
+           [class.active-related]="isActiveRelated(rowIndex, colIndex)"
+           [class.conflict-related]="isConflictRelated(rowIndex, colIndex)"
+           [class.conflict]="isConflict(rowIndex, colIndex)"
+           [class.locked]="isLocked(rowIndex, colIndex)"
 
-                 [class.active]="isActive(rowIndex, colIndex)"
-                 [class.active-related]="isActiveRelated(rowIndex, colIndex)"
-                 [class.conflict-related]="isConflictRelated(rowIndex, colIndex)"
-                 [class.conflict]="isConflict(rowIndex, colIndex)"
-                 [class.locked]="isLocked(rowIndex, colIndex)"
-
-                 (click)="activate(rowIndex, colIndex)">
-                {{ cell !== 0 ? cell : '' }}
-            </div>
-        </ng-container>
+           (click)="activate(rowIndex, colIndex)">
+        {{ cell !== 0 ? cell : '' }}
+      </button>
     </ng-container>
+  </ng-container>
 </div>

@@ -1,7 +1,15 @@
 .game-wrapper {
   align-items: center;
+  gap: 24px;
 
   > * {
     width: 100%;
   }
+}
+
+.game-control {
+  position: absolute;
+
+  top: 140px;
+  left: calc(50% + 368px);
 }

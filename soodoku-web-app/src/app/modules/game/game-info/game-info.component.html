@@ -1,13 +1,12 @@
-<div class="game-info-wrapper">
-  <div class="side left">
-    <span>Hints used: 3</span>
-  </div>
+<div class="game-info-wrapper row-container" [class.space-between]="breakpoint == 'xs'">
+  <soo-button [text]="'New game'" [iconLeft]="'play_arrow'"></soo-button>
 
-  <div class="center">
-    <span>21:37</span>
-  </div>
-
-  <div class="side right">
+  <div class="game-details row-container" [class.center]="breakpoint != 'xs'">
+    <span class="separated">21:37</span>
     <span>Moves: 11</span>
+  </div>
+
+  <div class="right" *ngIf="breakpoint != 'xs'">
+    <soo-avatar [username]="'anonymous'"></soo-avatar>
   </div>
 </div>

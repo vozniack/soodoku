@@ -1,0 +1,58 @@
+@import 'theme.scss';
+
+.game-control-wrapper {
+  gap: 16px;
+
+  button {
+    position: relative;
+
+    color: $primary;
+    background: color-mix(in srgb, $secondary-container 50%, transparent);
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 4px 8px;
+
+    transition: 0.05s ease-in-out background-color;
+    touch-action: manipulation;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        cursor: pointer;
+        background: $primary-container;
+      }
+    }
+
+    &:active {
+      background: $primary-container;
+    }
+
+    &.active {
+      background: $primary-container;
+    }
+  }
+
+  .badge {
+    top: 0;
+    right: 0;
+    position: absolute;
+    transform: translate(50%, -50%);
+
+    background-color: $primary;
+    color: $white;
+
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+
+    padding: 2px 6px;
+    border-radius: 8px;
+    min-width: 8px;
+
+    pointer-events: none;
+    user-select: none;
+
+    box-shadow: 0 0 4px color-mix(in srgb, $secondary-container 50%, transparent);
+  }
+}
