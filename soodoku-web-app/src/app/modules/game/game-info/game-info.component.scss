@@ -1,19 +1,39 @@
+@import 'theme.scss';
+
 .game-info-wrapper {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
 
-  .side {
-    &.left {
-      justify-content: flex-start;
-    }
+  .game-details {
+    gap: 12px;
 
-    &.right {
-      justify-content: flex-end;
+    height: 30px;
+    padding: 0 12px;
+    font-size: 12px;
+    border-radius: 8px;
+
+    color: $secondary;
+    background-color: color-mix(in srgb, $secondary-container 25%, transparent);
+
+    span.separated {
+      border-right: 1px solid color-mix(in srgb, $neutral 25%, transparent);
+      padding-right: 12px;
     }
   }
 
   .center {
+    position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    text-align: center;
+  }
+
+  .right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
 }
