@@ -5,6 +5,11 @@
   flex-direction: row;
   align-items: center;
 
+  height: 32px;
+
+  padding: 0;
+  margin-right: 6px;
+
   border-radius: 8px;
   background: color-mix(in srgb, $secondary-container 50%, transparent);
 
@@ -13,6 +18,10 @@
   cursor: pointer;
   transition: background-color 0.1s ease-in-out;
   touch-action: manipulation;
+
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -29,15 +38,15 @@
     align-items: center;
     justify-content: center;
 
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 100%;
 
-    margin-right: -2px;
+    margin-right: -6px;
 
     overflow: hidden;
 
-    background: color-mix(in srgb, $primary 50%, transparent);
+    background: $primary 100%;
 
     img {
       width: 100%;

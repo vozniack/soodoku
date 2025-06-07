@@ -1,0 +1,29 @@
+@import 'theme.scss';
+
+.difficulty-dialog {
+  color: $secondary;
+
+  > * {
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
+
+    font-size: 16px;
+    padding: 8px 24px;
+
+    color: $primary;
+    background: color-mix(in srgb, $secondary-container 50%, transparent);
+
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, $neutral 25%, transparent);
+
+    transition: background 0.1s ease-in-out;
+
+    &:hover {
+      cursor: pointer;
+      background: $primary-container;
+    }
+  }
+}
