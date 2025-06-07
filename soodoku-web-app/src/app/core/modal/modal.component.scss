@@ -1,0 +1,73 @@
+@import 'theme.scss';
+@import 'keyframes.scss';
+
+.backdrop {
+  position: fixed;
+
+  inset: 0;
+  z-index: 1000;
+
+  background: color-mix(in srgb, $black 50%, transparent);
+  animation: fadeIn 0.1s ease forwards;
+  transition: background-color 0.1s ease-in-out;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100dvh;
+
+  &.mobile {
+    align-items: flex-end;
+  }
+
+  &.hidden {
+    background: none;
+  }
+
+  .modal {
+    position: relative;
+
+    padding: 24px 32px;
+    border-radius: 8px;
+
+    min-width: 368px;
+    max-width: 50%;
+
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translateY(0);
+
+    background: $surface;
+    opacity: 1;
+
+    animation: fadeScaleIn 0.1s ease-out forwards;
+
+    &.hidden {
+      animation: fadeScaleOut 0.1s ease-out forwards;
+    }
+
+    &.mobile {
+      position: absolute;
+      bottom: 0;
+
+      width: 100%;
+
+      min-width: 0;
+      max-width: 90vw;
+
+      border-radius: 32px 32px 0 0;
+
+      animation: slideUp 0.2s ease-out forwards;
+
+      &.hidden {
+        animation: slideDown 0.2s ease-out forwards;
+      }
+    }
+  }
+
+  soo-button {
+    position: absolute;
+    top: 16px;
+    right: 32px;
+  }
+}

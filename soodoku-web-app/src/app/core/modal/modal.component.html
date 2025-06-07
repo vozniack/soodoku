@@ -1,0 +1,6 @@
+<div class="backdrop" [class.mobile]="isMobile" [class.hidden]="hidden" (click)="onBackdropClick($event)">
+  <div class="modal" [class.mobile]="isMobile" [class.hidden]="hidden" >
+    <soo-button [icon]="'close'" (click)="close()"></soo-button>
+    <ng-template #container></ng-template>
+  </div>
+</div>
