@@ -1,7 +1,8 @@
 <div class="game-info-wrapper row-container" [class.space-between]="breakpoint == 'xs'">
-  <soo-button [text]="'New game'" [iconLeft]="'play_arrow'"></soo-button>
+  <soo-button [text]="'New game'" [iconLeft]="'play_arrow'" (click)="newGame()"></soo-button>
 
   <div class="game-details row-container" [class.center]="breakpoint != 'xs'">
+    <span class="separated">EASY</span>
     <span class="separated">21:37</span>
     <span>Moves: 11</span>
   </div>
