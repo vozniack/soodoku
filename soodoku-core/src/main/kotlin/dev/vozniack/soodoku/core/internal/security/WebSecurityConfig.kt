@@ -25,9 +25,12 @@ class WebSecurityConfig(private val jwtConfig: JwtConfig) : WebMvcConfigurer {
     @Bean
     fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain = httpSecurity.cors { }
         .csrf { it.disable() }
-        .authorizeHttpRequests { it.requestMatchers(HttpMethod.GET, "/actuator/health").permitAll() }
-        .authorizeHttpRequests { it.requestMatchers(HttpMethod.POST, "/api/auth/*").permitAll() }
-        .authorizeHttpRequests { it.requestMatchers("/api/**").authenticated() }
+        .authorizeHttpRequests {
+            it.requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                .requestMatchers("/api/games/**").permitAll()
+                .anyRequest().authenticated()
+        }
         .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
         .addFilterBefore(AuthenticationFilter(jwtConfig.secret), BasicAuthenticationFilter::class.java)
         .exceptionHandling { it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)) }

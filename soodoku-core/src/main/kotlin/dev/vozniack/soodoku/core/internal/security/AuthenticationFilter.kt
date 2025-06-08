@@ -1,6 +1,5 @@
 package dev.vozniack.soodoku.core.internal.security
 
-import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
@@ -22,12 +21,11 @@ class AuthenticationFilter(private val jwtSecret: String) : OncePerRequestFilter
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
-        takeIf { !(request.requestURL.contains("api/auth") || request.requestURL.contains("actuator/health")) }?.let {
-            val token = parseJwtToken(request) ?: throw UnauthorizedException("Token is not present")
-            val loggedUser = buildLoggedUser(token) ?: throw UnauthorizedException("Token is not valid")
+        parseJwtToken(request)?.let { buildLoggedUser(it) }?.runCatching {
+            SecurityContextHolder.getContext().authentication = this
+        }?.onFailure { SecurityContextHolder.clearContext() }
 
-            SecurityContextHolder.getContext().authentication = loggedUser
-        }.also { filterChain.doFilter(request, response) }
+        filterChain.doFilter(request, response)
     }
 
     private fun parseJwtToken(request: HttpServletRequest): String? = request.getHeader("Authorization")
