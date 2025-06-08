@@ -2,7 +2,7 @@ package dev.vozniack.soodoku.lib.extension
 
 import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.defaultBoard
-import dev.vozniack.soodoku.lib.defaultLock
+import dev.vozniack.soodoku.lib.defaultLocks
 import dev.vozniack.soodoku.lib.exception.SoodokuMoveException
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -13,7 +13,7 @@ class SoodokuValidatorTest {
 
     @Test
     fun `check if move is valid`() {
-        val soodoku = Soodoku(defaultBoard(), defaultLock())
+        val soodoku = Soodoku(defaultBoard(), defaultLocks())
 
         assertTrue(soodoku.isMoveValid(0, 2, 6))
         assertFalse(soodoku.isMoveValid(0, 2, 5))
@@ -22,7 +22,7 @@ class SoodokuValidatorTest {
 
     @Test
     fun `check if move is allowed`() {
-        val soodoku = Soodoku(defaultBoard(), defaultLock())
+        val soodoku = Soodoku(defaultBoard(), defaultLocks())
 
         soodoku.move(0, 2, 6)
 

@@ -44,6 +44,48 @@ class SoodokuMapperTest {
         assertTrue(board.deepEquals(flatBoard.mapBoard()))
     }
 
+    @Test
+    fun `map locks from flat locks string`() {
+        val flatLocks = "1,2;3,4;5,6"
+        val locks: List<Pair<Int, Int>> = flatLocks.mapLocks()
+
+        assertEquals(listOf(Pair(1, 2), Pair(3, 4), Pair(5, 6)), locks)
+    }
+
+    @Test
+    fun `map locks from empty string returns empty list`() {
+        val flatLocks = ""
+        val locks = flatLocks.mapLocks()
+
+        assertTrue(locks.isEmpty())
+    }
+
+    @Test
+    fun `map locks from incorrect flat locks string throws exception`() {
+        val flatLocks = "1,2;3;5,6"
+
+        assertFailsWith<SoodokuMappingException> {
+            flatLocks.mapLocks()
+        }
+    }
+
+    @Test
+    fun `map locks to flat locks string`() {
+        val locks = listOf(Pair(7, 8), Pair(9, 10))
+        val flatLocks = locks.flatLocks()
+
+        assertEquals("7,8;9,10", flatLocks)
+    }
+
+    @Test
+    fun `map locks to and from string round-trip`() {
+        val originalLocks = listOf(Pair(11, 12), Pair(13, 14), Pair(15, 16))
+        val flatLocks = originalLocks.flatLocks()
+        val mappedLocks = flatLocks.mapLocks()
+
+        assertEquals(originalLocks, mappedLocks)
+    }
+
     private fun Array<IntArray>.deepEquals(other: Array<IntArray>): Boolean {
         if (this.size != other.size) return false
 

@@ -12,14 +12,14 @@ class SoodokuTest {
         val soodoku = Soodoku(Soodoku.Difficulty.EASY)
 
         assertNotNull(soodoku.board)
-        assertNotNull(soodoku.lock)
+        assertNotNull(soodoku.locks)
 
         assertEquals(Soodoku.Difficulty.EASY.emptyCells, soodoku.missingCells())
     }
 
     @Test
     fun `initialize existing Soodoku flat board`() {
-        val soodoku = Soodoku(defaultFlatBoard(), defaultLock())
+        val soodoku = Soodoku(defaultFlatBoard(), defaultFlatLocks())
 
         assertNotNull(soodoku.board)
         assertEquals(24, soodoku.missingCells())
@@ -27,7 +27,7 @@ class SoodokuTest {
 
     @Test
     fun `initialize existing Soodoku board`() {
-        val soodoku = Soodoku(defaultBoard(), defaultLock())
+        val soodoku = Soodoku(defaultBoard(), defaultLocks())
 
         assertNotNull(soodoku.board)
         assertEquals(24, soodoku.missingCells())

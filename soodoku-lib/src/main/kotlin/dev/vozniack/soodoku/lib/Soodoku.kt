@@ -1,25 +1,26 @@
 package dev.vozniack.soodoku.lib
 
-import dev.vozniack.soodoku.lib.extension.mapBoard
 import dev.vozniack.soodoku.lib.extension.generate
+import dev.vozniack.soodoku.lib.extension.mapBoard
+import dev.vozniack.soodoku.lib.extension.mapLocks
 
 class Soodoku {
 
     internal var board: Array<IntArray> = Array(9) { IntArray(9) { 0 } }
-    internal val lock: MutableList<Pair<Int, Int>> = mutableListOf()
+    internal var locks: MutableList<Pair<Int, Int>> = mutableListOf()
 
     constructor(difficulty: Difficulty) {
         generate(difficulty)
     }
 
-    constructor(board: String, lock: List<Pair<Int, Int>>) {
+    constructor(board: String, locks: String) {
         this.board = board.mapBoard()
-        this.lock.addAll(lock)
+        this.locks = locks.mapLocks().toMutableList()
     }
 
-    constructor(board: Array<IntArray>, lock: List<Pair<Int, Int>>) {
+    constructor(board: Array<IntArray>, locks: List<Pair<Int, Int>>) {
         this.board = board
-        this.lock.addAll(lock)
+        this.locks = locks.toMutableList()
     }
 
     data class Conflict(
@@ -35,8 +36,8 @@ class Soodoku {
     }
 
     data class Status(
-        val board: String,
-        val lock: List<Pair<Int, Int>>,
+        val board: Array<IntArray>,
+        val locks: List<Pair<Int, Int>>,
 
         val missingCells: Int,
         val conflicts: List<Conflict>,

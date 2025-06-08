@@ -1,0 +1,17 @@
+name: soodoku
+
+services:
+  postgres:
+    container_name: soodoku-postgres
+    image: postgres:16.4
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: soodoku_db
+      POSTGRES_USER: soodoku_admin
+      POSTGRES_PASSWORD: admin
+
+networks:
+  soodoku-network:
+    driver: bridge

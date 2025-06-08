@@ -60,7 +60,7 @@ private fun Soodoku.hasUniqueSolution(): Boolean {
 
             if (copy[row][col] == 0) {
                 for (value in 1..9) {
-                    if (Soodoku(copy, lock).isMoveValid(row, col, value)) {
+                    if (Soodoku(copy, locks).isMoveValid(row, col, value)) {
                         copy[row][col] = value
 
                         if (solve()) {
@@ -83,7 +83,7 @@ private fun Soodoku.hasUniqueSolution(): Boolean {
 }
 
 private fun Soodoku.saveLockCells() {
-    lock.addAll(board.withIndex().flatMap { (row, cols) ->
+    locks.addAll(board.withIndex().flatMap { (row, cols) ->
         cols.withIndex().filter { it.value != 0 }.map { Pair(row, it.index) }
     })
 }

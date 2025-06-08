@@ -31,7 +31,7 @@ internal fun Soodoku.isMoveAllowed(row: Int, col: Int, value: Int): Boolean {
         throw SoodokuMoveException("Value must be between 0 and 9 (0 means empty)")
     }
 
-    if ((row to col) in lock) {
+    if ((row to col) in locks) {
         throw SoodokuMoveException("Cannot modify a locked (pre-filled) cell at ($row, $col)")
     }
 

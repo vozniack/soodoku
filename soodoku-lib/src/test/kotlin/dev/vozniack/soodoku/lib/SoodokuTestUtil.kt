@@ -15,7 +15,7 @@ internal fun defaultBoard(): Array<IntArray> = arrayOf(
 internal fun defaultFlatBoard(): String =
     "240039158573408290819605074608900023020056709090840561401590630035264817762083040"
 
-internal fun defaultLock(): List<Pair<Int, Int>> = listOf(
+internal fun defaultLocks(): List<Pair<Int, Int>> = listOf(
     0 to 0, 0 to 1, 0 to 4, 0 to 5, 0 to 6, 0 to 7, 0 to 8,
     1 to 0, 1 to 1, 1 to 2, 1 to 3, 1 to 5, 1 to 6, 1 to 7,
     2 to 0, 2 to 1, 2 to 2, 2 to 3, 2 to 5, 2 to 7, 2 to 8,
@@ -26,3 +26,6 @@ internal fun defaultLock(): List<Pair<Int, Int>> = listOf(
     7 to 1, 7 to 2, 7 to 3, 7 to 4, 7 to 5, 7 to 6, 7 to 7, 7 to 8,
     8 to 0, 8 to 1, 8 to 2, 8 to 4, 8 to 5, 8 to 7
 )
+
+internal fun defaultFlatLocks(): String =
+    "0,0;0,1;0,4;0,5;0,6;0,7;0,8;1,0;1,1;1,2;1,3;1,5;1,6;1,7;2,0;2,1;2,2;2,3;2,5;2,7;2,8;3,0;3,2;3,3;3,7;3,8;4,1;4,4;4,5;4,6;4,8;5,1;5,3;5,4;5,6;5,7;5,8;6,0;6,2;6,3;6,4;6,6;6,7;7,1;7,2;7,3;7,4;7,5;7,6;7,7;7,8;8,0;8,1;8,2;8,4;8,5;8,7"
