@@ -8,15 +8,17 @@ import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.Move
 import dev.vozniack.soodoku.core.domain.entity.User
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
-import dev.vozniack.soodoku.core.extension.toSoodoku
+import dev.vozniack.soodoku.core.domain.extension.toSoodoku
 import dev.vozniack.soodoku.core.internal.exception.ConflictException
 import dev.vozniack.soodoku.core.internal.exception.NotFoundException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
 import dev.vozniack.soodoku.lib.Soodoku
+import dev.vozniack.soodoku.lib.exception.SoodokuMappingException
 import dev.vozniack.soodoku.lib.extension.flatBoard
 import dev.vozniack.soodoku.lib.extension.flatLocks
 import dev.vozniack.soodoku.lib.extension.move
 import dev.vozniack.soodoku.lib.extension.status
+import dev.vozniack.soodoku.lib.extension.value
 import java.time.LocalDateTime
 import java.util.UUID
 import org.springframework.stereotype.Service
@@ -57,8 +59,14 @@ class GameService(
             throw ConflictException("Game $id is already finished!")
         }
 
-        val soodoku = game.toSoodoku().also {
-            it.move(move.row, move.col, move.value)
+        val soodoku = game.toSoodoku()
+
+        val valueBefore: Int = try {
+            soodoku.value(move.row, move.col).also {
+                soodoku.move(move.row, move.col, move.value)
+            }
+        } catch (exception: SoodokuMappingException) {
+            throw ConflictException("This move is incorrect")
         }
 
         val status: Soodoku.Status = soodoku.status()
@@ -67,7 +75,7 @@ class GameService(
             currentBoard = status.board.flatBoard()
             updatedAt = LocalDateTime.now()
         }.also {
-            it.moves.add(Move(game = it, row = move.row, col = move.col, before = 0, after = move.value))
+            it.moves.add(Move(game = it, row = move.row, col = move.col, before = valueBefore, after = move.value))
         }
 
         return gameRepository.save(game) toDtoWithStatus status
@@ -85,8 +93,9 @@ class GameService(
         }
 
         val soodoku = game.toSoodoku()
+        val lastMove = game.moves.last()
 
-        game.moves.last().let {
+        lastMove.let {
             soodoku.move(it.row, it.col, it.before)
         }
 
@@ -95,7 +104,9 @@ class GameService(
         game.apply {
             currentBoard = status.board.flatBoard()
             updatedAt = LocalDateTime.now()
-        }.run { moves.removeLast() }
+        }.also {
+            it.moves.add(Move(game = it, row = lastMove.row, col = lastMove.col, before = lastMove.after, after = lastMove.before))
+        }
 
         return gameRepository.save(game) toDtoWithStatus status
     }
@@ -108,7 +119,7 @@ class GameService(
             finishedAt = LocalDateTime.now()
         }
 
-        return game toDtoWithStatus game.toSoodoku().status()
+        return gameRepository.save(game) toDtoWithStatus game.toSoodoku().status()
     }
 
     fun delete(id: UUID) {

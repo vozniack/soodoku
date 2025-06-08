@@ -26,7 +26,7 @@ infix fun Game.toDtoWithStatus(status: Soodoku.Status): GameDto = GameDto(
     finishedAt = finishedAt?.toISOTime()
 )
 
-fun Soodoku.Conflict.toDto(): ConflictDto = ConflictDto(
+private fun Soodoku.Conflict.toDto(): ConflictDto = ConflictDto(
     type = ConflictType.valueOf(type.name),
     value = value,
     index = index,

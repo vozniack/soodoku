@@ -34,8 +34,8 @@ CREATE TABLE moves
     game_id    UUID      NOT NULL,
     created_at TIMESTAMP NOT NULL             DEFAULT now(),
 
-    row        INT       NOT NULL,
-    col        INT       NOT NULL,
+    row_index  INT       NOT NULL,
+    col_index  INT       NOT NULL,
 
     before     INT       NOT NULL,
     after      INT       NOT NULL,

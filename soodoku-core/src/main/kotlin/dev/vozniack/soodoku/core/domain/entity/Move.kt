@@ -21,8 +21,8 @@ data class Move(
 
     @Column(nullable = false) val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @Column(nullable = false) val row: Int,
-    @Column(nullable = false) val col: Int,
+    @Column(name = "row_index", nullable = false) val row: Int,
+    @Column(name ="col_index", nullable = false) val col: Int,
 
     @Column(nullable = false) val before: Int,
     @Column(nullable = false) val after: Int

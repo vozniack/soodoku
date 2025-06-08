@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(private val userRepository: UserRepository) {
 
-    fun currentlyLoggedUser(): User? = SecurityContextHolder.getContext().authentication.name
-        ?.takeIf { it != "anonymousUser" }
-        ?.let { userRepository.findByEmail(it) ?: throw NotFoundException("Not found user with email $it") }
+    fun currentlyLoggedUser(): User? = SecurityContextHolder.getContext().authentication
+        ?.takeIf { it.name != "anonymousUser" }
+        ?.let { userRepository.findByEmail(it.name) ?: throw NotFoundException("Not found user with email $it") }
 }

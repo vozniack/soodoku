@@ -3,6 +3,7 @@ package dev.vozniack.soodoku.lib.extension
 import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.defaultBoard
 import dev.vozniack.soodoku.lib.defaultLocks
+import dev.vozniack.soodoku.lib.exception.SoodokuMappingException
 import dev.vozniack.soodoku.lib.exception.SoodokuMoveException
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -10,6 +11,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.assertThrows
 
 class SoodokuActionsTest {
 
@@ -52,6 +54,39 @@ class SoodokuActionsTest {
         assertEquals(0, status.missingCells)
         assertEquals(0, status.conflicts.size)
         assertTrue(status.done)
+    }
+
+    @Test
+    fun `get Soodoku value for specific cell`() {
+        val soodoku = Soodoku(defaultBoard(), defaultLocks())
+
+        assertEquals(soodoku.board[1][1], soodoku.value(1, 1))
+    }
+
+    @Test
+    fun `get Soodoku value for incorrect row`() {
+        val soodoku = Soodoku(defaultBoard(), defaultLocks())
+
+        assertThrows<SoodokuMappingException> {
+            soodoku.value(9, 1)
+        }
+
+        assertThrows<SoodokuMappingException> {
+            soodoku.value(-1, 1)
+        }
+    }
+
+    @Test
+    fun `get Soodoku value for incorrect column`() {
+        val soodoku = Soodoku(defaultBoard(), defaultLocks())
+
+        assertThrows<SoodokuMappingException> {
+            soodoku.value(1, 9)
+        }
+
+        assertThrows<SoodokuMappingException> {
+            soodoku.value(1, -1)
+        }
     }
 
     @Test
