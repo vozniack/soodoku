@@ -15,6 +15,7 @@ data class GameDto(
     val difficulty: Difficulty,
     val missing: Int,
     val moves: Int,
+    val realMoves: Int,
 
     val createdAt: String,
     val updatedAt: String?,

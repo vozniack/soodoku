@@ -4,12 +4,15 @@
     <soo-avatar *ngIf="breakpoint == 'xs'" [username]="'anonymous'"></soo-avatar>
   </div>
 
-  <soo-game-info></soo-game-info>
-  <soo-game-board [board]="board" [locks]="locks" [conflicts]="conflicts"></soo-game-board>
-  <soo-game-numbers></soo-game-numbers>
-  <soo-game-control *ngIf="breakpoint != 'xl'"></soo-game-control>
+  <soo-game-info [gameState$]="gameState$"></soo-game-info>
+  <soo-game-board [gameState$]="gameState$"></soo-game-board>
+  <soo-game-numbers [gameState$]="gameState$"></soo-game-numbers>
+
+  <ng-container *ngIf="breakpoint != 'xl'">
+    <soo-game-control [gameState$]="gameState$"></soo-game-control>
+  </ng-container>
 </div>
 
 <div class="game-control column-container" *ngIf="breakpoint == 'xl'" @fadeInAnimation>
-  <soo-game-control></soo-game-control>
+  <soo-game-control [gameState$]="gameState$"></soo-game-control>
 </div>

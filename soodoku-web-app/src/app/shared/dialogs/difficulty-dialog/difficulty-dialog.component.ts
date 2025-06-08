@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'soo-difficulty-dialog',
@@ -8,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class DifficultyDialogComponent {
 
+  @Output() result = new EventEmitter<string>();
+
+  select(level: string) {
+    this.result.emit(level);
+  }
 }

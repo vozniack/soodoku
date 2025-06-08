@@ -29,16 +29,19 @@ CREATE TABLE games
 
 CREATE TABLE moves
 (
-    id         UUID      NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+    id          UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
-    game_id    UUID      NOT NULL,
-    created_at TIMESTAMP NOT NULL             DEFAULT now(),
+    game_id     UUID        NOT NULL,
+    type        VARCHAR(64) NOT NULL,
 
-    row_index  INT       NOT NULL,
-    col_index  INT       NOT NULL,
+    created_at  TIMESTAMP   NOT NULL             DEFAULT now(),
+    reverted_at TIMESTAMP   NULL,
 
-    before     INT       NOT NULL,
-    after      INT       NOT NULL,
+    row_index   INT         NOT NULL,
+    col_index   INT         NOT NULL,
+
+    before      INT         NOT NULL,
+    after       INT         NOT NULL,
 
     CONSTRAINT fk_moves_game FOREIGN KEY (game_id) REFERENCES games (id)
 );

@@ -37,6 +37,8 @@ export class ModalComponent {
     if (inputs) {
       Object.assign(compRef.instance as object, inputs);
     }
+
+    return compRef;
   }
 
   onBackdropClick(event: MouseEvent) {

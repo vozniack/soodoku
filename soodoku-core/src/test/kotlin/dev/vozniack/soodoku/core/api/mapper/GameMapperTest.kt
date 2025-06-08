@@ -6,6 +6,7 @@ import dev.vozniack.soodoku.core.domain.entity.Move
 import dev.vozniack.soodoku.core.domain.entity.User
 import dev.vozniack.soodoku.core.domain.types.ConflictType
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.MoveType
 import dev.vozniack.soodoku.core.util.toISOTime
 import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.extension.flatBoard
@@ -50,6 +51,7 @@ class GameMapperTest : AbstractUnitTest() {
         assertEquals(Soodoku.Difficulty.EASY.name, gameDto.difficulty.name)
         assertEquals(game.currentBoard.count { it == '0' }, gameDto.missing)
         assertEquals(game.moves.size, gameDto.moves)
+        assertEquals(game.moves.filter { it.type == MoveType.NORMAL && it.revertedAt == null }.size, gameDto.realMoves)
 
         assertEquals(game.createdAt.toISOTime(), gameDto.createdAt)
         assertNull(game.updatedAt?.toISOTime())
@@ -122,5 +124,6 @@ class GameMapperTest : AbstractUnitTest() {
         assertEquals(Soodoku.Difficulty.EASY.name, gameDto.difficulty.name)
         assertEquals(79, gameDto.missing)
         assertEquals(2, gameDto.moves)
+        assertEquals(2, gameDto.realMoves)
     }
 }

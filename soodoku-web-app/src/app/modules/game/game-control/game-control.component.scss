@@ -14,22 +14,31 @@
 
     padding: 4px 8px;
 
-    transition: 0.05s ease-in-out background-color;
+    transition: background-color 0.05s ease-in-out, color 0.1s ease-in-out;
     touch-action: manipulation;
 
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        cursor: pointer;
+    &:not(:disabled) {
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          cursor: pointer;
+          background: $primary-container;
+        }
+      }
+
+      &:active {
         background: $primary-container;
       }
     }
 
-    &:active {
+    &.active {
       background: $primary-container;
     }
 
-    &.active {
-      background: $primary-container;
+    &:disabled {
+      cursor: auto;
+
+      color: color-mix(in srgb, $primary 25%, transparent);
+      background: color-mix(in srgb, $secondary-container 25%, transparent);
     }
   }
 

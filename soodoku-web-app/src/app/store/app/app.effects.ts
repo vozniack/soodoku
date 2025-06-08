@@ -12,7 +12,7 @@ export class AppEffects {
   logout$ = createEffect(() =>
     this.actions.pipe(
       ofType(ACTION_LOGOUT.type),
-      map(() => ACTION_LOGIN({user: {}}))
+      map(() => ACTION_LOGIN({userState: {}}))
     )
   );
 }

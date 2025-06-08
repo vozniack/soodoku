@@ -1,13 +1,15 @@
-<div class="game-info-wrapper row-container" [class.space-between]="breakpoint == 'xs'">
-  <soo-button [text]="'New game'" [iconLeft]="'play_arrow'" (click)="newGame()"></soo-button>
+<ng-container *ngIf="gameState$ | async as gameState">
+  <div class="game-info-wrapper row-container" [class.space-between]="breakpoint == 'xs'">
+    <soo-button [text]="'New game'" [iconLeft]="'play_arrow'" (click)="newGame()"></soo-button>
 
-  <div class="game-details row-container" [class.center]="breakpoint != 'xs'">
-    <span class="separated">EASY</span>
-    <span class="separated">21:37</span>
-    <span>Moves: 11</span>
-  </div>
+    <div class="game-details row-container" [class.center]="breakpoint != 'xs'">
+      <span class="separated">Missing: {{ gameState.game.missing }}</span>
+      <span class="separated">{{ elapsedTime$ | async }}</span>
+      <span>Moves: {{ gameState.game.moves }}</span>
+    </div>
 
-  <div class="right" *ngIf="breakpoint != 'xs'">
-    <soo-avatar [username]="'anonymous'"></soo-avatar>
+    <div class="right" *ngIf="breakpoint != 'xs'">
+      <soo-avatar [username]="'anonymous'"></soo-avatar>
+    </div>
   </div>
-</div>
+</ng-container>
