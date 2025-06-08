@@ -231,7 +231,7 @@ class GameControllerTest @Autowired constructor(
 
         val response: GameDto = jacksonObjectMapper().readValue(
             mockMvc.perform(
-                put("/api/games/${gameDto.id}/undo")
+                put("/api/games/${gameDto.id}/revert")
                     .contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
@@ -259,7 +259,7 @@ class GameControllerTest @Autowired constructor(
 
         val response: GameDto = jacksonObjectMapper().readValue(
             mockMvc.perform(
-                put("/api/games/${gameDto.id}/undo")
+                put("/api/games/${gameDto.id}/revert")
                     .contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
@@ -291,7 +291,7 @@ class GameControllerTest @Autowired constructor(
         )
 
         mockMvc.perform(
-            put("/api/games/${gameDto.id}/undo")
+            put("/api/games/${gameDto.id}/revert")
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isUnauthorized)
     }

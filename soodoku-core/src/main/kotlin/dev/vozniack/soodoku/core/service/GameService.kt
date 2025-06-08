@@ -9,6 +9,7 @@ import dev.vozniack.soodoku.core.domain.entity.Move
 import dev.vozniack.soodoku.core.domain.entity.User
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.extension.toSoodoku
+import dev.vozniack.soodoku.core.domain.types.MoveType
 import dev.vozniack.soodoku.core.internal.exception.ConflictException
 import dev.vozniack.soodoku.core.internal.exception.NotFoundException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
@@ -81,7 +82,7 @@ class GameService(
         return gameRepository.save(game) toDtoWithStatus status
     }
 
-    fun undo(id: UUID): GameDto {
+    fun revert(id: UUID): GameDto {
         val game: Game = getGame(id)
 
         if (game.finishedAt != null) {
@@ -89,11 +90,11 @@ class GameService(
         }
 
         if (game.moves.isEmpty()) {
-            throw ConflictException("Nothing to undo")
+            throw ConflictException("Nothing to revert")
         }
 
         val soodoku = game.toSoodoku()
-        val lastMove = game.moves.last()
+        val lastMove = game.moves.last { it.type == MoveType.NORMAL && it.revertedAt == null }
 
         lastMove.let {
             soodoku.move(it.row, it.col, it.before)
@@ -105,7 +106,20 @@ class GameService(
             currentBoard = status.board.flatBoard()
             updatedAt = LocalDateTime.now()
         }.also {
-            it.moves.add(Move(game = it, row = lastMove.row, col = lastMove.col, before = lastMove.after, after = lastMove.before))
+            it.moves.find { move -> move.id === lastMove.id }?.apply {
+                revertedAt = LocalDateTime.now()
+            }
+
+            it.moves.add(
+                Move(
+                    game = it,
+                    type = MoveType.REVERT,
+                    row = lastMove.row,
+                    col = lastMove.col,
+                    before = lastMove.after,
+                    after = lastMove.before
+                )
+            )
         }
 
         return gameRepository.save(game) toDtoWithStatus status

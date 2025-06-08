@@ -7,6 +7,7 @@ import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.MoveRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.MoveType
 import dev.vozniack.soodoku.core.internal.exception.ConflictException
 import dev.vozniack.soodoku.core.internal.exception.NotFoundException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
@@ -88,7 +89,9 @@ class GameServiceTest @Autowired constructor(
 
         assertEquals(Difficulty.EASY.name, gameDto.difficulty.name)
         assertEquals(gameDto.board.flatBoard().count { it == '0' }, gameDto.missing)
+
         assertEquals(0, gameDto.moves)
+        assertEquals(0, gameDto.realMoves)
 
         assertNotNull(gameDto.createdAt)
         assertNull(gameDto.updatedAt)
@@ -118,7 +121,9 @@ class GameServiceTest @Autowired constructor(
 
         assertEquals(Difficulty.EASY.name, gameDto.difficulty.name)
         assertEquals(gameDto.board.flatBoard().count { it == '0' }, gameDto.missing)
+
         assertEquals(0, gameDto.moves)
+        assertEquals(0, gameDto.realMoves)
 
         assertNotNull(gameDto.createdAt)
         assertNull(gameDto.updatedAt)
@@ -143,8 +148,10 @@ class GameServiceTest @Autowired constructor(
         assertEquals(initialGameDto.id, updatedGameDto.id)
         assertNull(updatedGameDto.userId)
 
-        assertEquals(1, updatedGameDto.moves)
         assertEquals(initialGameDto.missing - 1, updatedGameDto.missing)
+
+        assertEquals(1, updatedGameDto.moves)
+        assertEquals(1, updatedGameDto.realMoves)
 
         assertEquals(5, updatedGameDto.board[row][col])
 
@@ -180,8 +187,10 @@ class GameServiceTest @Autowired constructor(
         assertEquals(initialGameDto.id, updatedGameDto.id)
         assertEquals(user.id, updatedGameDto.userId)
 
-        assertEquals(1, updatedGameDto.moves)
         assertEquals(initialGameDto.missing - 1, updatedGameDto.missing)
+
+        assertEquals(1, updatedGameDto.moves)
+        assertEquals(1, updatedGameDto.realMoves)
 
         assertEquals(5, updatedGameDto.board[row][col])
 
@@ -248,7 +257,7 @@ class GameServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `undo last move with anonymous user`() {
+    fun `revert last move with anonymous user`() {
         val gameDto = gameService.new(NewGameDto(Difficulty.EASY))
 
         val (row, col) = gameDto.board
@@ -260,36 +269,42 @@ class GameServiceTest @Autowired constructor(
         val updatedGameDto = gameService.move(gameDto.id, MoveDto(row, col, 5))
 
         assertEquals(1, updatedGameDto.moves)
+        assertEquals(1, updatedGameDto.realMoves)
         assertEquals(5, updatedGameDto.board[row][col])
 
-        val undoneGameDto = gameService.undo(gameDto.id)
+        val revertedGameDto = gameService.revert(gameDto.id)
 
-        assertEquals(gameDto.id, undoneGameDto.id)
-        assertEquals(0, undoneGameDto.board[row][col])
-        assertEquals(updatedGameDto.missing + 1, undoneGameDto.missing)
+        assertEquals(gameDto.id, revertedGameDto.id)
+        assertEquals(0, revertedGameDto.board[row][col])
+        assertEquals(updatedGameDto.missing + 1, revertedGameDto.missing)
 
         val savedGame = gameRepository.findById(updatedGameDto.id).orElse(null)
         assertNotNull(savedGame)
 
-        assertEquals(2, undoneGameDto.moves)
+        assertEquals(2, revertedGameDto.moves)
+        assertEquals(0, revertedGameDto.realMoves)
 
         val move = savedGame.moves.first()
 
+        assertEquals(MoveType.NORMAL, move.type)
+        assertNotNull(move.revertedAt)
         assertEquals(row, move.row)
         assertEquals(col, move.col)
         assertEquals(0, move.before)
         assertEquals(5, move.after)
 
-        val undo = savedGame.moves[1]
+        val revert = savedGame.moves[1]
 
-        assertEquals(row, undo.row)
-        assertEquals(col, undo.col)
-        assertEquals(5, undo.before)
-        assertEquals(0, undo.after)
+        assertEquals(MoveType.REVERT, revert.type)
+        assertNull(revert.revertedAt)
+        assertEquals(row, revert.row)
+        assertEquals(col, revert.col)
+        assertEquals(5, revert.before)
+        assertEquals(0, revert.after)
     }
 
     @Test
-    fun `undo last move with existing user`() {
+    fun `revert last move with existing user`() {
         val user = userRepository.save(mockUser())
 
         SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
@@ -309,34 +324,39 @@ class GameServiceTest @Autowired constructor(
         assertEquals(1, updatedGameDto.moves)
         assertEquals(5, updatedGameDto.board[row][col])
 
-        val undoneGameDto = gameService.undo(gameDto.id)
+        val revertedGameDto = gameService.revert(gameDto.id)
 
-        assertEquals(gameDto.id, undoneGameDto.id)
-        assertEquals(0, undoneGameDto.board[row][col])
-        assertEquals(updatedGameDto.missing + 1, undoneGameDto.missing)
+        assertEquals(gameDto.id, revertedGameDto.id)
+        assertEquals(0, revertedGameDto.board[row][col])
+        assertEquals(updatedGameDto.missing + 1, revertedGameDto.missing)
 
         val savedGame = gameRepository.findById(updatedGameDto.id).orElse(null)
         assertNotNull(savedGame)
 
-        assertEquals(2, undoneGameDto.moves)
+        assertEquals(2, revertedGameDto.moves)
+        assertEquals(0, revertedGameDto.realMoves)
 
         val move = savedGame.moves.first()
 
+        assertEquals(MoveType.NORMAL, move.type)
+        assertNotNull(move.revertedAt)
         assertEquals(row, move.row)
         assertEquals(col, move.col)
         assertEquals(0, move.before)
         assertEquals(5, move.after)
 
-        val undo = savedGame.moves[1]
+        val revert = savedGame.moves[1]
 
-        assertEquals(row, undo.row)
-        assertEquals(col, undo.col)
-        assertEquals(5, undo.before)
-        assertEquals(0, undo.after)
+        assertEquals(MoveType.REVERT, revert.type)
+        assertNull(revert.revertedAt)
+        assertEquals(row, revert.row)
+        assertEquals(col, revert.col)
+        assertEquals(5, revert.before)
+        assertEquals(0, revert.after)
     }
 
     @Test
-    fun `undo last move with user different than owner`() {
+    fun `revert last move with user different than owner`() {
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
@@ -362,7 +382,7 @@ class GameServiceTest @Autowired constructor(
         )
 
         assertThrows<UnauthorizedException> {
-            gameService.undo(gameDto.id)
+            gameService.revert(gameDto.id)
         }
     }
 
@@ -375,7 +395,7 @@ class GameServiceTest @Autowired constructor(
         }
 
         assertThrows<ConflictException> {
-            gameService.undo(gameDto.id)
+            gameService.revert(gameDto.id)
         }
     }
 
@@ -386,7 +406,7 @@ class GameServiceTest @Autowired constructor(
         assertEquals(0, gameDto.moves)
 
         assertThrows<ConflictException> {
-            gameService.undo(gameDto.id)
+            gameService.revert(gameDto.id)
         }
     }
 

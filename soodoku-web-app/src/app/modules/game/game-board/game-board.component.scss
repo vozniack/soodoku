@@ -26,7 +26,7 @@
 
     border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
 
-    transition: 0.05s ease-in-out background-color, 0.05s ease-in-out border-color;
+    transition: 0.1s ease-in-out background-color, 0.1s ease-in-out border-color;
 
     &.xs {
       font-size: 20px;
@@ -81,6 +81,7 @@
     }
 
     &.conflict-related {
+      color: $error;
       background: color-mix(in srgb, $error-container 50%, transparent);
     }
 
@@ -89,7 +90,7 @@
       background-color: $error-container;
 
       &.locked {
-        color: color-mix(in srgb, $error 25%, transparent);
+        color: color-mix(in srgb, $error 50%, transparent);
       }
     }
 

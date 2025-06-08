@@ -25,7 +25,7 @@
     border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
     box-shadow: 0 0 12px color-mix(in srgb, $neutral 10%, transparent);
 
-    transition: 0.05s ease-in-out background-color;
+    transition: background-color 0.05s ease-in-out, color 0.1s ease-in-out;
     touch-action: manipulation;
 
     &.xs {
@@ -33,15 +33,22 @@
       aspect-ratio: 1.5 / 1;
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        cursor: pointer;
+    &:not(:disabled) {
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          cursor: pointer;
+          background: $primary-container;
+        }
+      }
+
+      &:active {
         background: $primary-container;
       }
     }
 
-    &:active {
-      background: $primary-container;
+    &:disabled {
+      cursor: auto;
+      color: color-mix(in srgb, $neutral 25%, transparent);
     }
   }
 }

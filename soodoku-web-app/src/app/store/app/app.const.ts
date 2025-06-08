@@ -8,8 +8,11 @@ export const initialAppState = (): SoodokuState => {
     view: View.HOME,
     theme: Theme.LIGHT,
     breakpoint: Breakpoint.XL,
-    user: {
+
+    userState: {
       token: undefined
-    }
+    },
+
+    gameState: undefined
   };
 };

@@ -27,8 +27,8 @@ class GameController(private val gameService: GameService) {
     @PutMapping("/{id}/move")
     fun move(@PathVariable id: UUID, @RequestBody move: MoveDto): GameDto = gameService.move(id, move)
 
-    @PutMapping("/{id}/undo")
-    fun undo(@PathVariable id: UUID): GameDto = gameService.undo(id)
+    @PutMapping("/{id}/revert")
+    fun undo(@PathVariable id: UUID): GameDto = gameService.revert(id)
 
     @PutMapping("/{id}/end")
     fun end(@PathVariable id: UUID): GameDto = gameService.end(id)
