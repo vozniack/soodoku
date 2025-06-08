@@ -2,7 +2,7 @@
   <div class="game-numbers-wrapper {{ breakpoint }}">
     <ng-container *ngFor="let number of numbers; let i = index">
       <button class="number {{breakpoint}}" [class.second-row]="breakpoint === 'xs' && i >= 5"
-              [disabled]="gameState.activeCell === undefined"
+              [disabled]="gameState.activeCell === undefined || gameState.activeCell.value === number"
               (click)="move(number)">
         {{ number }}
       </button>
