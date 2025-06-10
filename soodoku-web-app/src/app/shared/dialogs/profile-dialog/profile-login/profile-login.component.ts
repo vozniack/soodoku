@@ -24,7 +24,7 @@ export class ProfileLoginComponent {
 
   constructor(private store: Store, private formBuilder: FormBuilder, private authService: AuthService) {
     this.form = this.formBuilder.group({
-      email: new FormControl('', [Validators.required, Validators.pattern(emailRegex)]),
+      email: new FormControl('', [Validators.required, Validators.pattern(emailRegex)]  ),
       password: new FormControl('', [Validators.required])
     });
   }

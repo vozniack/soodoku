@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ACTION_LOGOUT } from '../../../../store/app/app.actions';
 import { ButtonComponent } from '../../../components/button/button.component';
@@ -12,10 +12,13 @@ import { ButtonComponent } from '../../../components/button/button.component';
 })
 export class ProfileDetailsComponent {
 
+  @Input() result!: EventEmitter<boolean>;
+
   constructor(private store: Store) {
   }
 
   logout(): void {
     this.store.dispatch(ACTION_LOGOUT());
+    this.result.emit(true);
   }
 }

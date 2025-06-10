@@ -2,7 +2,7 @@
   <h2>Profile</h2>
 
   <ng-container *ngIf="user.token !== undefined">
-    <soo-profile-details @fadeInAnimation></soo-profile-details>
+    <soo-profile-details [result]="result" @fadeInAnimation></soo-profile-details>
   </ng-container>
 
   <ng-container *ngIf="user.token === undefined">

@@ -1,5 +1,5 @@
 <div class="input" [style.width]="width" [style.max-width]="maxWidth" [style.margin]="maxWidth ? 'auto' : 0">
-  <div class="form tonal" [class.invalid]="control.invalid" [class.disabled]="control.disabled">
+  <div class="form tonal" [class.invalid]="control.touched && control.invalid" [class.disabled]="control.disabled">
     <span *ngIf="placeholder && placeholderShrink" class="label" [class.active]="control.value?.toString().length > 0">
       {{ placeholder }}
     </span>
