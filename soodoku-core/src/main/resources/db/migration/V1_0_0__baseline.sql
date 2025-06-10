@@ -49,4 +49,4 @@ CREATE TABLE moves
 );
 
 INSERT INTO users (email, password, username)
-VALUES ('turbowafflerider9000@soodoku.dev', '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO', 'turbowafflerider_9000');
+VALUES ('rajeshkootrappali@bbt.com', '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO', 'koothrappali9000');
