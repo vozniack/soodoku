@@ -1,10 +1,10 @@
 import { ApplicationRef, Injectable, Type, createComponent, } from '@angular/core';
 import { take } from 'rxjs';
 import { Breakpoint } from '../breakpoint/breakpoint.interface';
-import { ModalComponent } from './modal.component';
+import { DialogComponent } from './dialog.component';
 
 @Injectable({providedIn: 'root'})
-export class ModalService {
+export class DialogService {
 
   breakpoint!: Breakpoint;
 
@@ -13,24 +13,24 @@ export class ModalService {
 
   open<T, R = any>(component: Type<T>, inputs?: Partial<T>): Promise<R> {
     return new Promise<R>((resolve) => {
-      const modalRef = createComponent(ModalComponent, {
+      const dialogRef = createComponent(DialogComponent, {
         environmentInjector: this.appRef.injector,
       });
 
-      this.appRef.attachView(modalRef.hostView);
-      document.body.appendChild(modalRef.location.nativeElement);
+      this.appRef.attachView(dialogRef.hostView);
+      document.body.appendChild(dialogRef.location.nativeElement);
 
-      const childCompRef = modalRef.instance.loadChild(component, inputs);
+      const childCompRef = dialogRef.instance.loadChild(component, inputs);
 
-      modalRef.instance.closed.subscribe(() => {
-        this.appRef.detachView(modalRef.hostView);
-        modalRef.destroy();
+      dialogRef.instance.closed.subscribe(() => {
+        this.appRef.detachView(dialogRef.hostView);
+        dialogRef.destroy();
         resolve(null as any);
       });
 
       if ((childCompRef.instance as any).result) {
         (childCompRef.instance as any).result.pipe(take(1)).subscribe((value: any) => {
-          modalRef.instance.close();
+          dialogRef.instance.close();
           resolve(value);
         });
       }

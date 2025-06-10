@@ -1,7 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 export const SELECT_APP_STATE = createSelector(
-  createFeatureSelector<any>('soodoku-storage'), state => state
+  createFeatureSelector<any>('soodokuStorage'), state => state
 );
 
 export const SELECT_VIEW = createSelector(

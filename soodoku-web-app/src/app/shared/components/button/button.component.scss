@@ -32,7 +32,10 @@
   }
 
   &:disabled {
-    cursor: default;
+    cursor: not-allowed;
+
+    color: color-mix(in srgb, $primary 75%, transparent);
+    background: color-mix(in srgb, $secondary-container 25%, transparent);
   }
 
   /* Sizes */

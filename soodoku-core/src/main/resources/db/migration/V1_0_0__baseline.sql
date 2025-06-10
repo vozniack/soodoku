@@ -5,7 +5,9 @@ CREATE TABLE users
     id       UUID         NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
     email    VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255)
+    password VARCHAR(255),
+
+    username VARCHAR(255)
 );
 
 CREATE TABLE games
@@ -46,5 +48,5 @@ CREATE TABLE moves
     CONSTRAINT fk_moves_game FOREIGN KEY (game_id) REFERENCES games (id)
 );
 
-INSERT INTO users (email, password)
-VALUES ('admin@soodoku.dev', '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO');
+INSERT INTO users (email, password, username)
+VALUES ('rajeshkootrappali@bbt.com', '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO', 'koothrappali9000');

@@ -20,8 +20,8 @@
   touch-action: manipulation;
 
   border: none;
-  -webkit-tap-highlight-color: transparent;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {

@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { BehaviorSubject, filter, from, interval, Observable, Subscription } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
-import { ModalService } from '../../../core/modal/modal.service';
+import { DialogService } from '../../../core/dialog/dialog.service';
 import { View } from '../../../core/view/view.const';
 import { AvatarComponent } from '../../../shared/components/avatar/avatar.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
@@ -33,7 +33,7 @@ export class GameInfoComponent implements OnInit {
   elapsedTime$ = new BehaviorSubject<string>('00:00');
   private timerSub?: Subscription;
 
-  constructor(private store: Store, private modalService: ModalService, private gameService: GameService) {
+  constructor(private store: Store, private dialogService: DialogService, private gameService: GameService) {
     this.store.select(SELECT_BREAKPOINT).pipe(
       takeUntilDestroyed(),
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)
@@ -47,7 +47,7 @@ export class GameInfoComponent implements OnInit {
   }
 
   newGame(): void {
-    from(this.modalService.open(DifficultyDialogComponent))
+    from(this.dialogService.open(DifficultyDialogComponent))
       .pipe(
         filter((difficulty): difficulty is string => !!difficulty),
         switchMap(difficulty => this.gameService.new(difficulty)),

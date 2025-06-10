@@ -1,0 +1,11 @@
+<div class="profile-dialog column-container gap">
+  <h2>Profile</h2>
+
+  <ng-container *ngIf="user.token !== undefined">
+    <soo-profile-details [result]="result" @fadeInAnimation></soo-profile-details>
+  </ng-container>
+
+  <ng-container *ngIf="user.token === undefined">
+    <soo-profile-login [result]="result" @fadeInAnimation></soo-profile-login>
+  </ng-container>
+</div>

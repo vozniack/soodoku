@@ -6,13 +6,13 @@ import { SELECT_BREAKPOINT } from '../../store/app/app.selectors';
 import { Breakpoint } from '../breakpoint/breakpoint.interface';
 
 @Component({
-  selector: 'soo-modal',
+  selector: 'soo-dialog',
   standalone: true,
-  templateUrl: './modal.component.html',
-  styleUrls: ['./modal.component.scss'],
+  templateUrl: './dialog.component.html',
+  styleUrls: ['./dialog.component.scss'],
   imports: [ButtonComponent]
 })
-export class ModalComponent {
+export class DialogComponent {
 
   @Output() closed = new EventEmitter<void>();
 

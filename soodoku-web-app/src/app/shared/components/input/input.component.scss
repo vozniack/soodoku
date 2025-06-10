@@ -1,0 +1,132 @@
+@import 'theme.scss';
+
+.input {
+  margin: 0;
+  padding: 0;
+
+  .name {
+    margin-bottom: 8px;
+    color: $neutral;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .form {
+    width: 100%;
+    border-radius: 8px;
+
+    position: relative;
+    box-shadow: none;
+
+    transition: border-color 0.1s ease-in-out, background-color 0.1s ease-in-out, color 0.1s ease-in-out;
+
+    border: 1px solid color-mix(in srgb, $secondary 10%, transparent);
+    background-color: color-mix(in srgb, $secondary-container 25%, transparent);
+
+    &:not(.disabled) {
+      &:hover, &:focus {
+        border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
+        background-color: color-mix(in srgb, $primary 10%, transparent);
+      }
+    }
+
+    &.invalid {
+      border: 1px solid color-mix(in srgb, $error 10%, transparent);
+      background-color: color-mix(in srgb, $error-container 50%, transparent);
+
+      &:hover, &:focus {
+        border: 1px solid color-mix(in srgb, $error 25%, transparent);
+        background-color: color-mix(in srgb, $error-container 75%, transparent);
+      }
+
+      .icon {
+        color: $error;
+      }
+    }
+
+    .label {
+      opacity: 1;
+      z-index: -1;
+
+      position: absolute;
+      top: 16px;
+      left: 16px;
+
+      font-size: 8px;
+      font-weight: 500;
+      color: color-mix(in srgb, $neutral 50%, transparent);
+
+      transition: opacity 0.1s ease-in-out, top 0.1s ease-in-out, left 0.1s ease-in-out, z-index 0.1s ease-in-out;
+
+      &.active, &:focus {
+        z-index: 1;
+        opacity: 1;
+
+        top: -14px;
+        left: 2px;
+      }
+    }
+
+    input {
+      height: 40px;
+      width: 100%;
+      padding: 4px 16px;
+
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      color: $neutral;
+
+      box-sizing: border-box;
+      background: none;
+      border: none;
+
+      &:focus {
+        outline: none;
+      }
+
+      &:disabled {
+        color: color-mix(in srgb, $neutral 75%, transparent);
+      }
+
+      &::placeholder {
+        font-size: 10px;
+        font-weight: 500;
+        color: color-mix(in srgb, $neutral 50%, transparent);
+      }
+
+      ::-webkit-outer-spin-button, ::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+
+    input:-webkit-autofill {
+      font-size: 14px;
+
+      -webkit-text-fill-color: $primary !important;
+      transition: background-color 5000s ease-in-out 0s;
+
+      &:hover, &:focus, &:active {
+        transition: background-color 5000s ease-in-out 0s;
+      }
+    }
+
+    .icon {
+      position: absolute;
+      top: 8px;
+      right: 16px;
+
+      color: $primary;
+
+      transition: color 0.1s ease-in-out;
+
+      &.active {
+        cursor: pointer;
+
+        &:hover {
+          font-variation-settings: 'FILL' 1;
+        }
+      }
+    }
+  }
+}

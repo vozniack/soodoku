@@ -1,10 +1,10 @@
 import { createAction, props } from '@ngrx/store';
 import { Breakpoint } from '../../core/breakpoint/breakpoint.interface';
+import { User } from '../../core/user/user.interface';
 import { View } from '../../core/view/view.const';
 import { Theme } from '../../core/theme/theme.const';
 import { Cell } from '../../modules/game/game-board/game-board.interface';
 import { Game } from '../../modules/game/game.interface';
-import { UserState } from './app.state';
 
 export const ACTION_SET_VIEW = createAction(
   '[App] Set view', props<{ view: View }>()
@@ -19,11 +19,15 @@ export const ACTION_SET_BREAKPOINT = createAction(
 );
 
 export const ACTION_LOGIN = createAction(
-  '[User] Login', props<{ userState: UserState }>()
+  '[User] Login', props<{ token?: string }>()
 );
 
 export const ACTION_LOGOUT = createAction(
   '[User] Logout'
+);
+
+export const ACTION_SET_USER = createAction(
+  '[User] Set user', props<{ user: User }>()
 );
 
 export const ACTION_SET_GAME = createAction(
