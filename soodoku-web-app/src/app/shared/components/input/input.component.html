@@ -1,0 +1,23 @@
+<div class="input" [style.width]="width" [style.max-width]="maxWidth" [style.margin]="maxWidth ? 'auto' : 0">
+  <div class="form tonal" [class.invalid]="control.invalid" [class.disabled]="control.disabled">
+    <span *ngIf="placeholder && placeholderShrink" class="label" [class.active]="control.value?.toString().length > 0">
+      {{ placeholder }}
+    </span>
+
+    <input [style.padding-right]="icon ? '40px' : '16px'"
+           [formControl]="control"
+           [id]="id"
+           [name]="name"
+           [type]="type"
+           [placeholder]="placeholder"
+           [maxLength]="maxLength"
+           [autocomplete]="autocomplete"/>
+
+    <soo-icon *ngIf="icon && !password" class="icon" (click)="switchVisibility()" [name]="icon" [size]="20"></soo-icon>
+
+    <soo-icon *ngIf="password" class="icon active" (click)="switchVisibility()"
+              [name]="type == 'password' ? 'visibility' : 'visibility_off'"
+              [size]="20">
+    </soo-icon>
+  </div>
+</div>

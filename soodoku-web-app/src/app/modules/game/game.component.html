@@ -1,7 +1,7 @@
 <div class="game-wrapper column-container" @fadeInAnimation>
   <div class="row-container" [class.center]="breakpoint != 'xs'" [class.space-between]="breakpoint == 'xs'">
     <soo-logo [width]="breakpoint == 'xs' || breakpoint == 'sm' ? '128px' : '192px'"></soo-logo>
-    <soo-avatar *ngIf="breakpoint == 'xs'" [username]="'anonymous'"></soo-avatar>
+    <soo-avatar *ngIf="breakpoint == 'xs'"></soo-avatar>
   </div>
 
   <soo-game-info [gameState$]="gameState$"></soo-game-info>

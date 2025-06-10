@@ -1,0 +1,9 @@
+@import 'theme.scss';
+
+.profile-dialog {
+  color: $secondary;
+
+  > * {
+    width: 100%;
+  }
+}

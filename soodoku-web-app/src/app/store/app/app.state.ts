@@ -1,3 +1,4 @@
+import { User } from '../../core/user/user.interface';
 import { View } from '../../core/view/view.const';
 import { Theme } from '../../core/theme/theme.const';
 import { Breakpoint } from '../../core/breakpoint/breakpoint.interface';
@@ -14,6 +15,7 @@ export interface SoodokuState {
 }
 
 export interface UserState {
+  user?: User,
   token?: string;
 }
 

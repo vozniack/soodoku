@@ -1,4 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { from } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { DialogService } from '../../../core/dialog/dialog.service';
+import { SELECT_USER_STATE } from '../../../store/app/app.selectors';
+import { UserState } from '../../../store/app/app.state';
+import { ProfileDialogComponent } from '../../dialogs/profile-dialog/profile-dialog.component';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -10,5 +17,15 @@ import { IconComponent } from '../icon/icon.component';
 })
 export class AvatarComponent {
 
-  @Input() username!: string;
+  username!: string;
+
+  constructor(private store: Store, private dialogService: DialogService) {
+    this.store.select(SELECT_USER_STATE).pipe(
+      tap((userState: UserState) => this.username = userState?.user?.username ? userState.user.username : 'anonymous')
+    ).subscribe()
+  }
+
+  openProfile(): void {
+    from(this.dialogService.open(ProfileDialogComponent)).subscribe();
+  }
 }

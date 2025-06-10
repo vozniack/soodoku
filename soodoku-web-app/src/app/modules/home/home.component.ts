@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { filter, from } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { ModalService } from '../../core/modal/modal.service';
+import { DialogService } from '../../core/dialog/dialog.service';
 import { View } from '../../core/view/view.const';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { ViewAwareComponent } from '../../core/view/view.component';
@@ -24,12 +24,12 @@ import { GameService } from '../game/game.service';
 })
 export class HomeComponent extends ViewAwareComponent {
 
-  constructor(viewService: ViewService, private modalService: ModalService, private gameService: GameService, private store: Store) {
+  constructor(viewService: ViewService, private dialogService: DialogService, private gameService: GameService, private store: Store) {
     super(viewService);
   }
 
   newGame(): void {
-    from(this.modalService.open(DifficultyDialogComponent))
+    from(this.dialogService.open(DifficultyDialogComponent))
       .pipe(
         filter((difficulty): difficulty is string => !!difficulty),
         switchMap(difficulty => this.gameService.new(difficulty)),
