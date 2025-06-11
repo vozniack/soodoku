@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Output, Type, ViewChild, ViewContainerRef, } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { Component, EventEmitter, Input, Output, Type, ViewChild, ViewContainerRef, } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { tap } from 'rxjs/operators';
 import { ButtonComponent } from '../../shared/components/button/button.component';
@@ -10,10 +11,11 @@ import { Breakpoint } from '../breakpoint/breakpoint.interface';
   standalone: true,
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss'],
-  imports: [ButtonComponent]
+  imports: [ButtonComponent, NgIf]
 })
 export class DialogComponent {
 
+  @Input() closing = true;
   @Output() closed = new EventEmitter<void>();
 
   @ViewChild('container', {read: ViewContainerRef, static: true})

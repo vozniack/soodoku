@@ -1,0 +1,16 @@
+<div class="confirmation-dialog column-container gap">
+  <h2>{{ title }}</h2>
+  <span>{{ description }}</span>
+
+  <div class="actions row-container gap">
+    <soo-button
+      (click)="close(false)"
+      [text]="'No'">
+    </soo-button>
+
+    <soo-button
+      (click)="close(true)"
+      [text]="'Yes'">
+    </soo-button>
+  </div>
+</div>

@@ -29,4 +29,8 @@ export class GameService {
   revert(id: string): Observable<Game> {
     return this.httpClient.put<Game>(`${this.baseUrl}/${id}/revert`, {});
   }
+
+  end(id: string): Observable<Game> {
+    return this.httpClient.put<Game>(`${this.baseUrl}/${id}/end`, {});
+  }
 }

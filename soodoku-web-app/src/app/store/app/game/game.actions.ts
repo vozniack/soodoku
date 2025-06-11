@@ -15,7 +15,7 @@ export const ACTION_GAME_NEW = createAction(
 );
 
 export const ACTION_GAME_MOVE = createAction(
-  '[Game] Move', props<{ value: number }>()
+  '[Game] Move (fill cell)', props<{ value: number }>()
 );
 
 export const ACTION_GAME_REVERT = createAction(
@@ -23,6 +23,13 @@ export const ACTION_GAME_REVERT = createAction(
 );
 
 export const ACTION_GAME_WIPE = createAction(
-  '[Game] Wipe'
+  '[Game] Wipe cell'
 );
 
+export const ACTION_GAME_SURRENDER = createAction(
+  '[Game] Surrender game'
+);
+
+export const ACTION_GAME_END = createAction(
+  '[Game] End game', props<{ game: Game }>()
+);

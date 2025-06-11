@@ -1,6 +1,6 @@
 <div class="backdrop" [class.mobile]="isMobile" [class.hidden]="hidden" (click)="onBackdropClick($event)">
-  <div class="dialog" [class.mobile]="isMobile" [class.hidden]="hidden" >
-    <soo-button [icon]="'close'" (click)="close()"></soo-button>
+  <div class="dialog" [class.mobile]="isMobile" [class.hidden]="hidden">
+    <soo-button *ngIf="closing" [icon]="'close'" (click)="close()"></soo-button>
     <ng-template #container></ng-template>
   </div>
 </div>
