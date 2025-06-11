@@ -10,11 +10,15 @@ export const ACTION_GAME_SET_FOCUS = createAction(
   '[Game] Set game focused cell', props<{ focus?: Cell }>()
 );
 
+export const ACTION_GAME_NEW = createAction(
+  '[Game] Create new game', props<{ difficulty: string }>()
+);
+
 export const ACTION_GAME_MOVE = createAction(
   '[Game] Move', props<{ value: number }>()
 );
 
-export const ACTION_GAME_MOVE_REVERT = createAction(
+export const ACTION_GAME_REVERT = createAction(
   '[Game] Revert move'
 );
 

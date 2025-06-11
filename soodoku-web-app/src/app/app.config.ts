@@ -9,6 +9,7 @@ import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@an
 import { authInterceptorFn } from './core/auth/auth.interceptor';
 import { appReducers } from './store/app/app.reducers';
 import { AuthEffects } from './store/app/auth/auth.effects';
+import { GameEffects } from './store/app/game/game.effects';
 import { persistState } from './store/meta/meta.reducers';
 
 export const appConfig: ApplicationConfig = {
@@ -24,6 +25,6 @@ export const appConfig: ApplicationConfig = {
       {soodokuStorage: appReducers},
       {metaReducers: [persistState as MetaReducer]},
     ),
-    provideEffects(AuthEffects)
+    provideEffects([AuthEffects, GameEffects])
   ]
 };

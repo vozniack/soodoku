@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { ACTION_GAME_NEW } from '../../../store/app/game/game.actions';
 
 @Component({
   selector: 'soo-difficulty-dialog',
@@ -8,9 +10,13 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class DifficultyDialogComponent {
 
-  @Output() result = new EventEmitter<string>();
+  @Output() result = new EventEmitter<boolean>();
 
-  select(level: string) {
-    this.result.emit(level);
+  constructor(private store: Store) {
+  }
+
+  select(difficulty: string) {
+    this.store.dispatch(ACTION_GAME_NEW({difficulty}));
+    this.result.emit(true);
   }
 }

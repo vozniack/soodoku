@@ -3,16 +3,14 @@ import { Component, Input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
 import { ViewAwareComponent } from '../../../core/view/view.component';
 import { ViewService } from '../../../core/view/view.service';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
+import { ACTION_GAME_REVERT, ACTION_GAME_WIPE } from '../../../store/app/game/game.actions';
 import { GameState } from '../../../store/app/game/game.state';
-import { setGameActionBuilder } from '../game.function';
-import { Game } from '../game.interface';
-import { GameService } from '../game.service';
 
 @Component({
   selector: 'soo-game-control',
@@ -28,7 +26,7 @@ export class GameControlComponent extends ViewAwareComponent {
   breakpoint!: Breakpoint;
   hints: number = 3;
 
-  constructor(viewService: ViewService, private store: Store, private gameService: GameService) {
+  constructor(viewService: ViewService, private store: Store) {
     super(viewService);
 
     this.store.select(SELECT_BREAKPOINT).pipe(
@@ -38,32 +36,10 @@ export class GameControlComponent extends ViewAwareComponent {
   }
 
   revert(): void {
-    this.gameState$.pipe(
-      take(1),
-      filter((gameState) => !!gameState.game && !!gameState.focus),
-      switchMap((gameState) =>
-        this.gameService.revert(gameState.game!!.id).pipe(
-          map((updatedGame: Game) => ({updatedGame, focus: gameState.focus}))
-        )
-      ),
-      tap(({updatedGame, focus}) => {
-        this.store.dispatch(setGameActionBuilder(updatedGame, focus));
-      })
-    ).subscribe();
+    this.store.dispatch(ACTION_GAME_REVERT());
   }
 
   wipe(): void {
-    this.gameState$.pipe(
-      take(1),
-      filter((gameState) => !!gameState.game && !!gameState.focus),
-      switchMap((gameState) =>
-        this.gameService.move(gameState.game!!.id, gameState.focus!!.row, gameState.focus!!.col, 0).pipe(
-          map((updatedGame: Game) => ({updatedGame, focus: gameState.focus!}))
-        )
-      ),
-      tap(({updatedGame, focus}) => {
-        this.store.dispatch(setGameActionBuilder(updatedGame, focus));
-      })
-    ).subscribe();
+    this.store.dispatch(ACTION_GAME_WIPE());
   }
 }

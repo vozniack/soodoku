@@ -3,19 +3,14 @@ import { Component, Input, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, filter, from, interval, Observable, Subscription } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
 import { DialogService } from '../../../core/dialog/dialog.service';
-import { View } from '../../../core/view/view.const';
 import { AvatarComponent } from '../../../shared/components/avatar/avatar.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { DifficultyDialogComponent } from '../../../shared/dialogs/difficulty-dialog/difficulty-dialog.component';
-import { ACTION_SET_VIEW } from '../../../store/app/app.actions';
 import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
-import { ACTION_GAME_SET } from '../../../store/app/game/game.actions';
 import { GameState } from '../../../store/app/game/game.state';
-import { Game } from '../game.interface';
-import { GameService } from '../game.service';
 import { updateElapsedTime } from './game-info.function';
 
 @Component({
@@ -34,7 +29,7 @@ export class GameInfoComponent implements OnInit {
   elapsedTime$ = new BehaviorSubject<string>('00:00');
   private timerSub?: Subscription;
 
-  constructor(private store: Store, private dialogService: DialogService, private gameService: GameService) {
+  constructor(private store: Store, private dialogService: DialogService) {
     this.store.select(SELECT_BREAKPOINT).pipe(
       takeUntilDestroyed(),
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)
@@ -49,15 +44,7 @@ export class GameInfoComponent implements OnInit {
   }
 
   newGame(): void {
-    from(this.dialogService.open(DifficultyDialogComponent))
-      .pipe(
-        filter((difficulty): difficulty is string => !!difficulty),
-        switchMap(difficulty => this.gameService.new(difficulty)),
-        tap((game: Game) => {
-          this.store.dispatch(ACTION_GAME_SET({game: game}));
-          this.store.dispatch(ACTION_SET_VIEW({view: View.GAME}));
-        })
-      ).subscribe();
+    from(this.dialogService.open(DifficultyDialogComponent)).subscribe();
   }
 
   private startElapsedTimer(createdAt: string) {
