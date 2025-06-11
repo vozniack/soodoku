@@ -5,26 +5,22 @@ import { initialGameState } from './game.const';
 import { GameState } from './game.state';
 
 export const _gameReducer = createReducer(initialGameState,
-  on(ACTION_GAME_SET, (state, newState: GameState) => onSetGame(state, newState)),
-  on(ACTION_GAME_SET_FOCUS, (state, newState) => onSetGameFocus(state, newState.focus)),
+  on(ACTION_GAME_SET, (state: GameState, newState: GameState) => onSetGame(state, newState)),
+  on(ACTION_GAME_SET_FOCUS, (state: GameState, newState: GameState) => onSetGameFocus(state, newState.focus)),
 );
 
 function onSetGame(state: GameState, newState: GameState) {
   return {
     ...state,
-    gameState: {
-      game: newState.game,
-      focus: newState.focus
-    }
+    game: newState.game,
+    focus: newState.focus
   };
 }
 
 function onSetGameFocus(state: GameState, focus?: Cell) {
   return {
     ...state,
-    gameState: {
-      game: state.game!!,
-      focus: focus
-    }
+    game: state.game!!,
+    focus: focus
   };
 }

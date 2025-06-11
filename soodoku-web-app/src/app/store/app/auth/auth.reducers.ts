@@ -5,21 +5,16 @@ import { AuthState } from './auth.state';
 
 export const _authReducer = createReducer(initialAuthState,
   on(ACTION_AUTH_LOGIN, (state, newState) => onAuthLogin(state, newState.token)),
-  on(ACTION_AUTH_LOGOUT, (state) => onAuthLogout(state)),
+  on(ACTION_AUTH_LOGOUT, () => onAuthLogout()),
 );
 
 function onAuthLogin(state: AuthState, token?: string) {
   return {
     ...state,
-    authState: {
-      token: token,
-    }
+    token: token,
   };
 }
 
-function onAuthLogout(state: AuthState) {
-  return {
-    ...state,
-    authState: {}
-  };
+function onAuthLogout() {
+  return {};
 }

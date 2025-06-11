@@ -13,9 +13,7 @@ export const _userReducer = createReducer(initialUserState,
 function onSetUser(state: UserState, user: User) {
   return {
     ...state,
-    userState: {
-      user: user
-    }
+    user: user
   };
 }
 
