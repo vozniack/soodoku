@@ -1,0 +1,21 @@
+@import 'theme.scss';
+
+.game-end-dialog {
+  color: $secondary;
+
+  > * {
+    width: 100%;
+  }
+
+  &.victory {
+    h2, span {
+      color: $success !important;
+    }
+  }
+
+  &.defeat {
+    h2, span {
+      color: $error !important;
+    }
+  }
+}

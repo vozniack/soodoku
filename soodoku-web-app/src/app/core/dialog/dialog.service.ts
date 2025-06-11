@@ -11,16 +11,18 @@ export class DialogService {
   constructor(private appRef: ApplicationRef) {
   }
 
-  open<T, R = any>(component: Type<T>, inputs?: Partial<T>): Promise<R> {
+  open<T, R = any>(component: Type<T>, config?: { closing: boolean, inputs?: Partial<T> }): Promise<R> {
     return new Promise<R>((resolve) => {
       const dialogRef = createComponent(DialogComponent, {
         environmentInjector: this.appRef.injector,
       });
 
+      dialogRef.instance.closing = config?.closing ?? true;
+
       this.appRef.attachView(dialogRef.hostView);
       document.body.appendChild(dialogRef.location.nativeElement);
 
-      const childCompRef = dialogRef.instance.loadChild(component, inputs);
+      const childCompRef = dialogRef.instance.loadChild(component, config?.inputs);
 
       dialogRef.instance.closed.subscribe(() => {
         this.appRef.detachView(dialogRef.hostView);

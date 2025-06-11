@@ -3,23 +3,26 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { filter } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { User } from '../../core/user/user.interface';
-import { UserService } from '../../core/user/user.service';
-import { View } from '../../core/view/view.const';
-import { ACTION_LOGIN, ACTION_LOGOUT, ACTION_SET_USER, ACTION_SET_VIEW, } from './app.actions';
-import { SELECT_GAME_STATE } from './app.selectors';
-import { GameState } from './app.state';
+import { User } from '../../../core/user/user.interface';
+import { UserService } from '../../../core/user/user.service';
+import { View } from '../../../core/view/view.const';
+import { ACTION_SET_VIEW } from '../app.actions';
+import { SELECT_GAME_STATE } from '../game/game.selectors';
+import { GameState } from '../game/game.state';
+import { ACTION_USER_SET } from '../user/user.actions';
+import { ACTION_AUTH_LOGIN, ACTION_AUTH_LOGOUT } from './auth.actions';
 
 @Injectable()
-export class AppEffects {
+export class AuthEffects {
 
   private actions$ = inject(Actions);
   private store$ = inject(Store);
+
   private userService = inject(UserService);
 
   logout$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(ACTION_LOGOUT),
+      ofType(ACTION_AUTH_LOGOUT),
       switchMap(() => this.store$.select(SELECT_GAME_STATE)),
       filter((state: GameState) => state.game?.userId !== undefined),
       map(() => ACTION_SET_VIEW({view: View.HOME}))
@@ -28,9 +31,9 @@ export class AppEffects {
 
   login$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(ACTION_LOGIN),
+      ofType(ACTION_AUTH_LOGIN),
       switchMap(() => this.userService.getLoggedUser()),
-      map((user: User) => ACTION_SET_USER({user: user}))
+      map((user: User) => ACTION_USER_SET({user: user}))
     )
   );
 }

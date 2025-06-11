@@ -1,26 +1,28 @@
 <ng-container *ngIf="gameState$ | async as gameState">
-  <div class="game-control-wrapper center"
-       [class.row-container]="breakpoint != 'xl'"
-       [class.column-container]="breakpoint == 'xl'">
-    <button (click)="revert()" [disabled]="gameState.game.realMoves < 1">
-      <soo-icon [name]="'undo'" [size]="32"></soo-icon>
-    </button>
+  <ng-container *ngIf="gameState.game !== undefined">
+    <div class="game-control-wrapper center"
+         [class.row-container]="breakpoint != 'xl'"
+         [class.column-container]="breakpoint == 'xl'">
+      <button (click)="revert()" [disabled]="gameState.game!!.realMoves < 1">
+        <soo-icon [name]="'undo'" [size]="32"></soo-icon>
+      </button>
 
-    <button (click)="wipe()" [disabled]="gameState.activeCell === undefined || gameState.activeCell.value == 0">
-      <soo-icon [name]="'ink_eraser'" [size]="32"></soo-icon>
-    </button>
+      <button (click)="wipe()" [disabled]="gameState.focus === undefined || gameState.focus.value == 0">
+        <soo-icon [name]="'ink_eraser'" [size]="32"></soo-icon>
+      </button>
 
-    <button>
-      <soo-icon [name]="'draw'" [size]="32"></soo-icon>
-    </button>
+      <button>
+        <soo-icon [name]="'draw'" [size]="32"></soo-icon>
+      </button>
 
-    <button>
-      <soo-icon [name]="'lightbulb'" [size]="32"></soo-icon>
-      <span class="badge">{{ hints }}</span>
-    </button>
+      <button>
+        <soo-icon [name]="'lightbulb'" [size]="32"></soo-icon>
+        <span class="badge">{{ hints }}</span>
+      </button>
 
-    <button (click)="setView(View.HOME)">
-      <soo-icon [name]="'flag'" [size]="32"></soo-icon>
-    </button>
-  </div>
+      <button (click)="surrender()">
+        <soo-icon [name]="'flag'" [size]="32"></soo-icon>
+      </button>
+    </div>
+  </ng-container>
 </ng-container>

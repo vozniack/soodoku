@@ -1,25 +1,14 @@
-import { User } from '../../core/user/user.interface';
 import { View } from '../../core/view/view.const';
-import { Theme } from '../../core/theme/theme.const';
 import { Breakpoint } from '../../core/breakpoint/breakpoint.interface';
-import { Cell } from '../../modules/game/game-board/game-board.interface';
-import { Game } from '../../modules/game/game.interface';
+import { AuthState } from './auth/auth.state';
+import { GameState } from './game/game.state';
+import { UserState } from './user/user.state';
 
-export interface SoodokuState {
+export interface AppState {
   view: View;
-  theme: Theme;
   breakpoint: Breakpoint,
 
+  authState: AuthState;
   userState: UserState;
-  gameState?: GameState;
-}
-
-export interface UserState {
-  user?: User,
-  token?: string;
-}
-
-export interface GameState {
-  game: Game,
-  activeCell?: Cell,
+  gameState: GameState;
 }

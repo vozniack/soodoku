@@ -1,0 +1,11 @@
+<div class="game-end-dialog column-container gap"
+     [class.victory]="game.missing == 0"
+     [class.defeat]="game.missing != 0">
+  <h2>{{title()}}</h2>
+  <span>{{description()}}</span>
+
+  <soo-button
+    (click)="this.result.emit(true)"
+    [text]="'Try again'">
+  </soo-button>
+</div>

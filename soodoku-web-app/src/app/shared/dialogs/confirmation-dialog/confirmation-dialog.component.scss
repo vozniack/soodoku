@@ -1,0 +1,15 @@
+@import 'theme.scss';
+
+.confirmation-dialog {
+  color: $secondary;
+
+  > * {
+    width: 100%;
+  }
+
+  .actions {
+    > * {
+      width: 100%;
+    }
+  }
+}

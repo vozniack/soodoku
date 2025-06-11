@@ -5,9 +5,9 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
-import { ACTION_SET_GAME_ACTIVE_CELL } from '../../../store/app/app.actions';
 import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
-import { GameState } from '../../../store/app/app.state';
+import { ACTION_GAME_SET_FOCUS } from '../../../store/app/game/game.actions';
+import { GameState } from '../../../store/app/game/game.state';
 import { Game } from '../game.interface';
 import { Cell } from './game-board.interface';
 
@@ -33,18 +33,18 @@ export class GameBoardComponent {
 
   // Action methods
 
-  activate(game: Game, row: number, col: number, value: number, activeCell?: Cell) {
+  activate(game: Game, row: number, col: number, value: number, focus?: Cell) {
     if (!this.isLocked(game, row, col)) {
-      this.store.dispatch(ACTION_SET_GAME_ACTIVE_CELL({
-        activeCell: activeCell?.row == row && activeCell?.col == col ? undefined : {row, col, value}
+      this.store.dispatch(ACTION_GAME_SET_FOCUS({
+        focus: focus?.row == row && focus?.col == col ? undefined : {row, col, value}
       }));
     }
   }
 
   // Conditioning methods
 
-  isActive(game: Game, row: number, col: number, activeCell?: Cell): boolean {
-    return !this.isLocked(game, row, col) && activeCell?.row == row && activeCell?.col == col;
+  isActive(game: Game, row: number, col: number, focus?: Cell): boolean {
+    return !this.isLocked(game, row, col) && focus?.row == row && focus?.col == col;
   }
 
   isActiveRelated(row: number, col: number, active?: Cell): boolean {
