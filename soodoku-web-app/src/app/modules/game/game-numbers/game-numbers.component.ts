@@ -6,7 +6,7 @@ import { filter, Observable, take } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
 import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
-import { GameState } from '../../../store/app/app.state';
+import { GameState } from '../../../store/app/game/game.state';
 import { setGameActionBuilder } from '../game.function';
 import { Game } from '../game.interface';
 import { GameService } from '../game.service';
@@ -36,14 +36,14 @@ export class GameNumbersComponent {
   move(value: number): void {
     this.gameState$.pipe(
       take(1),
-      filter((gameState: GameState) => !!gameState.activeCell),
+      filter((gameState) => !!gameState.game && !!gameState.focus),
       switchMap((gameState: GameState) =>
-        this.gameService.move(gameState.game.id, gameState.activeCell!.row, gameState.activeCell!.col, value).pipe(
-          map((updatedGame: Game) => ({updatedGame, activeCell: gameState.activeCell!}))
+        this.gameService.move(gameState.game!!.id, gameState.focus!.row, gameState.focus!.col, value).pipe(
+          map((updatedGame: Game) => ({updatedGame, focus: gameState.focus!}))
         )
       ),
-      tap(({updatedGame, activeCell}) => {
-        this.store.dispatch(setGameActionBuilder(updatedGame, activeCell));
+      tap(({updatedGame, focus}) => {
+        this.store.dispatch(setGameActionBuilder(updatedGame, focus));
       })
     ).subscribe();
   }

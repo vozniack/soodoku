@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { tap } from 'rxjs/operators';
 import { LoginRequest, LoginResponse } from '../../../../core/auth/auth.interface';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { ACTION_LOGIN } from '../../../../store/app/app.actions';
+import { ACTION_AUTH_LOGIN } from '../../../../store/app/auth/auth.actions';
 import { ButtonComponent } from '../../../components/button/button.component';
 import { InputComponent } from '../../../components/input/input.component';
 import { emailRegex } from '../../../const/regex.const';
@@ -31,7 +31,7 @@ export class ProfileLoginComponent {
 
   login(): void {
     this.authService.login(this.form.getRawValue() as LoginRequest).pipe(
-      tap((response: LoginResponse) => this.store.dispatch(ACTION_LOGIN({token: response.token}))),
+      tap((response: LoginResponse) => this.store.dispatch(ACTION_AUTH_LOGIN({token: response.token}))),
       tap(() => this.result.emit(true))
     ).subscribe();
   }

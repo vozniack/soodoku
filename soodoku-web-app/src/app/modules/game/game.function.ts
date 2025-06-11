@@ -1,13 +1,13 @@
-import { ACTION_SET_GAME } from '../../store/app/app.actions';
+import { ACTION_GAME_SET } from '../../store/app/game/game.actions';
 import { Cell } from './game-board/game-board.interface';
 import { Game } from './game.interface';
 
-export function setGameActionBuilder(updatedGame: Game, activeCell?: Cell) {
-  return ACTION_SET_GAME({
+export function setGameActionBuilder(updatedGame: Game, focus?: Cell) {
+  return ACTION_GAME_SET({
     game: updatedGame,
-    activeCell: activeCell !== undefined ? {
-      ...activeCell,
-      value: updatedGame.board[activeCell.row][activeCell.col]
+    focus: focus !== undefined ? {
+      ...focus,
+      value: updatedGame.board[focus.row][focus.col]
     } : undefined
   });
 }

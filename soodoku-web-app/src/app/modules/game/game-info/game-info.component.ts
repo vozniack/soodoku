@@ -10,9 +10,10 @@ import { View } from '../../../core/view/view.const';
 import { AvatarComponent } from '../../../shared/components/avatar/avatar.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { DifficultyDialogComponent } from '../../../shared/dialogs/difficulty-dialog/difficulty-dialog.component';
-import { ACTION_SET_GAME, ACTION_SET_VIEW } from '../../../store/app/app.actions';
+import { ACTION_SET_VIEW } from '../../../store/app/app.actions';
 import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
-import { GameState } from '../../../store/app/app.state';
+import { ACTION_GAME_SET } from '../../../store/app/game/game.actions';
+import { GameState } from '../../../store/app/game/game.state';
 import { Game } from '../game.interface';
 import { GameService } from '../game.service';
 import { updateElapsedTime } from './game-info.function';
@@ -42,7 +43,8 @@ export class GameInfoComponent implements OnInit {
 
   ngOnInit(): void {
     this.gameState$.pipe(
-      tap(gameState => this.startElapsedTimer(gameState.game.createdAt))
+      filter((gameState: GameState) => !!gameState.game),
+      tap((gameState: GameState) => this.startElapsedTimer(gameState.game!!.createdAt))
     ).subscribe();
   }
 
@@ -52,7 +54,7 @@ export class GameInfoComponent implements OnInit {
         filter((difficulty): difficulty is string => !!difficulty),
         switchMap(difficulty => this.gameService.new(difficulty)),
         tap((game: Game) => {
-          this.store.dispatch(ACTION_SET_GAME({game: game, activeCell: undefined}));
+          this.store.dispatch(ACTION_GAME_SET({game: game}));
           this.store.dispatch(ACTION_SET_VIEW({view: View.GAME}));
         })
       ).subscribe();

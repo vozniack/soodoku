@@ -13,7 +13,8 @@ import { LeaderboardComponent } from './modules/leaderboard/leaderboard.componen
 import { MyGamesComponent } from './modules/my-games/my-games.component';
 import { ProfileComponent } from './modules/profile/profile.component';
 import { ACTION_SET_BREAKPOINT, ACTION_SET_VIEW } from './store/app/app.actions';
-import { SELECT_GAME_STATE, SELECT_VIEW } from './store/app/app.selectors';
+import { SELECT_VIEW } from './store/app/app.selectors';
+import { SELECT_GAME_STATE } from './store/app/game/game.selectors';
 
 @Component({
   selector: 'soo-root',

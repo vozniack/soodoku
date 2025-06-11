@@ -1,7 +1,6 @@
 import { Action, ActionReducer } from '@ngrx/store';
 
 export function persistState<S, A extends Action = Action>(reducer: ActionReducer<S, A>) {
-
   const localStorageKey = 'soodokuStorage';
 
   let onInit = true;

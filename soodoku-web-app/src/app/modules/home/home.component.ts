@@ -10,7 +10,8 @@ import { ViewService } from '../../core/view/view.service';
 import { fadeInAnimation } from '../../shared/animations/fade-in-animation';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { DifficultyDialogComponent } from '../../shared/dialogs/difficulty-dialog/difficulty-dialog.component';
-import { ACTION_SET_GAME, ACTION_SET_VIEW } from '../../store/app/app.actions';
+import { ACTION_SET_VIEW } from '../../store/app/app.actions';
+import { ACTION_GAME_SET } from '../../store/app/game/game.actions';
 import { Game } from '../game/game.interface';
 import { GameService } from '../game/game.service';
 
@@ -34,7 +35,7 @@ export class HomeComponent extends ViewAwareComponent {
         filter((difficulty): difficulty is string => !!difficulty),
         switchMap(difficulty => this.gameService.new(difficulty)),
         tap((game: Game) => {
-          this.store.dispatch(ACTION_SET_GAME({game: game, activeCell: undefined}));
+          this.store.dispatch(ACTION_GAME_SET({game: game}));
           this.store.dispatch(ACTION_SET_VIEW({view: View.GAME}));
         })
       ).subscribe();

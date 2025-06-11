@@ -1,18 +1,20 @@
 <ng-container *ngIf="gameState$ | async as gameState">
-  <div class="game-board">
-    <ng-container *ngFor="let row of gameState.game.board; let rowIndex = index">
-      <ng-container *ngFor="let cell of row; let colIndex = index">
-        <button class="cell {{breakpoint}}"
-                [class.active]="isActive(gameState.game, rowIndex, colIndex, gameState.activeCell)"
-                [class.active-related]="isActiveRelated(rowIndex, colIndex, gameState.activeCell)"
-                [class.conflict-related]="isConflictRelated(gameState.game, rowIndex, colIndex)"
-                [class.conflict]="isConflict(gameState.game, rowIndex, colIndex)"
-                [class.locked]="isLocked(gameState.game, rowIndex, colIndex)"
+  <ng-container *ngIf="gameState.game !== undefined">
+    <div class="game-board">
+      <ng-container *ngFor="let row of gameState.game.board; let rowIndex = index">
+        <ng-container *ngFor="let cell of row; let colIndex = index">
+          <button class="cell {{breakpoint}}"
+                  [class.active]="isActive(gameState.game, rowIndex, colIndex, gameState.focus)"
+                  [class.active-related]="isActiveRelated(rowIndex, colIndex, gameState.focus)"
+                  [class.conflict-related]="isConflictRelated(gameState.game, rowIndex, colIndex)"
+                  [class.conflict]="isConflict(gameState.game, rowIndex, colIndex)"
+                  [class.locked]="isLocked(gameState.game, rowIndex, colIndex)"
 
-                (click)="activate(gameState.game, rowIndex, colIndex, cell, gameState.activeCell)">
-          {{ cell !== 0 ? cell : '' }}
-        </button>
+                  (click)="activate(gameState.game, rowIndex, colIndex, cell, gameState.focus)">
+            {{ cell !== 0 ? cell : '' }}
+          </button>
+        </ng-container>
       </ng-container>
-    </ng-container>
-  </div>
+    </div>
+  </ng-container>
 </ng-container>

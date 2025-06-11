@@ -9,7 +9,7 @@ import { ViewAwareComponent } from '../../../core/view/view.component';
 import { ViewService } from '../../../core/view/view.service';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
-import { GameState } from '../../../store/app/app.state';
+import { GameState } from '../../../store/app/game/game.state';
 import { setGameActionBuilder } from '../game.function';
 import { Game } from '../game.interface';
 import { GameService } from '../game.service';
@@ -40,14 +40,14 @@ export class GameControlComponent extends ViewAwareComponent {
   revert(): void {
     this.gameState$.pipe(
       take(1),
-      filter((gameState) => !!gameState.activeCell),
+      filter((gameState) => !!gameState.game && !!gameState.focus),
       switchMap((gameState) =>
-        this.gameService.revert(gameState.game.id).pipe(
-          map((updatedGame: Game) => ({updatedGame, activeCell: gameState.activeCell}))
+        this.gameService.revert(gameState.game!!.id).pipe(
+          map((updatedGame: Game) => ({updatedGame, focus: gameState.focus}))
         )
       ),
-      tap(({updatedGame, activeCell}) => {
-        this.store.dispatch(setGameActionBuilder(updatedGame, activeCell));
+      tap(({updatedGame, focus}) => {
+        this.store.dispatch(setGameActionBuilder(updatedGame, focus));
       })
     ).subscribe();
   }
@@ -55,14 +55,14 @@ export class GameControlComponent extends ViewAwareComponent {
   wipe(): void {
     this.gameState$.pipe(
       take(1),
-      filter((gameState) => !!gameState.activeCell),
+      filter((gameState) => !!gameState.game && !!gameState.focus),
       switchMap((gameState) =>
-        this.gameService.move(gameState.game.id, gameState.activeCell!.row, gameState.activeCell!.col, 0).pipe(
-          map((updatedGame: Game) => ({updatedGame, activeCell: gameState.activeCell!}))
+        this.gameService.move(gameState.game!!.id, gameState.focus!!.row, gameState.focus!!.col, 0).pipe(
+          map((updatedGame: Game) => ({updatedGame, focus: gameState.focus!}))
         )
       ),
-      tap(({updatedGame, activeCell}) => {
-        this.store.dispatch(setGameActionBuilder(updatedGame, activeCell));
+      tap(({updatedGame, focus}) => {
+        this.store.dispatch(setGameActionBuilder(updatedGame, focus));
       })
     ).subscribe();
   }
