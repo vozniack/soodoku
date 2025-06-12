@@ -15,28 +15,8 @@
 
   border-radius: 8px;
 
-  color: $primary;
-  background: color-mix(in srgb, $secondary-container 50%, transparent);
-
   transition: color 0.1s ease-in-out, background-color 0.1s ease-in-out, border-color 0.1s ease-in-out;
   touch-action: manipulation;
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background-color: $primary-container;
-    }
-  }
-
-  &:active {
-    background: $primary-container;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-
-    color: color-mix(in srgb, $primary 75%, transparent);
-    background: color-mix(in srgb, $secondary-container 25%, transparent);
-  }
 
   /* Sizes */
 
@@ -66,6 +46,30 @@
 
     .icon-right {
       margin-right: -4px;
+    }
+  }
+
+  /* Styles */
+
+  &.tonal {
+    color: $primary;
+    background: color-mix(in srgb, $secondary-container 50%, transparent);
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: $primary-container;
+      }
+    }
+
+    &:active {
+      background: $primary-container;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+
+      color: color-mix(in srgb, $primary 75%, transparent);
+      background: color-mix(in srgb, $secondary-container 25%, transparent);
     }
   }
 }

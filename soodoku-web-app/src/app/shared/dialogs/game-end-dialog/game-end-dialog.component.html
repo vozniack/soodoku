@@ -1,11 +1,18 @@
-<div class="game-end-dialog column-container gap"
+<div class="game-end-dialog column-container gap-big"
      [class.victory]="game.missing == 0"
      [class.defeat]="game.missing != 0">
-  <h2>{{title()}}</h2>
-  <span>{{description()}}</span>
+  <div class="row-container space-between">
+    <div class="column-container">
+      <h2>{{ title() }}</h2>
+      <span>{{ description() }}</span>
+    </div>
 
-  <soo-button
-    (click)="this.result.emit(true)"
-    [text]="'Try again'">
-  </soo-button>
+    <soo-icon [name]="icon()" [size]="48"></soo-icon>
+  </div>
+
+  <div class="game-details row-container space-between">
+    <span>During the game, you used <b>{{ game.moves }}</b> moves, missed <b>{{ game.missing }}</b> fields, and the whole game lasted <b>{{ duration() }}</b>.</span>
+  </div>
+
+  <soo-button [text]="'Try once again'" (click)="this.result.emit(true)"></soo-button>
 </div>

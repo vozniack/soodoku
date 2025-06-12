@@ -10,7 +10,7 @@ export const _userReducer = createReducer(initialUserState,
   on(ACTION_USER_SET_THEME, (state, newState) => onSetUserTheme(state, newState.theme)),
 );
 
-function onSetUser(state: UserState, user: User) {
+function onSetUser(state: UserState, user?: User) {
   return {
     ...state,
     user: user

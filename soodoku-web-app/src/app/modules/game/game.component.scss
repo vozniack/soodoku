@@ -1,13 +1,12 @@
 .game-wrapper {
   align-items: center;
-  gap: 24px;
 
   > * {
     width: 100%;
   }
 }
 
-.game-control {
+.desktop-game-control {
   position: absolute;
 
   top: 140px;

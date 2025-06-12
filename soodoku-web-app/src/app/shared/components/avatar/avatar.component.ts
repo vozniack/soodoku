@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -11,11 +12,13 @@ import { IconComponent } from '../icon/icon.component';
 @Component({
   selector: 'soo-avatar',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, NgIf],
   templateUrl: './avatar.component.html',
   styleUrl: './avatar.component.scss'
 })
 export class AvatarComponent {
+
+  @Input() withUsername = true;
 
   username!: string;
 

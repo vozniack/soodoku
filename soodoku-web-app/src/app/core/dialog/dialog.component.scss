@@ -32,7 +32,7 @@
     border-radius: 8px;
 
     min-width: 368px;
-    max-width: 50%;
+    max-width: 512px;
 
     transition: transform 0.3s ease, opacity 0.3s ease;
     transform: translateY(0);
@@ -67,7 +67,7 @@
 
   soo-button {
     position: absolute;
-    top: 16px;
+    top: 24px;
     right: 32px;
   }
 }

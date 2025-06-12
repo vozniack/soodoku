@@ -1,9 +1,10 @@
 <div class="difficulty-dialog column-container gap">
-    <h2>New game</h2>
+  <h2>New game</h2>
+  <span>Select your difficulty.</span>
 
-    <div class="column-container gap">
-        <button (click)="select('EASY')">Easy</button>
-        <button (click)="select('MEDIUM')">Medium</button>
-        <button (click)="select('HARD')">Hard</button>
-    </div>
+  <div class="column-container gap">
+    <soo-button [text]="'Easy'" (click)="select('EASY')"></soo-button>
+    <soo-button [text]="'Medium'" (click)="select('MEDIUM')"></soo-button>
+    <soo-button [text]="'Hard'" (click)="select('HARD')"></soo-button>
+  </div>
 </div>
