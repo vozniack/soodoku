@@ -24,23 +24,23 @@
     font-size: 24px;
     color: $neutral;
 
-    border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
+    border: 1px solid color-mix(in srgb, $secondary 10%, transparent);
 
-    transition: 0.1s ease-in-out background-color, 0.1s ease-in-out border-color;
+    transition: background 0.1s ease-in-out, border-color 0.1s ease-in-out;
 
     &.xs {
-      font-size: 20px;
+      font-size: 16px;
     }
 
     // Specific cells formatting
 
     &:nth-child(9n + 3), &:nth-child(9n + 6) {
-      border-right: 1px solid $primary;
+      border-right: 1px solid color-mix(in srgb, $primary 75%, transparent);
     }
 
     &:nth-child(n + 19):nth-child(-n + 27),
     &:nth-child(n + 46):nth-child(-n + 54) {
-      border-bottom: 1px solid $primary;
+      border-bottom: 1px solid color-mix(in srgb, $primary 75%, transparent);
     }
 
     &:first-child {
@@ -77,7 +77,7 @@
     &.active {
       color: $primary;
       background: $primary-container;
-      border-color: $primary;
+      border-color: color-mix(in srgb, $primary 50%, transparent);
     }
 
     &.conflict-related {

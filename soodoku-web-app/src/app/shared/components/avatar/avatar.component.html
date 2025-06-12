@@ -1,5 +1,5 @@
-<button class="avatar-wrapper" (click)="openProfile()">
-  <span class="username">{{ username }}</span>
+<button class="avatar-wrapper" [class.username]="withUsername" (click)="openProfile()">
+  <span class="username" *ngIf="withUsername">{{ username }}</span>
 
   <div class="avatar">
     <soo-icon [name]="'person'" [size]="18"></soo-icon>

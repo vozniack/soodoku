@@ -3,19 +3,21 @@
 .game-end-dialog {
   color: $secondary;
 
-  > * {
-    width: 100%;
+  &.victory soo-icon {
+    color: $success !important;
   }
 
-  &.victory {
-    h2, span {
-      color: $success !important;
-    }
+  &.defeat soo-icon {
+    color: $error !important;
   }
 
-  &.defeat {
-    h2, span {
-      color: $error !important;
-    }
+  .game-details {
+    gap: 12px;
+
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+
+    background-color: color-mix(in srgb, $secondary-container 25%, transparent);
   }
 }

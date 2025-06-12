@@ -20,6 +20,7 @@ export class ButtonComponent {
   @Input() iconRight?: string;
 
   @Input() size: 'small' | 'normal' = 'normal';
+  @Input() style: 'tonal' = 'tonal';
 
   @Input() width: string = '100%';
   @Input() maxWidth: string = '';

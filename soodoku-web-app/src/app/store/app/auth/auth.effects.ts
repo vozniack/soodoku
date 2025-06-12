@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { filter } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { User } from '../../../core/user/user.interface';
 import { UserService } from '../../../core/user/user.service';
 import { View } from '../../../core/view/view.const';
@@ -23,6 +23,7 @@ export class AuthEffects {
   logout$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ACTION_AUTH_LOGOUT),
+      tap(() => this.store$.dispatch(ACTION_USER_SET({user: undefined}))),
       switchMap(() => this.store$.select(SELECT_GAME_STATE)),
       filter((state: GameState) => state.game?.userId !== undefined),
       map(() => ACTION_SET_VIEW({view: View.HOME}))

@@ -118,11 +118,15 @@
 
       color: $primary;
 
+      cursor: pointer;
+      outline: none;
+      border: none;
+
       transition: color 0.1s ease-in-out;
 
-      &.active {
-        cursor: pointer;
+      touch-action: manipulation;
 
+      @media (hover: hover) and (pointer: fine) {
         &:hover {
           font-variation-settings: 'FILL' 1;
         }

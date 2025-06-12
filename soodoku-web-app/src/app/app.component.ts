@@ -11,7 +11,6 @@ import { GameComponent } from './modules/game/game.component';
 import { HomeComponent } from './modules/home/home.component';
 import { LeaderboardComponent } from './modules/leaderboard/leaderboard.component';
 import { MyGamesComponent } from './modules/my-games/my-games.component';
-import { ProfileComponent } from './modules/profile/profile.component';
 import { ACTION_SET_BREAKPOINT, ACTION_SET_VIEW } from './store/app/app.actions';
 import { SELECT_VIEW } from './store/app/app.selectors';
 import { SELECT_GAME_STATE } from './store/app/game/game.selectors';
@@ -19,7 +18,7 @@ import { SELECT_GAME_STATE } from './store/app/game/game.selectors';
 @Component({
   selector: 'soo-root',
   standalone: true,
-  imports: [NgIf, HomeComponent, GameComponent, LeaderboardComponent, ProfileComponent, MyGamesComponent],
+  imports: [NgIf, HomeComponent, GameComponent, LeaderboardComponent, MyGamesComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

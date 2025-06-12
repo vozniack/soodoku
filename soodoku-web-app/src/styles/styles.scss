@@ -3,8 +3,10 @@
 // Imports
 
 @font-face {
-  font-family: 'Fresca';
-  src: url('../assets/fonts/font_fresca.ttf');
+  font-family: 'NunitoSans';
+  src: url('../assets/fonts/font_nunito_sans.ttf');
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
@@ -26,7 +28,7 @@ body {
   background: $surface;
   color: $primary;
 
-  font-family: 'Fresca', serif;
+  font-family: 'NunitoSans', serif;
   transition: background-color 0.1s ease-in-out;
 
   ::selection {
@@ -84,6 +86,10 @@ h1, h2, h3, h4 {
   &.gap {
     gap: 16px;
   }
+
+  &.gap-big {
+    gap: 24px;
+  }
 }
 
 .row-container {
@@ -101,7 +107,6 @@ h1, h2, h3, h4 {
 
   &.space-between {
     justify-content: space-between;
-    align-items: center;
   }
 
   &.center {
