@@ -1,0 +1,6 @@
+<div *ngIf="visible" class="snackbar" [ngClass]="{show: visible && !hiding, hide: hiding}">
+  <ng-container *ngIf="visible">
+    <soo-icon *ngIf="icon" [name]="icon" [size]="20"></soo-icon>
+    <span>{{ message }}</span>
+  </ng-container>
+</div>

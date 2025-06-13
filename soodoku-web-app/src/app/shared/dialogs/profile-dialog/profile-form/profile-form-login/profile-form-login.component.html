@@ -22,9 +22,11 @@
     [maxWidth]="'448px'">
   </soo-input>
 
+  <button class="mode-switcher" (click)="onSwitchMode()">Don't have an account yet? Sign up!</button>
+
   <soo-button
     (click)="login()"
-    [disabled]="form.invalid"
+    [disabled]="loginForm.invalid"
     [text]="'Login'"
     [maxWidth]="'448px'">
   </soo-button>

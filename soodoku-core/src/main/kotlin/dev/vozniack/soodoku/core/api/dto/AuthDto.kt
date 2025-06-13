@@ -5,6 +5,12 @@ data class LoginRequestDto(
     val password: String
 )
 
-data class LoginResponseDto(
+data class SignupRequestDto(
+    val email: String,
+    val password: String,
+    val username: String
+)
+
+data class AuthResponseDto(
     val token: String
 )

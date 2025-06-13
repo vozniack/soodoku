@@ -1,0 +1,22 @@
+@import 'theme.scss';
+
+.mode-switcher {
+  text-align: center;
+  font-size: 12px;
+
+  color: $primary;
+  background: none;
+
+  border-radius: 8px;
+  padding: 8px 16px;
+
+  cursor: pointer;
+  border: none;
+  outline: none;
+
+  transition: background-color 0.1s ease-in-out;
+
+  &:hover {
+    background: color-mix(in srgb, $secondary-container 50%, transparent);
+  }
+}

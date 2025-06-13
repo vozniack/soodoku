@@ -5,6 +5,7 @@ import { select, Store } from '@ngrx/store';
 import { distinctUntilChanged, map, tap, withLatestFrom } from 'rxjs/operators';
 import { Breakpoint } from './core/breakpoint/breakpoint.interface';
 import { BreakpointService } from './core/breakpoint/breakpoint.service';
+import { SnackbarComponent } from './core/snackbar/snackbar.component';
 import { ThemeService } from './core/theme/theme.service';
 import { View } from './core/view/view.const';
 import { GameComponent } from './modules/game/game.component';
@@ -18,7 +19,7 @@ import { SELECT_GAME_STATE } from './store/app/game/game.selectors';
 @Component({
   selector: 'soo-root',
   standalone: true,
-  imports: [NgIf, HomeComponent, GameComponent, LeaderboardComponent, MyGamesComponent],
+  imports: [NgIf, HomeComponent, GameComponent, LeaderboardComponent, MyGamesComponent, SnackbarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

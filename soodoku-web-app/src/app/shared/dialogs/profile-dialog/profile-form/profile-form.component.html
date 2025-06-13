@@ -1,0 +1,16 @@
+<div class="column-container gap">
+  <h2>{{mode === 'login' ? 'Login' : 'Signup'}}</h2>
+
+  <soo-profile-form-login *ngIf="mode === 'login'"
+                          [result]="result"
+                          (switchMode)="onSwitchMode($event)"
+                          @fadeInAnimation>
+  </soo-profile-form-login>
+
+  <soo-profile-form-signup *ngIf="mode === 'signup'"
+                           [result]="result"
+                           (switchMode)="onSwitchMode($event)"
+                           @fadeInAnimation>
+  </soo-profile-form-signup>
+</div>
+
