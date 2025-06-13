@@ -90,6 +90,10 @@ h1, h2, h3, h4 {
   &.gap-big {
     gap: 24px;
   }
+
+  &.center {
+    align-items: center;
+  }
 }
 
 .row-container {

@@ -1,6 +1,10 @@
 <div class="difficulty-dialog column-container gap">
   <h2>New game</h2>
-  <span>Select your difficulty.</span>
+
+  <span *ngIf="!loggedIn">
+    Because you are not logged in, your game will be anonymous and your progress may be lost.
+    To avoid that login to your account or create a new one.
+  </span>
 
   <div class="column-container gap">
     <soo-button [text]="'Easy'" (click)="select('EASY')"></soo-button>

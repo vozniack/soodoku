@@ -1,33 +1,34 @@
-<div class="home-wrapper column-container gap" @fadeInAnimation>
+<div class="home-wrapper column-container center gap-big" @fadeInAnimation>
   <soo-logo></soo-logo>
 
-  <div class="section" (click)="newGame()">
-    <div class="button row-container center">
-      <soo-icon [name]="'play_arrow'" [size]="48"></soo-icon>
-    </div>
-
-    <div class="row-container center">
-      <span class="text">New game</span>
-    </div>
+  <div class="row-container space-between gap-small">
+    <span class="logged-as">logged as</span>
+    <soo-avatar></soo-avatar>
   </div>
 
-  <div class="section" (click)="setView(View.MY_GAMES)">
-    <div class="button row-container center">
-      <soo-icon [name]="'list_alt'" [size]="40"></soo-icon>
-    </div>
+  <hr/>
 
-    <div class="row-container center">
-      <span class="text">My games</span>
-    </div>
+  <div class="sections column-container gap ">
+    <soo-home-section [text]="'New game'"
+                      [icon]="'play_arrow'"
+                      [size]="40"
+                      (click)="newGame()">
+    </soo-home-section>
+
+    <soo-home-section [text]="'My games'"
+                      [icon]="'list_alt'"
+                      [disabled]="user === undefined"
+                      (click)="myGames()">
+    </soo-home-section>
+
+    <soo-home-section [text]="'Leaderboard'" [icon]="'leaderboard'"
+                      [disabled]="user === undefined"
+                      (click)="leaderboard()">
+    </soo-home-section>
   </div>
 
-  <div class="section" (click)="setView(View.LEADERBOARD)">
-    <div class="button row-container center">
-      <soo-icon [name]="'leaderboard'" [size]="40"></soo-icon>
-    </div>
+  <soo-home-game></soo-home-game>
 
-    <div class="row-container center">
-      <span class="text">Leaderboard</span>
-    </div>
-  </div>
+  <span class="about">vozniack.dev &#169; 2025</span>
+  <span class="version">version: 1.0</span>
 </div>
