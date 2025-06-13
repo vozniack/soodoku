@@ -6,8 +6,6 @@ import { filter, from, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
 import { DialogService } from '../../../core/dialog/dialog.service';
-import { ViewAwareComponent } from '../../../core/view/view.component';
-import { ViewService } from '../../../core/view/view.service';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { ConfirmationDialogComponent } from '../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
 import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
@@ -21,16 +19,14 @@ import { GameState } from '../../../store/app/game/game.state';
   templateUrl: './game-control.component.html',
   styleUrl: './game-control.component.scss'
 })
-export class GameControlComponent extends ViewAwareComponent {
+export class GameControlComponent {
 
   @Input() gameState$!: Observable<GameState>;
 
   breakpoint!: Breakpoint;
   hints: number = 3;
 
-  constructor(viewService: ViewService, private store: Store, private dialogService: DialogService) {
-    super(viewService);
-
+  constructor(private store: Store, private dialogService: DialogService) {
     this.store.select(SELECT_BREAKPOINT).pipe(
       takeUntilDestroyed(),
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)

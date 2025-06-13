@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ViewAwareComponent } from '../../core/view/view.component';
+import { View } from '../../core/view/view.const';
 import { ViewService } from '../../core/view/view.service';
 
 @Component({
@@ -9,9 +9,12 @@ import { ViewService } from '../../core/view/view.service';
   templateUrl: './my-games.component.html',
   styleUrl: './my-games.component.scss'
 })
-export class MyGamesComponent extends ViewAwareComponent {
+export class MyGamesComponent {
 
-  constructor(viewService: ViewService) {
-    super(viewService);
+  constructor(private viewService: ViewService) {
+  }
+
+  setView(): void {
+    this.viewService.setView(View.HOME);
   }
 }

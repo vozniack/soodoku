@@ -72,4 +72,19 @@
       background: color-mix(in srgb, $secondary-container 25%, transparent);
     }
   }
+
+  &.flat {
+    color: $primary;
+    background: none;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: color-mix(in srgb, $secondary-container 50%, transparent);
+      }
+    }
+
+    &:active {
+      background: $secondary-container 50%;
+    }
+  }
 }

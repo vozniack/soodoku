@@ -34,7 +34,12 @@
     [maxWidth]="'448px'">
   </soo-input>
 
-  <button class="mode-switcher" (click)="onSwitchMode()">Already have an account? Log in!</button>
+  <soo-button
+    [text]="'Already have an account? Log in!'"
+    [style]="'flat'"
+    [size]="'small'"
+    (click)="onSwitchMode()">
+  </soo-button>
 
   <soo-button
     (click)="signup()"
