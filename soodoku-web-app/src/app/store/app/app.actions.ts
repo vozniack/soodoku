@@ -9,3 +9,7 @@ export const ACTION_SET_VIEW = createAction(
 export const ACTION_SET_BREAKPOINT = createAction(
   '[App] Set breakpoint', props<{ breakpoint: Breakpoint }>()
 );
+
+export const ACTION_SHOW_SNACKBAR = createAction(
+  '[App] Show snackbar', props<{ message: string; icon?: string, duration?: number }>()
+);

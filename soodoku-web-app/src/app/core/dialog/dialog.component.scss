@@ -57,10 +57,10 @@
 
       border-radius: 32px 32px 0 0;
 
-      animation: slideUp 0.2s ease-out forwards;
+      animation: slideBottomUp 0.2s ease-out forwards;
 
       &.hidden {
-        animation: slideDown 0.2s ease-out forwards;
+        animation: slideBottomDown 0.2s ease-out forwards;
       }
     }
   }

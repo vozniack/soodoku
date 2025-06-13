@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { filter } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { User } from '../../../core/user/user.interface';
 import { UserService } from '../../../core/user/user.service';
 import { View } from '../../../core/view/view.const';
-import { ACTION_SET_VIEW } from '../app.actions';
+import { ACTION_SET_VIEW, ACTION_SHOW_SNACKBAR } from '../app.actions';
 import { SELECT_GAME_STATE } from '../game/game.selectors';
 import { GameState } from '../game/game.state';
 import { ACTION_USER_SET } from '../user/user.actions';
@@ -24,8 +24,9 @@ export class AuthEffects {
     this.actions$.pipe(
       ofType(ACTION_AUTH_LOGOUT),
       tap(() => this.store$.dispatch(ACTION_USER_SET({user: undefined}))),
-      switchMap(() => this.store$.select(SELECT_GAME_STATE)),
-      filter((state: GameState) => state.game?.userId !== undefined),
+      withLatestFrom(this.store$.select(SELECT_GAME_STATE)),
+      filter(([_, state]: [any, GameState]) => state.game?.userId !== undefined),
+      tap(() => this.store$.dispatch(ACTION_SHOW_SNACKBAR({message: 'You have been logged out', icon: 'waving_hand'}))),
       map(() => ACTION_SET_VIEW({view: View.HOME}))
     )
   );

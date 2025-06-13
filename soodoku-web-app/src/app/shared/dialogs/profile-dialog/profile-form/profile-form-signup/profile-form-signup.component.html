@@ -1,0 +1,45 @@
+<div class="column-container gap">
+  <soo-input
+    [control]="getControl('email')"
+    [id]="'email'"
+    [name]="'email'"
+    [placeholder]="'Email address'"
+    [placeholderShrink]="false"
+    [icon]="'mail'"
+    [maxWidth]="'448px'"
+    [style]="'tonal'">
+  </soo-input>
+
+  <soo-input
+    [control]="getControl('password')"
+    [id]="'password'"
+    [name]="'password'"
+    [type]="'password'"
+    [placeholder]="'Password'"
+    [placeholderShrink]="false"
+    [password]="true"
+    [style]="'tonal'"
+    [maxWidth]="'448px'">
+  </soo-input>
+
+  <soo-input
+    [control]="getControl('username')"
+    [id]="'username'"
+    [name]="'username'"
+    [type]="'text'"
+    [placeholder]="'Username'"
+    [placeholderShrink]="false"
+    [icon]="'person'"
+    [style]="'tonal'"
+    [maxWidth]="'448px'">
+  </soo-input>
+
+  <button class="mode-switcher" (click)="onSwitchMode()">Already have an account? Log in!</button>
+
+  <soo-button
+    (click)="signup()"
+    [disabled]="signupForm.invalid"
+    [text]="'Signup'"
+    [maxWidth]="'448px'">
+  </soo-button>
+</div>
