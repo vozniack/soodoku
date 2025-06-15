@@ -14,6 +14,7 @@ import dev.vozniack.soodoku.core.internal.exception.NotFoundException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
 import dev.vozniack.soodoku.core.mock.mockUser
 import dev.vozniack.soodoku.lib.extension.flatBoard
+import dev.vozniack.soodoku.lib.extension.mapBoard
 import dev.vozniack.soodoku.lib.extension.solve
 import dev.vozniack.soodoku.lib.extension.status
 import java.time.LocalDateTime
@@ -250,6 +251,29 @@ class GameServiceTest @Autowired constructor(
         assertThrows<ConflictException> {
             gameService.move(initialGameDto.id, NewMoveDto(row = row, col = col, value = 5))
         }
+    }
+
+    @Test
+    fun `make a move and finish the game`() {
+        val initialGameDto = gameService.new(NewGameDto(Difficulty.DEV_FILLED))
+
+        val game = gameRepository.findById(initialGameDto.id).get()
+
+        val (row, col) = initialGameDto.board
+            .withIndex()
+            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
+            .first { it.third == 0 }
+            .let { it.first to it.second }
+
+        val value = game.solvedBoard.mapBoard()[row][col]
+
+        val updatedGameDto = gameService.move(initialGameDto.id, NewMoveDto(row = row, col = col, value = value))
+        assertEquals(initialGameDto.id, updatedGameDto.id)
+
+        val savedGame = gameRepository.findById(updatedGameDto.id).orElse(null)
+
+        assertNotNull(savedGame)
+        assertNotNull(savedGame.finishedAt)
     }
 
     @Test
@@ -550,6 +574,19 @@ class GameServiceTest @Autowired constructor(
     }
 
     @Test
+    fun `use hint and finish the game`() {
+        val gameDto = gameService.new(NewGameDto(Difficulty.DEV_FILLED))
+        val updatedGameDto = gameService.hint(gameDto.id)
+
+        assertEquals(gameDto.id, updatedGameDto.id)
+
+        val savedGame = gameRepository.findById(gameDto.id).orElse(null)
+
+        assertNotNull(savedGame)
+        assertNotNull(savedGame.finishedAt)
+    }
+
+    @Test
     fun `end game with anonymous user`() {
         val gameDto = gameService.new(NewGameDto(Difficulty.EASY))
         val endedGameDto = gameService.end(gameDto.id)
@@ -602,6 +639,20 @@ class GameServiceTest @Autowired constructor(
             gameService.end(gameDto.id)
         }
     }
+
+    @Test
+    fun `end game when game is finished`() {
+        val gameDto = gameService.new(NewGameDto(Difficulty.EASY))
+
+        gameRepository.findById(gameDto.id).ifPresent {
+            gameRepository.save(it.apply { finishedAt = LocalDateTime.now() })
+        }
+
+        assertThrows<ConflictException> {
+            gameService.end(gameDto.id)
+        }
+    }
+
 
     @Test
     fun `delete game and its moves with anonymous user`() {

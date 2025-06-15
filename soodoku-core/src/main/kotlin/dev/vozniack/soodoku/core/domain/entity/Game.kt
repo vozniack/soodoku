@@ -22,10 +22,10 @@ data class Game(
     @Id
     @Column(nullable = false) val id: UUID = UUID.randomUUID(),
 
-    @Column(nullable = false) var initialBoard: String,
-    @Column(nullable = false) var solvedBoard: String,
-    @Column(nullable = false) var currentBoard: String,
-    @Column(nullable = false) var locks: String,
+    @Column(nullable = false, length = 128) var initialBoard: String,
+    @Column(nullable = false, length = 128) var solvedBoard: String,
+    @Column(nullable = false, length = 128) var currentBoard: String,
+    @Column(nullable = false, length = 512) var locks: String,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false) var difficulty: Difficulty,
