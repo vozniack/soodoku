@@ -1,5 +1,5 @@
 <ng-container *ngIf="gameState$ | async as gameState">
-  <ng-container *ngIf="gameState.game !== undefined">
+  <ng-container *ngIf="gameState.game !== undefined && gameState.game.finishedAt == undefined">
     <div class="game-control-wrapper center"
          [class.row-container]="breakpoint != 'xl'"
          [class.column-container]="breakpoint == 'xl'">

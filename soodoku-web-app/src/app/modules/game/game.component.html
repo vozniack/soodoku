@@ -13,6 +13,16 @@
   </ng-container>
 </div>
 
+<ng-container *ngIf="gameState$ | async as gameState">
+  <soo-button *ngIf="gameState.game?.finishedAt != undefined"
+              [text]="'Back to home'"
+              [style]="'flat'"
+              [width]="'152px'"
+              (click)="home()"
+              @fadeInAnimation>
+  </soo-button>
+</ng-container>
+
 <div class="desktop-game-control column-container" *ngIf="breakpoint == 'xl'" @fadeInAnimation>
   <soo-game-control [gameState$]="gameState$"></soo-game-control>
 </div>

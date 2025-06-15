@@ -5,7 +5,10 @@
 
       <div class="game-details row-container" [class.center]="breakpoint != 'xs'">
         <span class="separated">Missing: {{ gameState.game!!.missing }}</span>
-        <span class="separated">{{ elapsedTime$ | async }}</span>
+
+        <span class="separated" *ngIf="gameState.game.finishedAt == undefined">{{ elapsedTime$ | async }}</span>
+        <span class="separated" *ngIf="gameState.game.finishedAt != undefined">{{ duration(gameState.game) }}</span>
+
         <span>Moves: {{ gameState.game.moves.length }}</span>
       </div>
 

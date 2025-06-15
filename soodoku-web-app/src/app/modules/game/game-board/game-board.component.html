@@ -3,21 +3,32 @@
     <div class="game-board">
       <ng-container *ngFor="let row of gameState.game.board; let rowIndex = index">
         <ng-container *ngFor="let cell of row; let colIndex = index">
-          <button class="cell {{breakpoint}}"
-                  [class.active]="isActive(gameState.game, rowIndex, colIndex, gameState.focus)"
-                  [class.active-related]="isActiveRelated(rowIndex, colIndex, gameState.focus)"
-                  [class.conflict-related]="isConflictRelated(gameState.game, rowIndex, colIndex)"
-                  [class.conflict]="isConflict(gameState.game, rowIndex, colIndex)"
-                  [class.hint]="isHint(gameState.game, rowIndex, colIndex)"
-                  [class.locked]="isLocked(gameState.game, rowIndex, colIndex)"
+          <ng-container *ngIf="gameState.game.finishedAt == undefined">
+            <button class="cell {{breakpoint}}"
+                    [class.active]="isActive(gameState.game, rowIndex, colIndex, gameState.focus)"
+                    [class.active-related]="isActiveRelated(rowIndex, colIndex, gameState.focus)"
+                    [class.conflict-related]="isConflictRelated(gameState.game, rowIndex, colIndex)"
+                    [class.conflict]="isConflict(gameState.game, rowIndex, colIndex)"
+                    [class.hint]="isHint(gameState.game, rowIndex, colIndex)"
+                    [class.locked]="isLocked(gameState.game, rowIndex, colIndex)"
 
-                  (click)="activate(gameState.game, rowIndex, colIndex, cell, gameState.focus)">
-            <span>{{ cell !== 0 ? cell : '' }}</span>
+                    (click)="activate(gameState.game, rowIndex, colIndex, cell, gameState.focus)">
+              <span>{{ cell !== 0 ? cell : '' }}</span>
 
-            <ng-container *ngIf="isHint(gameState.game, rowIndex, colIndex)">
-              <soo-icon class="hint" [name]="'lightbulb'" [size]="breakpoint != 'xs' ? 12 : 8"></soo-icon>
-            </ng-container>
-          </button>
+              <ng-container *ngIf="isHint(gameState.game, rowIndex, colIndex)">
+                <soo-icon class="hint" [name]="'lightbulb'" [size]="breakpoint != 'xs' ? 12 : 8"></soo-icon>
+              </ng-container>
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="gameState.game.finishedAt != undefined">
+            <span class="cell {{breakpoint}}"
+                  [class.correct]="isCorrect(gameState.game, rowIndex, colIndex)"
+                  [class.incorrect]="isIncorrect(gameState.game, rowIndex, colIndex)">
+              {{ cell !== 0 ? cell : '' }}
+            </span>
+          </ng-container>
+
         </ng-container>
       </ng-container>
     </div>

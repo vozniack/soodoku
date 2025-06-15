@@ -10,6 +10,7 @@ data class GameDto(
     val userId: UUID? = null,
 
     val board: Array<IntArray>,
+    val solved: Array<IntArray>? = null,
     val locks: List<List<Int>>,
     val conflicts: List<ConflictDto>,
 

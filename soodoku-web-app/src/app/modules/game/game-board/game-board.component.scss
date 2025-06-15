@@ -111,4 +111,26 @@
       color: color-mix(in srgb, $neutral 50%, transparent);
     }
   }
+
+  span.cell {
+    color: color-mix(in srgb, $neutral 50%, transparent);
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        &:not(.locked):not(.hint) {
+          cursor: default;
+          background: none;
+        }
+      }
+    }
+
+    &.correct {
+      color: $success;
+    }
+
+    &.incorrect {
+      color: $error;
+      background: color-mix(in srgb, $error-container 50%, transparent);
+    }
+  }
 }
