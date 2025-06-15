@@ -19,10 +19,10 @@ class SoodokuEvaluatorTest {
                 intArrayOf(0, 6, 0, 0, 0, 0, 2, 8, 0),
                 intArrayOf(0, 0, 0, 4, 1, 9, 0, 0, 5),
                 intArrayOf(0, 0, 0, 0, 8, 0, 0, 7, 9)
-            ), listOf()
+            ), arrayOf(), listOf()
         )
 
-        val conflicts: List<Soodoku.Conflict> = soodoku.findConflicts()
+        val conflicts: List<Soodoku.Conflict> = soodoku.conflicts()
 
         assertEquals(2, conflicts.size)
 
@@ -55,10 +55,10 @@ class SoodokuEvaluatorTest {
                 intArrayOf(0, 4, 0, 0, 0, 0, 2, 8, 0),
                 intArrayOf(1, 0, 0, 4, 7, 9, 0, 0, 5),
                 intArrayOf(0, 0, 0, 0, 8, 0, 0, 7, 9)
-            ), listOf()
+            ), arrayOf(), listOf()
         )
 
-        val conflicts: List<Soodoku.Conflict> = soodoku.findConflicts()
+        val conflicts: List<Soodoku.Conflict> = soodoku.conflicts()
 
         assertEquals(2, conflicts.size)
 
@@ -91,10 +91,10 @@ class SoodokuEvaluatorTest {
                 intArrayOf(0, 6, 0, 0, 0, 0, 2, 4, 0),
                 intArrayOf(0, 0, 0, 4, 1, 9, 8, 8, 5),
                 intArrayOf(0, 0, 0, 0, 8, 0, 0, 7, 9)
-            ), listOf()
+            ), arrayOf(), listOf()
         )
 
-        val conflicts: List<Soodoku.Conflict> = soodoku.findConflicts()
+        val conflicts: List<Soodoku.Conflict> = soodoku.conflicts()
 
         assertEquals(4, conflicts.size)
 

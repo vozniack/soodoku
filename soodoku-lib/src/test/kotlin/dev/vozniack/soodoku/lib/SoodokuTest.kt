@@ -19,7 +19,7 @@ class SoodokuTest {
 
     @Test
     fun `initialize existing Soodoku flat board`() {
-        val soodoku = Soodoku(defaultFlatBoard(), defaultFlatLocks())
+        val soodoku = Soodoku(defaultFlatBoard(), defaultFlatSolved(), defaultFlatLocks())
 
         assertNotNull(soodoku.board)
         assertEquals(24, soodoku.missingCells())
@@ -27,7 +27,7 @@ class SoodokuTest {
 
     @Test
     fun `initialize existing Soodoku board`() {
-        val soodoku = Soodoku(defaultBoard(), defaultLocks())
+        val soodoku = Soodoku(defaultBoard(), defaultSolved(), defaultLocks())
 
         assertNotNull(soodoku.board)
         assertEquals(24, soodoku.missingCells())

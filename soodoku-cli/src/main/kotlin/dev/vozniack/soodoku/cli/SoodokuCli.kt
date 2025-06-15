@@ -31,7 +31,7 @@ class SoodokuCli {
 
             val status = soodoku.status()
 
-            if (status.done) {
+            if (status.missingCells == 0) {
                 println("Congratulations! You've solved the Soodoku!")
                 break
             }

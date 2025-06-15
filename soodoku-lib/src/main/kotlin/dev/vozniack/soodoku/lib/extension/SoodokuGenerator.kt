@@ -23,6 +23,9 @@ internal fun Soodoku.generate(difficulty: Soodoku.Difficulty): Soodoku = apply {
         } ?: true
 
     fillBoard()
+
+    solved = Array(9) { board[it].clone() }
+
     cleanCells(difficulty)
     saveLockCells()
 }
@@ -51,6 +54,8 @@ private fun Soodoku.cleanCells(difficulty: Soodoku.Difficulty): Soodoku = apply 
 
 private fun Soodoku.hasUniqueSolution(): Boolean {
     val copy = Array(9) { board[it].clone() }
+    val solved = Array(9) { solved[it].clone()}
+
     var count = 0
 
     fun solve(): Boolean {
@@ -60,7 +65,7 @@ private fun Soodoku.hasUniqueSolution(): Boolean {
 
             if (copy[row][col] == 0) {
                 for (value in 1..9) {
-                    if (Soodoku(copy, locks).isMoveValid(row, col, value)) {
+                    if (Soodoku(copy, solved, locks).isMoveValid(row, col, value)) {
                         copy[row][col] = value
 
                         if (solve()) {

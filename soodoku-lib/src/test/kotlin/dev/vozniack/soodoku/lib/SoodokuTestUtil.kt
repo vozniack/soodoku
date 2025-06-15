@@ -15,6 +15,21 @@ internal fun defaultBoard(): Array<IntArray> = arrayOf(
 internal fun defaultFlatBoard(): String =
     "240039158573408290819605074608900023020056709090840561401590630035264817762083040"
 
+internal fun defaultSolved(): Array<IntArray> = arrayOf(
+    intArrayOf(2, 4, 6, 7, 3, 9, 1, 5, 8),
+    intArrayOf(5, 7, 3, 4, 1, 8, 2, 9, 6),
+    intArrayOf(8, 1, 9, 6, 2, 5, 3, 7, 4),
+    intArrayOf(6, 5, 8, 9, 7, 1, 4, 2, 3),
+    intArrayOf(1, 2, 4, 3, 5, 6, 7, 8, 9),
+    intArrayOf(3, 9, 7, 8, 4, 2, 5, 6, 1),
+    intArrayOf(4, 8, 1, 5, 9, 7, 6, 3, 2),
+    intArrayOf(9, 3, 5, 2, 6, 4, 8, 1, 7),
+    intArrayOf(7, 6, 2, 1, 8, 3, 9, 4, 5)
+)
+
+internal fun defaultFlatSolved(): String =
+    "246739158573418296819625374658971423124356789397842561481597632935264817762183945"
+
 internal fun defaultLocks(): List<Pair<Int, Int>> = listOf(
     0 to 0, 0 to 1, 0 to 4, 0 to 5, 0 to 6, 0 to 7, 0 to 8,
     1 to 0, 1 to 1, 1 to 2, 1 to 3, 1 to 5, 1 to 6, 1 to 7,

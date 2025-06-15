@@ -2,24 +2,24 @@ package dev.vozniack.soodoku.lib.extension
 
 import dev.vozniack.soodoku.lib.Soodoku
 
-internal fun Soodoku.findConflicts(): List<Soodoku.Conflict> =
-    findRowConflicts() + findColConflicts() + findBoxConflicts()
+internal fun Soodoku.conflicts(): List<Soodoku.Conflict> =
+    rowConflicts() + colConflicts() + boxConflicts()
 
-private fun Soodoku.findRowConflicts(): List<Soodoku.Conflict> = (0..8).flatMap { row ->
+private fun Soodoku.rowConflicts(): List<Soodoku.Conflict> = (0..8).flatMap { row ->
     board[row].withIndex()
         .filter { it.value != 0 }
         .groupBy({ it.value }, { it.index })
         .toConflicts(Soodoku.Conflict.Type.ROW, row) { col -> row to col }
 }
 
-private fun Soodoku.findColConflicts(): List<Soodoku.Conflict> = (0..8).flatMap { col ->
+private fun Soodoku.colConflicts(): List<Soodoku.Conflict> = (0..8).flatMap { col ->
     (0..8).map { row -> row to board[row][col] }
         .filter { it.second != 0 }
         .groupBy({ it.second }, { it.first })
         .toConflicts(Soodoku.Conflict.Type.COL, col) { row -> row to col }
 }
 
-private fun Soodoku.findBoxConflicts(): List<Soodoku.Conflict> = (0..2).flatMap { boxRow ->
+private fun Soodoku.boxConflicts(): List<Soodoku.Conflict> = (0..2).flatMap { boxRow ->
     (0..2).flatMap { boxCol ->
         val index = boxRow * 3 + boxCol
 
