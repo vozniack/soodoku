@@ -11,8 +11,12 @@
   </div>
 
   <div class="game-details row-container space-between">
-    <span>During the game, you used <b>{{ game.moves }}</b> moves, missed <b>{{ game.missing }}</b> fields, and the whole game lasted <b>{{ duration() }}</b>.</span>
+    <span>
+      During the game, you used <b>{{ game.moves.length }}</b> moves,
+      <ng-container *ngIf="game.missing > 0">missed <b>{{ game.missing }}</b> fields,</ng-container>
+      and whole game lasted <b>{{ duration() }}</b>.
+    </span>
   </div>
 
-  <soo-button [text]="'Try once again'" (click)="this.result.emit(true)"></soo-button>
+  <soo-button [text]="'Show me the board!'" (click)="this.result.emit(true)"></soo-button>
 </div>

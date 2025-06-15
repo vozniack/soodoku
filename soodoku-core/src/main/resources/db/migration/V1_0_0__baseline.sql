@@ -15,9 +15,9 @@ CREATE TABLE games
     id            UUID         NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
     initial_board VARCHAR(128) NOT NULL,
-    solved_board   VARCHAR(128) NOT NULL,
+    solved_board  VARCHAR(128) NOT NULL,
     current_board VARCHAR(128) NOT NULL,
-    locks         VARCHAR(255) NOT NULL,
+    locks         VARCHAR(512) NOT NULL,
 
     difficulty    VARCHAR(16)  NOT NULL,
 

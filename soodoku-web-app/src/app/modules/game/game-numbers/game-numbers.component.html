@@ -1,5 +1,5 @@
 <ng-container *ngIf="gameState$ | async as gameState">
-  <ng-container *ngIf="gameState.game !== undefined">
+  <ng-container *ngIf="gameState.game !== undefined && gameState.game.finishedAt == undefined">
     <div class="game-numbers-wrapper {{ breakpoint }}">
       <ng-container *ngFor="let number of numbers; let i = index">
         <button class="number {{breakpoint}}" [class.second-row]="breakpoint === 'xs' && i >= 5"

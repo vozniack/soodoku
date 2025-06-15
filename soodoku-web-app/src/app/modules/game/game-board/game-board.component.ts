@@ -81,4 +81,12 @@ export class GameBoardComponent {
   isLocked(game: Game, row: number, col: number): boolean {
     return game.locks.some(([r, c]) => r === row && c === col);
   }
+
+  isCorrect(game: Game, row: number, col: number): boolean {
+    return game.solved != undefined && !this.isLocked(game, row, col) && game.board[row][col] == game.solved[row][col];
+  }
+
+  isIncorrect(game: Game, row: number, col: number): boolean {
+    return game.solved != undefined && game.board[row][col] != game.solved[row][col];
+  }
 }

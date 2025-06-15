@@ -3,6 +3,7 @@ export interface Game {
   userId?: string,
 
   board: number[][],
+  solved?: number[][],
   locks: [number, number][],
   conflicts: Conflict[]
 

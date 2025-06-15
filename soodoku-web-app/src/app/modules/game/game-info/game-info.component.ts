@@ -9,8 +9,10 @@ import { DialogService } from '../../../core/dialog/dialog.service';
 import { AvatarComponent } from '../../../shared/components/avatar/avatar.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { DifficultyDialogComponent } from '../../../shared/dialogs/difficulty-dialog/difficulty-dialog.component';
+import { formatDurationBetween } from '../../../shared/functions/time.fuction';
 import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
 import { GameState } from '../../../store/app/game/game.state';
+import { Game } from '../game.interface';
 import { updateElapsedTime } from './game-info.function';
 
 @Component({
@@ -45,6 +47,10 @@ export class GameInfoComponent implements OnInit {
 
   newGame(): void {
     from(this.dialogService.open(DifficultyDialogComponent)).subscribe();
+  }
+
+  duration(game: Game): string {
+    return formatDurationBetween(game.createdAt, game.finishedAt!!);
   }
 
   private startElapsedTimer(createdAt: string) {

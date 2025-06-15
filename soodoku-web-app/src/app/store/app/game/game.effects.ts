@@ -45,6 +45,16 @@ export class GameEffects {
     )
   );
 
+  set$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ACTION_GAME_SET),
+      withLatestFrom(this.store$.select(SELECT_GAME_STATE)),
+      filter(([_, gameState]) => !!gameState.game),
+      filter(([_, gameState]) => gameState.game.finishedAt != undefined),
+      map(() => ACTION_GAME_END())
+    )
+  );
+
   move$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ACTION_GAME_MOVE),
@@ -104,7 +114,7 @@ export class GameEffects {
       filter(([_, {game}]) => !!game),
       switchMap(([_, gameState]) =>
         this.gameService$.end(gameState.game!.id).pipe(
-          map((updatedGame: Game) => ACTION_GAME_END({game: updatedGame}))
+          map((updatedGame: Game) => buildSetGameAction(updatedGame, gameState))
         )
       )
     )
@@ -113,8 +123,7 @@ export class GameEffects {
   end$ = createEffect(() =>
       this.actions$.pipe(
         ofType(ACTION_GAME_END),
-        tap(() => this.dialogService$.open(GameEndDialogComponent, {closing: false})),
-        tap(() => this.store$.dispatch(ACTION_SET_VIEW({view: View.HOME})))
+        tap(() => this.dialogService$.open(GameEndDialogComponent, {closing: false}))
       ),
     {dispatch: false}
   );

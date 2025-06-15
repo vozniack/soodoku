@@ -81,6 +81,12 @@ class GameService(
             it.moves.add(Move(game = it, row = move.row, col = move.col, before = valueBefore, after = move.value))
         }
 
+        if (game.currentBoard.count { it == '0' } == 0 && status.conflicts.isEmpty()) {
+            game.apply {
+                finishedAt = LocalDateTime.now()
+            }
+        }
+
         return gameRepository.save(game) toDtoWithStatus status
     }
 
@@ -176,11 +182,21 @@ class GameService(
             )
         }
 
+        if (game.currentBoard.count { it == '0' } == 0 && status.conflicts.isEmpty()) {
+            game.apply {
+                finishedAt = LocalDateTime.now()
+            }
+        }
+
         return gameRepository.save(game) toDtoWithStatus status
     }
 
     fun end(id: UUID): GameDto {
         val game: Game = getGame(id)
+
+        if (game.finishedAt != null) {
+            throw ConflictException("Game $id is already finished!")
+        }
 
         game.apply {
             updatedAt = LocalDateTime.now()

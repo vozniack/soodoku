@@ -35,5 +35,5 @@ export const ACTION_GAME_SURRENDER = createAction(
 );
 
 export const ACTION_GAME_END = createAction(
-  '[Game] End game', props<{ game: Game }>()
+  '[Game] End game'
 );

@@ -31,30 +31,45 @@ internal fun Soodoku.generate(difficulty: Soodoku.Difficulty): Soodoku = apply {
 }
 
 private fun Soodoku.cleanCells(difficulty: Soodoku.Difficulty): Soodoku = apply {
-    var removed = 0
-
-    (0 until 81).shuffled()
-        .map { it / 9 to it % 9 }
-        .filter { (row, col) -> board[row][col] != 0 }
-        .forEach { (row, col) ->
-            if (removed >= difficulty.emptyCells) {
-                return@forEach
-            }
-
-            val backup = board[row][col]
-            board[row][col] = 0
-
-            if (hasUniqueSolution()) {
-                removed++
-            } else {
-                board[row][col] = backup
+    when (difficulty) {
+        Soodoku.Difficulty.DEV_EMPTY -> {
+            for (row in 0..8) {
+                for (col in 0..8) {
+                    board[row][col] = 0
+                }
             }
         }
+
+        Soodoku.Difficulty.DEV_FILLED -> {
+            val (row, col) = (0 until 81).shuffled().first().let { it / 9 to it % 9 }
+            board[row][col] = 0
+        }
+
+        else -> {
+            var removed = 0
+
+            (0 until 81).shuffled()
+                .map { it / 9 to it % 9 }
+                .filter { (row, col) -> board[row][col] != 0 }
+                .forEach { (row, col) ->
+                    if (removed >= difficulty.emptyCells) return@forEach
+
+                    val backup = board[row][col]
+                    board[row][col] = 0
+
+                    if (hasUniqueSolution()) {
+                        removed++
+                    } else {
+                        board[row][col] = backup
+                    }
+                }
+        }
+    }
 }
 
 private fun Soodoku.hasUniqueSolution(): Boolean {
     val copy = Array(9) { board[it].clone() }
-    val solved = Array(9) { solved[it].clone()}
+    val solved = Array(9) { solved[it].clone() }
 
     var count = 0
 

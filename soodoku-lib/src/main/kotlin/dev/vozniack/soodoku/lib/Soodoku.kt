@@ -49,6 +49,7 @@ class Soodoku {
     )
 
     enum class Difficulty(val emptyCells: Int) {
-        EASY(40), MEDIUM(45), HARD(50)
+        EASY(40), MEDIUM(45), HARD(50),
+        DEV_FILLED(1), DEV_EMPTY(81)
     }
 }

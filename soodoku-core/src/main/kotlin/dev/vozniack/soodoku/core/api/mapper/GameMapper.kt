@@ -15,6 +15,7 @@ infix fun Game.toDtoWithStatus(status: Soodoku.Status): GameDto = GameDto(
     userId = user?.id,
 
     board = currentBoard.mapBoard(),
+    solved = finishedAt?.let { this.solvedBoard.mapBoard() },
     locks = locks.mapLocks().map { listOf(it.first, it.second) },
     conflicts = status.conflicts.map { it.toDto() },
 
