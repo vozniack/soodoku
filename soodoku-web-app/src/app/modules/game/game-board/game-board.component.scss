@@ -13,6 +13,8 @@
   overflow: hidden;
 
   .cell {
+    position: relative;
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -30,6 +32,17 @@
 
     &.xs {
       font-size: 16px;
+
+      soo-icon {
+        top: -5px;
+        right: 1px;
+      }
+    }
+
+    soo-icon {
+      position: absolute;
+      top: -2px;
+      right: 2px;
     }
 
     // Specific cells formatting
@@ -63,7 +76,7 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        &:not(.locked) {
+        &:not(.locked):not(.hint) {
           cursor: pointer;
           background-color: $primary-container;
         }
@@ -94,7 +107,7 @@
       }
     }
 
-    &.locked {
+    &.locked, &.hint {
       color: color-mix(in srgb, $neutral 50%, transparent);
     }
   }

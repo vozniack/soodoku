@@ -9,8 +9,14 @@ import { DialogService } from '../../../core/dialog/dialog.service';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { ConfirmationDialogComponent } from '../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
 import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
-import { ACTION_GAME_SURRENDER, ACTION_GAME_REVERT, ACTION_GAME_WIPE } from '../../../store/app/game/game.actions';
+import {
+  ACTION_GAME_SURRENDER,
+  ACTION_GAME_REVERT,
+  ACTION_GAME_WIPE,
+  ACTION_GAME_HINT
+} from '../../../store/app/game/game.actions';
 import { GameState } from '../../../store/app/game/game.state';
+import { Game, Move } from '../game.interface';
 
 @Component({
   selector: 'soo-game-control',
@@ -24,7 +30,6 @@ export class GameControlComponent {
   @Input() gameState$!: Observable<GameState>;
 
   breakpoint!: Breakpoint;
-  hints: number = 3;
 
   constructor(private store: Store, private dialogService: DialogService) {
     this.store.select(SELECT_BREAKPOINT).pipe(
@@ -41,6 +46,10 @@ export class GameControlComponent {
     this.store.dispatch(ACTION_GAME_WIPE());
   }
 
+  hint(): void {
+    this.store.dispatch(ACTION_GAME_HINT());
+  }
+
   surrender(): void {
     from(this.dialogService.open(ConfirmationDialogComponent, {
         closing: false,
@@ -53,5 +62,9 @@ export class GameControlComponent {
       filter((result: boolean) => result),
       tap(() => this.store.dispatch(ACTION_GAME_SURRENDER()))
     ).subscribe();
+  }
+
+  moves(game: Game): number {
+    return game.moves.filter((move: Move) => (move.type == 'NORMAL') && !move.reverted).length;
   }
 }

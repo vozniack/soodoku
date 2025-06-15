@@ -12,6 +12,7 @@ import dev.vozniack.soodoku.core.mock.mockSignupRequest
 import dev.vozniack.soodoku.core.mock.mockUser
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -26,8 +27,13 @@ class AuthControllerTest @Autowired constructor(
     context: WebApplicationContext
 ) : AbstractWebMvcTest(context) {
 
+    @BeforeEach
+    fun `clear up before`() {
+        userRepository.deleteAll()
+    }
+
     @AfterEach
-    fun `clean up`() {
+    fun `clear up after`() {
         userRepository.deleteAll()
     }
 

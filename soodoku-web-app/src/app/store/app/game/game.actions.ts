@@ -26,6 +26,10 @@ export const ACTION_GAME_WIPE = createAction(
   '[Game] Wipe cell'
 );
 
+export const ACTION_GAME_HINT = createAction(
+  '[Game] Use hint'
+);
+
 export const ACTION_GAME_SURRENDER = createAction(
   '[Game] Surrender game'
 );

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.vozniack.soodoku.core.AbstractWebMvcTest
 import dev.vozniack.soodoku.core.api.dto.GameDto
-import dev.vozniack.soodoku.core.api.dto.MoveDto
 import dev.vozniack.soodoku.core.api.dto.NewGameDto
+import dev.vozniack.soodoku.core.api.dto.NewMoveDto
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
@@ -144,7 +144,7 @@ class GameControllerTest @Autowired constructor(
             .first { it.third == 0 }
             .let { it.first to it.second }
 
-        val request = MoveDto(row, col, 5)
+        val request = NewMoveDto(row, col, 5)
 
         val response: GameDto = jacksonObjectMapper().readValue(
             mockMvc.perform(
@@ -174,7 +174,7 @@ class GameControllerTest @Autowired constructor(
             .first { it.third == 0 }
             .let { it.first to it.second }
 
-        val request = MoveDto(row, col, 5)
+        val request = NewMoveDto(row, col, 5)
 
         val response: GameDto = jacksonObjectMapper().readValue(
             mockMvc.perform(
@@ -204,7 +204,7 @@ class GameControllerTest @Autowired constructor(
             .first { it.third == 0 }
             .let { it.first to it.second }
 
-        val request = MoveDto(row, col, 5)
+        val request = NewMoveDto(row, col, 5)
 
         SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
             "jane.doe@soodoku.com", null, emptyList()
@@ -218,7 +218,7 @@ class GameControllerTest @Autowired constructor(
     }
 
     @Test
-    fun `undo last move with anonymous user`() {
+    fun `revert last move with anonymous user`() {
         val gameDto = gameService.new(NewGameDto(Difficulty.EASY))
 
         val (row, col) = gameDto.board
@@ -227,7 +227,7 @@ class GameControllerTest @Autowired constructor(
             .first { it.third == 0 }
             .let { it.first to it.second }
 
-        gameService.move(gameDto.id, MoveDto(row = row, col = col, value = 5))
+        gameService.move(gameDto.id, NewMoveDto(row = row, col = col, value = 5))
 
         val response: GameDto = jacksonObjectMapper().readValue(
             mockMvc.perform(
@@ -240,7 +240,7 @@ class GameControllerTest @Autowired constructor(
     }
 
     @Test
-    fun `undo last move with existing user`() {
+    fun `revert last move with existing user`() {
         val user = userRepository.save(mockUser())
 
         SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
@@ -255,7 +255,7 @@ class GameControllerTest @Autowired constructor(
             .first { it.third == 0 }
             .let { it.first to it.second }
 
-        gameService.move(gameDto.id, MoveDto(row = row, col = col, value = 5))
+        gameService.move(gameDto.id, NewMoveDto(row = row, col = col, value = 5))
 
         val response: GameDto = jacksonObjectMapper().readValue(
             mockMvc.perform(
@@ -268,7 +268,7 @@ class GameControllerTest @Autowired constructor(
     }
 
     @Test
-    fun `undo last move with user different than owner`() {
+    fun `revert last move with user different than owner`() {
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
@@ -284,7 +284,7 @@ class GameControllerTest @Autowired constructor(
             .first { it.third == 0 }
             .let { it.first to it.second }
 
-        gameService.move(gameDto.id, MoveDto(row = row, col = col, value = 5))
+        gameService.move(gameDto.id, NewMoveDto(row = row, col = col, value = 5))
 
         SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
             "jane.doe@soodoku.com", null, emptyList()
@@ -292,6 +292,61 @@ class GameControllerTest @Autowired constructor(
 
         mockMvc.perform(
             put("/api/games/${gameDto.id}/revert")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `use hint with anonymous user`() {
+        val gameDto = gameService.new(NewGameDto(Difficulty.EASY))
+
+        val response: GameDto = jacksonObjectMapper().readValue(
+            mockMvc.perform(
+                put("/api/games/${gameDto.id}/hint")
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertEquals(gameDto.id, response.id)
+    }
+
+    @Test
+    fun `use hint with existing user`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val gameDto = gameService.new(NewGameDto(Difficulty.EASY))
+
+        val response: GameDto = jacksonObjectMapper().readValue(
+            mockMvc.perform(
+                put("/api/games/${gameDto.id}/hint")
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertEquals(gameDto.id, response.id)
+    }
+
+    @Test
+    fun `use hint with user different than owner`() {
+        val user = userRepository.save(mockUser())
+        userRepository.save(mockUser("jane.doe@soodoku.com"))
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val gameDto = gameService.new(NewGameDto(Difficulty.EASY))
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            "jane.doe@soodoku.com", null, emptyList()
+        )
+
+        mockMvc.perform(
+            put("/api/games/${gameDto.id}/hint")
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isUnauthorized)
     }

@@ -3,7 +3,7 @@
     <div class="game-control-wrapper center"
          [class.row-container]="breakpoint != 'xl'"
          [class.column-container]="breakpoint == 'xl'">
-      <button (click)="revert()" [disabled]="gameState.game!!.realMoves < 1">
+      <button (click)="revert()" [disabled]="moves(gameState.game) < 1">
         <soo-icon [name]="'undo'" [size]="32"></soo-icon>
       </button>
 
@@ -15,9 +15,9 @@
         <soo-icon [name]="'draw'" [size]="32"></soo-icon>
       </button>
 
-      <button>
+      <button (click)="hint()" [disabled]="gameState.game.hints < 1">
         <soo-icon [name]="'lightbulb'" [size]="32"></soo-icon>
-        <span class="badge">{{ hints }}</span>
+        <span class="badge">{{ gameState.game.hints }}</span>
       </button>
 
       <button (click)="surrender()">

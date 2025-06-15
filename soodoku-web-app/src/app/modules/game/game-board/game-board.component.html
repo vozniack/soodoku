@@ -8,10 +8,15 @@
                   [class.active-related]="isActiveRelated(rowIndex, colIndex, gameState.focus)"
                   [class.conflict-related]="isConflictRelated(gameState.game, rowIndex, colIndex)"
                   [class.conflict]="isConflict(gameState.game, rowIndex, colIndex)"
+                  [class.hint]="isHint(gameState.game, rowIndex, colIndex)"
                   [class.locked]="isLocked(gameState.game, rowIndex, colIndex)"
 
                   (click)="activate(gameState.game, rowIndex, colIndex, cell, gameState.focus)">
-            {{ cell !== 0 ? cell : '' }}
+            <span>{{ cell !== 0 ? cell : '' }}</span>
+
+            <ng-container *ngIf="isHint(gameState.game, rowIndex, colIndex)">
+              <soo-icon class="hint" [name]="'lightbulb'" [size]="breakpoint != 'xs' ? 12 : 8"></soo-icon>
+            </ng-container>
           </button>
         </ng-container>
       </ng-container>

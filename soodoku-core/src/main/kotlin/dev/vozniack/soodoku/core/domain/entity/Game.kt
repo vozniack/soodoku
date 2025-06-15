@@ -23,11 +23,14 @@ data class Game(
     @Column(nullable = false) val id: UUID = UUID.randomUUID(),
 
     @Column(nullable = false) var initialBoard: String,
+    @Column(nullable = false) var solvedBoard: String,
     @Column(nullable = false) var currentBoard: String,
     @Column(nullable = false) var locks: String,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false) var difficulty: Difficulty,
+
+    @Column(nullable = false) var hints: Int,
 
     @Column(nullable = false) val createdAt: LocalDateTime = LocalDateTime.now(),
     @Column(nullable = true) var updatedAt: LocalDateTime? = null,

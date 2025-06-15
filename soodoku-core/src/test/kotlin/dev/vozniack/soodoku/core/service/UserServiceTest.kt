@@ -2,8 +2,9 @@ package dev.vozniack.soodoku.core.service
 
 import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
-import dev.vozniack.soodoku.core.internal.exception.NotFoundException
+import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
 import dev.vozniack.soodoku.core.mock.mockUser
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -21,9 +22,14 @@ class UserServiceTest @Autowired constructor(
 ) : AbstractUnitTest() {
 
     @BeforeEach
-    fun `clear up`() {
+    fun `clear up before`() {
         userRepository.deleteAll()
         SecurityContextHolder.clearContext()
+    }
+
+    @AfterEach
+    fun `clear up after`() {
+        userRepository.deleteAll()
     }
 
     @Test
@@ -61,7 +67,7 @@ class UserServiceTest @Autowired constructor(
             "jane.doe@soodoku.com", null, emptyList()
         )
 
-        val exception = assertThrows<NotFoundException> {
+        val exception = assertThrows<UnauthorizedException> {
             userService.currentlyLoggedUser()
         }
 
