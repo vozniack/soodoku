@@ -9,31 +9,31 @@ class SoodokuGeneratorTest {
 
     @Test
     fun `generate easy board`() {
-        val soodoku = Soodoku("0".repeat(81).mapBoard(), listOf())
+        val soodoku = Soodoku("0".repeat(81).mapBoard(), arrayOf(), listOf())
         assertTrue(soodoku.missingCells() == 81)
 
         soodoku.generate(Soodoku.Difficulty.EASY)
-        assertEquals(soodoku.missingCells(), Soodoku.Difficulty.EASY.emptyCells)
+        assertEquals(Soodoku.Difficulty.EASY.emptyCells, soodoku.missingCells())
         assertEquals(soodoku.locks.size, 81 - soodoku.missingCells())
     }
 
     @Test
     fun `generate medium board`() {
-        val soodoku = Soodoku("0".repeat(81).mapBoard(), listOf())
+        val soodoku = Soodoku("0".repeat(81).mapBoard(),arrayOf(), listOf())
         assertTrue(soodoku.missingCells() == 81)
 
         soodoku.generate(Soodoku.Difficulty.MEDIUM)
-        assertEquals(soodoku.missingCells(), Soodoku.Difficulty.MEDIUM.emptyCells)
+        assertEquals(Soodoku.Difficulty.MEDIUM.emptyCells, soodoku.missingCells())
         assertEquals(soodoku.locks.size, 81 - soodoku.missingCells())
     }
 
     @Test
     fun `generate hard board`() {
-        val soodoku = Soodoku("0".repeat(81).mapBoard(), listOf())
+        val soodoku = Soodoku("0".repeat(81).mapBoard(),arrayOf(), listOf())
         assertTrue(soodoku.missingCells() == 81)
 
         soodoku.generate(Soodoku.Difficulty.HARD)
-        assertEquals(soodoku.missingCells(), Soodoku.Difficulty.HARD.emptyCells)
+        assertEquals(Soodoku.Difficulty.HARD.emptyCells, soodoku.missingCells())
         assertEquals(soodoku.locks.size, 81 - soodoku.missingCells())
     }
 }

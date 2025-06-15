@@ -15,7 +15,9 @@ import {
   ACTION_GAME_NEW,
   ACTION_GAME_REVERT,
   ACTION_GAME_SET,
-  ACTION_GAME_WIPE, ACTION_GAME_END
+  ACTION_GAME_WIPE,
+  ACTION_GAME_END,
+  ACTION_GAME_HINT
 } from './game.actions';
 import { buildSetGameAction } from './game.function';
 import { SELECT_GAME_STATE } from './game.selectors';
@@ -76,6 +78,19 @@ export class GameEffects {
       filter(([_, {game, focus}]) => !!game && !!focus),
       switchMap(([_, gameState]) =>
         this.gameService$.move(gameState.game!.id, gameState.focus!.row, gameState.focus!.col, 0).pipe(
+          map((updatedGame: Game) => buildSetGameAction(updatedGame, gameState))
+        )
+      )
+    )
+  );
+
+  hint$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ACTION_GAME_HINT),
+      withLatestFrom(this.store$.select(SELECT_GAME_STATE)),
+      filter(([_, gameState]) => !!gameState.game),
+      switchMap(([_, gameState]) =>
+        this.gameService$.hint(gameState.game!.id).pipe(
           map((updatedGame: Game) => buildSetGameAction(updatedGame, gameState))
         )
       )

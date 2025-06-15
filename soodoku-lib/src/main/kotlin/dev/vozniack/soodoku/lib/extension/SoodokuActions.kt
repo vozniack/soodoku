@@ -4,7 +4,7 @@ import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.Soodoku.Status
 import dev.vozniack.soodoku.lib.exception.SoodokuMappingException
 
-fun Soodoku.status(): Status = Status(board, locks, missingCells(), findConflicts(), missingCells() == 0)
+fun Soodoku.status(): Status = Status(board, solved, locks, conflicts(), missingCells())
 
 fun Soodoku.value(row: Int, col: Int): Int = try {
     board[row][col]

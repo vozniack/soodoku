@@ -5,16 +5,17 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
 import { ACTION_GAME_SET_FOCUS } from '../../../store/app/game/game.actions';
 import { GameState } from '../../../store/app/game/game.state';
-import { Game } from '../game.interface';
+import { Game, Move } from '../game.interface';
 import { Cell } from './game-board.interface';
 
 @Component({
   selector: 'soo-game-board',
   standalone: true,
-  imports: [NgForOf, NgIf, AsyncPipe],
+  imports: [NgForOf, NgIf, AsyncPipe, IconComponent],
   templateUrl: './game-board.component.html',
   styleUrl: './game-board.component.scss'
 })
@@ -34,7 +35,7 @@ export class GameBoardComponent {
   // Action methods
 
   activate(game: Game, row: number, col: number, value: number, focus?: Cell) {
-    if (!this.isLocked(game, row, col)) {
+    if (!this.isHint(game, row, col) && !this.isLocked(game, row, col)) {
       this.store.dispatch(ACTION_GAME_SET_FOCUS({
         focus: focus?.row == row && focus?.col == col ? undefined : {row, col, value}
       }));
@@ -71,6 +72,10 @@ export class GameBoardComponent {
         }
       }
     });
+  }
+
+  isHint(game: Game, row: number, col: number): boolean {
+    return game.moves.some((move: Move) => move.type === 'HINT' && move.row === row && move.col === col);
   }
 
   isLocked(game: Game, row: number, col: number): boolean {

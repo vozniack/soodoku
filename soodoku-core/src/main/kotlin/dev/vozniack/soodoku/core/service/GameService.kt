@@ -1,8 +1,8 @@
 package dev.vozniack.soodoku.core.service
 
 import dev.vozniack.soodoku.core.api.dto.GameDto
-import dev.vozniack.soodoku.core.api.dto.MoveDto
 import dev.vozniack.soodoku.core.api.dto.NewGameDto
+import dev.vozniack.soodoku.core.api.dto.NewMoveDto
 import dev.vozniack.soodoku.core.api.mapper.toDtoWithStatus
 import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.Move
@@ -45,15 +45,17 @@ class GameService(
         return gameRepository.save(
             Game(
                 initialBoard = status.board.flatBoard(),
+                solvedBoard = status.solved.flatBoard(),
                 currentBoard = status.board.flatBoard(),
                 locks = status.locks.flatLocks(),
                 difficulty = newGameDto.difficulty,
+                hints = 3,
                 user = user
             )
         ) toDtoWithStatus status
     }
 
-    fun move(id: UUID, move: MoveDto): GameDto {
+    fun move(id: UUID, move: NewMoveDto): GameDto {
         val game: Game = getGame(id)
 
         if (game.finishedAt != null) {
@@ -118,6 +120,58 @@ class GameService(
                     col = lastMove.col,
                     before = lastMove.after,
                     after = lastMove.before
+                )
+            )
+        }
+
+        return gameRepository.save(game) toDtoWithStatus status
+    }
+
+    fun hint(id: UUID): GameDto {
+        val game: Game = getGame(id)
+
+        if (game.finishedAt != null) {
+            throw ConflictException("Game $id is already finished!")
+        }
+
+        if (game.hints < 1) {
+            throw ConflictException("You don't have more hints for game $id!")
+        }
+
+        val soodoku = game.toSoodoku()
+        var status: Soodoku.Status = soodoku.status()
+
+        val allUnlockedCells = (0..8).flatMap { row -> (0..8).map { col -> row to col } }
+            .filter { (row, col) -> (row to col) !in status.locks }
+
+        val (row, col) = allUnlockedCells.filter { (row, col) -> status.board[row][col] == 0 }
+            .takeIf { it.isNotEmpty() }?.random()
+            ?: allUnlockedCells.filter { (row, col) ->
+                status.board[row][col] != status.solved[row][col]
+            }.randomOrNull()
+            ?: throw ConflictException("No available cells for game $id")
+
+        val hint = status.solved[row][col]
+
+        val valueBefore: Int = soodoku.value(row, col).also {
+            soodoku.move(row, col, hint)
+        }
+
+        status = soodoku.status()
+
+        game.apply {
+            currentBoard = status.board.flatBoard()
+            hints -= 1
+            updatedAt = LocalDateTime.now()
+        }.also {
+            it.moves.add(
+                Move(
+                    game = it,
+                    type = MoveType.HINT,
+                    row = row,
+                    col = col,
+                    before = valueBefore,
+                    after = hint
                 )
             )
         }

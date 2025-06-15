@@ -5,10 +5,10 @@ import { GameState } from './game.state';
 export function buildSetGameAction(updatedGame: Game, gameState: GameState) {
   return ACTION_GAME_SET({
     game: updatedGame,
-    focus: {
-      row: gameState.focus!.row,
-      col: gameState.focus!.col,
-      value: updatedGame.board[gameState.focus!.row][gameState.focus!.col]
-    }
+    focus: gameState.focus !== undefined ? {
+      row: gameState.focus.row,
+      col: gameState.focus.col,
+      value: updatedGame.board[gameState.focus.row][gameState.focus.col]
+    } : undefined
   });
 }

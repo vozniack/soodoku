@@ -14,11 +14,14 @@ CREATE TABLE games
 (
     id            UUID         NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
-    initial_board VARCHAR(255) NOT NULL,
-    current_board VARCHAR(255) NOT NULL,
+    initial_board VARCHAR(128) NOT NULL,
+    solved_board   VARCHAR(128) NOT NULL,
+    current_board VARCHAR(128) NOT NULL,
     locks         VARCHAR(255) NOT NULL,
 
-    difficulty    VARCHAR(64)  NOT NULL,
+    difficulty    VARCHAR(16)  NOT NULL,
+
+    hints         INT          NOT NULL,
 
     created_at    TIMESTAMP    NOT NULL             DEFAULT now(),
     updated_at    TIMESTAMP    NULL,
@@ -34,7 +37,7 @@ CREATE TABLE moves
     id          UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
     game_id     UUID        NOT NULL,
-    type        VARCHAR(64) NOT NULL,
+    type        VARCHAR(16) NOT NULL,
 
     created_at  TIMESTAMP   NOT NULL             DEFAULT now(),
     reverted_at TIMESTAMP   NULL,
@@ -49,4 +52,6 @@ CREATE TABLE moves
 );
 
 INSERT INTO users (email, password, username)
-VALUES ('rajeshkootrappali@bbt.com', '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO', 'koothrappali9000');
+VALUES ('rajeshkootrappali@bbt.com',
+        '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO',
+        'koothrappali9000');

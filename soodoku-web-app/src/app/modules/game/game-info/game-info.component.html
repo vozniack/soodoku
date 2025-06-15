@@ -6,7 +6,7 @@
       <div class="game-details row-container" [class.center]="breakpoint != 'xs'">
         <span class="separated">Missing: {{ gameState.game!!.missing }}</span>
         <span class="separated">{{ elapsedTime$ | async }}</span>
-        <span>Moves: {{ gameState.game!!.moves }}</span>
+        <span>Moves: {{ gameState.game.moves.length }}</span>
       </div>
 
       <div class="right" *ngIf="breakpoint != 'xs'">
