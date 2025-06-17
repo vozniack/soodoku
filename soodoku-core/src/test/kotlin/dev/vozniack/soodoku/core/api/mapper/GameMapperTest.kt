@@ -3,9 +3,9 @@ package dev.vozniack.soodoku.core.api.mapper
 import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.Move
-import dev.vozniack.soodoku.core.domain.entity.User
 import dev.vozniack.soodoku.core.domain.types.ConflictType
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.mock.mockUser
 import dev.vozniack.soodoku.core.util.toISOTime
 import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.extension.flatBoard
@@ -25,7 +25,7 @@ class GameMapperTest : AbstractUnitTest() {
         val soodoku = Soodoku(Soodoku.Difficulty.EASY)
         val status = soodoku.status()
 
-        val user = User(email = "john.doe@soodoku.com")
+        val user = mockUser()
 
         val game = Game(
             initialBoard = status.board.flatBoard(),
@@ -69,7 +69,7 @@ class GameMapperTest : AbstractUnitTest() {
 
         val soodoku = Soodoku(emptyBoard, solvedBoard, emptyLocks)
 
-        val user = User(email = "john.doe@soodoku.com")
+        val user = mockUser()
 
         val game = Game(
             initialBoard = emptyBoard,

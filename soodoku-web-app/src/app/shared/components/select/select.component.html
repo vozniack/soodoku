@@ -1,0 +1,28 @@
+<div class="select" [style.width]="width" [style.max-width]="maxWidth" [style.margin]="maxWidth ? 'auto' : 0">
+  <div class="form tonal"
+       [class.invalid]="control.touched && control.invalid"
+       [class.disabled]="control.disabled"
+       (click)="toggleDropdown()">
+
+    <span *ngIf="placeholder" class="label" [class.active]="control.value !== null && control.value !== undefined">
+      {{ placeholder }}
+    </span>
+
+    <div class="select-value">
+      <span class="value">{{ getOptionName() || placeholder }}</span>
+    </div>
+
+    <soo-icon class="expand-icon" [class.active]="active" [name]="'expand_more'" [size]="20"></soo-icon>
+  </div>
+
+  <div class="select-options" *ngIf="active" @fadeInAnimation>
+    <div class="option empty" *ngIf="allowEmpty" (click)="setValue(null)">
+      <span>. . .</span>
+    </div>
+
+    <div class="option" *ngFor="let option of options" (click)="setValue(option.value)">
+      <span>{{ option.name }}</span>
+      <soo-icon *ngIf="option.value === control.value" [name]="'check'" [size]="14"></soo-icon>
+    </div>
+  </div>
+</div>

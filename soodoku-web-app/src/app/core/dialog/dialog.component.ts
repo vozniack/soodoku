@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output, Type, ViewChild, ViewContainerR
 import { Store } from '@ngrx/store';
 import { tap } from 'rxjs/operators';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { SELECT_BREAKPOINT } from '../../store/app/app.selectors';
+import { SELECT_APP_BREAKPOINT } from '../../store/app/app.selectors';
 import { Breakpoint } from '../breakpoint/breakpoint.interface';
 
 @Component({
@@ -26,7 +26,7 @@ export class DialogComponent {
   hidden = false;
 
   constructor(private store: Store) {
-    this.store.select(SELECT_BREAKPOINT).pipe(
+    this.store.select(SELECT_APP_BREAKPOINT).pipe(
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)
     ).subscribe();
   }

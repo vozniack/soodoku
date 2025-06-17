@@ -8,7 +8,7 @@ import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
 import { DialogService } from '../../../core/dialog/dialog.service';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { ConfirmationDialogComponent } from '../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
-import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
+import { SELECT_APP_BREAKPOINT } from '../../../store/app/app.selectors';
 import {
   ACTION_GAME_SURRENDER,
   ACTION_GAME_REVERT,
@@ -32,7 +32,7 @@ export class GameControlComponent {
   breakpoint!: Breakpoint;
 
   constructor(private store: Store, private dialogService: DialogService) {
-    this.store.select(SELECT_BREAKPOINT).pipe(
+    this.store.select(SELECT_APP_BREAKPOINT).pipe(
       takeUntilDestroyed(),
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)
     ).subscribe();

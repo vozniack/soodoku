@@ -14,10 +14,11 @@
 
   cursor: pointer;
   transition: background-color 0.1s ease-in-out;
-  touch-action: manipulation;
 
   border: none;
   outline: none;
+
+  touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 
   &.username {

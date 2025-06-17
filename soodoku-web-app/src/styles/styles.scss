@@ -26,7 +26,7 @@ body {
   max-height: calc(var(--vh, 1vh) * 100);
 
   background: $surface;
-  color: $primary;
+  color: $secondary;
 
   font-family: 'NunitoSans', serif;
   transition: background-color 0.1s ease-in-out;

@@ -7,4 +7,6 @@ fun User.toDto(): UserDto = UserDto(
     id = id,
     email = email,
     username = username,
+    language = language,
+    theme = theme,
 )

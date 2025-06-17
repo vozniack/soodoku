@@ -7,6 +7,10 @@ soo-logo {
 .home-wrapper {
   align-items: center;
 
+  soo-divider {
+    width: 100%;
+  }
+
   > .sections {
     width: 100%;
 
@@ -35,14 +39,6 @@ soo-logo {
 
   .version {
     right: 16px;
-  }
-
-  hr {
-    width: 90%;
-    border-color: color-mix(in srgb, $white 50%, transparent);
-    background-color: color-mix(in srgb, $white 50%, transparent);
-
-    opacity: 0.5;
   }
 }
 

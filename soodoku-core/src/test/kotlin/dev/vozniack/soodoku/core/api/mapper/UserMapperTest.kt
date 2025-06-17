@@ -17,5 +17,7 @@ class UserMapperTest : AbstractUnitTest() {
         assertEquals(user.id, userDto.id)
         assertEquals(user.email, userDto.email)
         assertEquals(user.username, userDto.username)
+        assertEquals(user.language, userDto.language)
+        assertEquals(user.theme, userDto.theme)
     }
 }

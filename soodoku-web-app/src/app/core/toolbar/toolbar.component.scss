@@ -1,0 +1,38 @@
+@import 'theme.scss';
+
+.toolbar {
+  gap: 4px;
+
+  .settings-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    border-radius: 50%;
+
+    height: 32px;
+    width: 32px;
+
+    color: $white;
+    background: $primary;
+
+    transition: background-color 0.1s ease-in-out;
+
+    border: none;
+    outline: none;
+
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+
+    soo-icon {
+      margin-top: 1px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        cursor: pointer;
+        background-color: $primary-container;
+      }
+    }
+  }
+}
