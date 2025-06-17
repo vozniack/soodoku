@@ -8,9 +8,11 @@
       [control]="darkThemeForm"
       [iconOff]="'light_mode'"
       [iconOn]="'dark_mode'"
-      [width]="'86px'">
+      [width]="'72px'">
     </soo-switch>
   </div>
+
+  <soo-divider></soo-divider>
 
   <div class="column-container gap-small" [style.flex]="100">
     <h4>Language</h4>
@@ -20,6 +22,4 @@
       <soo-button [text]="'English'" (click)="selectLanguage('en_EN')"></soo-button>
     </div>
   </div>
-
-  <soo-divider></soo-divider>
 </div>
