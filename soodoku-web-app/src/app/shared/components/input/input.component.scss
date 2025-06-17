@@ -6,7 +6,9 @@
 
   .name {
     margin-bottom: 8px;
+
     color: $neutral;
+
     font-size: 14px;
     font-weight: 600;
   }
@@ -39,6 +41,10 @@
         background-color: color-mix(in srgb, $error-container 75%, transparent);
       }
 
+      input::placeholder {
+        color: $error;
+      }
+
       .icon {
         color: $error;
       }
@@ -68,12 +74,12 @@
     }
 
     input {
-      height: 40px;
+      height: 32px;
       width: 100%;
       padding: 4px 16px;
 
       font-family: 'Montserrat', sans-serif;
-      font-size: 14px;
+      font-size: 12px;
       color: $neutral;
 
       box-sizing: border-box;
@@ -85,7 +91,7 @@
       }
 
       &:disabled {
-        color: color-mix(in srgb, $neutral 75%, transparent);
+        color: color-mix(in srgb, $neutral 50%, transparent);
       }
 
       &::placeholder {
@@ -113,12 +119,11 @@
 
     .icon {
       position: absolute;
-      top: 8px;
-      right: 16px;
+      top: 4px;
+      right: 12px;
 
       color: $primary;
 
-      cursor: pointer;
       outline: none;
       border: none;
 
@@ -126,8 +131,13 @@
 
       touch-action: manipulation;
 
+      &.disabled {
+        color: color-mix(in srgb, $primary 50%, transparent);
+      }
+
       @media (hover: hover) and (pointer: fine) {
-        &:hover {
+        &.active:hover {
+          cursor: pointer;
           font-variation-settings: 'FILL' 1;
         }
       }

@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
-import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
+import { SELECT_APP_BREAKPOINT } from '../../../store/app/app.selectors';
 import { ACTION_GAME_MOVE } from '../../../store/app/game/game.actions';
 import { GameState } from '../../../store/app/game/game.state';
 
@@ -25,7 +25,7 @@ export class GameNumbersComponent {
   numbers: number[] = [...Array(9).keys()].map(i => i + 1);
 
   constructor(private store: Store) {
-    this.store.select(SELECT_BREAKPOINT).pipe(
+    this.store.select(SELECT_APP_BREAKPOINT).pipe(
       takeUntilDestroyed(),
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)
     ).subscribe();

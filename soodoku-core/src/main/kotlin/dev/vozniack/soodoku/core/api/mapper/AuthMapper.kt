@@ -7,4 +7,6 @@ infix fun SignupRequestDto.toUserWithEncodedPassword(password: String): User = U
     email = email,
     password = password,
     username = username,
+    language = language,
+    theme = theme
 )

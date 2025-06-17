@@ -10,7 +10,7 @@ import { AvatarComponent } from '../../../shared/components/avatar/avatar.compon
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { DifficultyDialogComponent } from '../../../shared/dialogs/difficulty-dialog/difficulty-dialog.component';
 import { formatDurationBetween } from '../../../shared/functions/time.fuction';
-import { SELECT_BREAKPOINT } from '../../../store/app/app.selectors';
+import { SELECT_APP_BREAKPOINT } from '../../../store/app/app.selectors';
 import { GameState } from '../../../store/app/game/game.state';
 import { Game } from '../game.interface';
 import { updateElapsedTime } from './game-info.function';
@@ -32,7 +32,7 @@ export class GameInfoComponent implements OnInit {
   private timerSub?: Subscription;
 
   constructor(private store: Store, private dialogService: DialogService) {
-    this.store.select(SELECT_BREAKPOINT).pipe(
+    this.store.select(SELECT_APP_BREAKPOINT).pipe(
       takeUntilDestroyed(),
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)
     ).subscribe();

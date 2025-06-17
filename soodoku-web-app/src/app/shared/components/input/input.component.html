@@ -13,7 +13,8 @@
            [maxLength]="maxLength"
            [autocomplete]="autocomplete"/>
 
-    <soo-icon *ngIf="icon && !password" class="icon" (click)="switchVisibility()" [name]="icon" [size]="20"></soo-icon>
+    <soo-icon *ngIf="icon && !password" class="icon" [class.disabled]="control.disabled" [name]="icon" [size]="20">
+    </soo-icon>
 
     <soo-icon *ngIf="password" class="icon active" (click)="switchVisibility()"
               [name]="type == 'password' ? 'visibility' : 'visibility_off'"

@@ -1,0 +1,6 @@
+@import 'theme.scss';
+
+hr {
+  border-color: color-mix(in srgb, $surface-container 10%, transparent);
+  background-color: color-mix(in srgb, $surface-container 10%, transparent);
+}

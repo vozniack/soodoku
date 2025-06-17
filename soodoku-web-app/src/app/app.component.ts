@@ -5,6 +5,7 @@ import { select, Store } from '@ngrx/store';
 import { distinctUntilChanged, map, tap, withLatestFrom } from 'rxjs/operators';
 import { Breakpoint } from './core/breakpoint/breakpoint.interface';
 import { BreakpointService } from './core/breakpoint/breakpoint.service';
+import { LanguageService } from './core/language/language.service';
 import { SnackbarComponent } from './core/snackbar/snackbar.component';
 import { ThemeService } from './core/theme/theme.service';
 import { View } from './core/view/view.const';
@@ -13,7 +14,7 @@ import { HomeComponent } from './modules/home/home.component';
 import { LeaderboardComponent } from './modules/leaderboard/leaderboard.component';
 import { MyGamesComponent } from './modules/my-games/my-games.component';
 import { ACTION_SET_BREAKPOINT, ACTION_SET_VIEW } from './store/app/app.actions';
-import { SELECT_VIEW } from './store/app/app.selectors';
+import { SELECT_APP_VIEW } from './store/app/app.selectors';
 import { SELECT_GAME_STATE } from './store/app/game/game.selectors';
 
 @Component({
@@ -28,16 +29,17 @@ export class AppComponent implements AfterViewInit {
   View = View;
   view!: View;
 
-  constructor(private store: Store, private themeService: ThemeService, private breakpointService: BreakpointService) {
+  constructor(private store: Store, private themeService: ThemeService, private languageService: LanguageService, private breakpointService: BreakpointService) {
     this.store.pipe(
       takeUntilDestroyed(),
-      select(SELECT_VIEW),
+      select(SELECT_APP_VIEW),
       withLatestFrom(this.store.select(SELECT_GAME_STATE)),
       map(([view, gameState]) => view === View.GAME && (gameState?.game?.id === undefined) ? View.HOME : view),
       distinctUntilChanged()
     ).subscribe(view => this.store.dispatch(ACTION_SET_VIEW({view: this.view = view})));
 
     this.themeService.applyTheme();
+    this.languageService.applyLanguage();
 
     this.breakpointService.breakpointChanges$.pipe(
       takeUntilDestroyed(),

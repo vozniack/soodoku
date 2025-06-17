@@ -6,15 +6,19 @@ import dev.vozniack.soodoku.core.AbstractWebMvcTest
 import dev.vozniack.soodoku.core.api.dto.UserDto
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.mock.mockUser
+import dev.vozniack.soodoku.core.mock.mockUserLanguageUpdateDto
+import dev.vozniack.soodoku.core.mock.mockUserPasswordUpdateDto
+import dev.vozniack.soodoku.core.mock.mockUserThemeUpdateDto
+import dev.vozniack.soodoku.core.mock.mockUserUsernameUpdateDto
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.context.WebApplicationContext
 
@@ -23,37 +27,29 @@ class UserControllerTest @Autowired constructor(
     context: WebApplicationContext
 ) : AbstractWebMvcTest(context) {
 
+    private val objectMapper = jacksonObjectMapper()
+
     @BeforeEach
     fun `clear up before`() {
         userRepository.deleteAll()
+
         SecurityContextHolder.clearContext()
     }
 
     @AfterEach
     fun `clear up after`() {
         userRepository.deleteAll()
+
+        SecurityContextHolder.clearContext()
     }
 
     @Test
-    fun `get currently logged user with anonymous user`() {
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "anonymousUser", null, emptyList()
-        )
-
-        mockMvc.perform(
-            get("/api/users").contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isUnauthorized)
-    }
-
-    @Test
-    fun `get currently logged user with existing user`() {
+    fun `get currently logged user with logged user`() {
         val user = userRepository.save(mockUser())
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
-        val response: UserDto = jacksonObjectMapper().readValue(
+        val response: UserDto = objectMapper.readValue(
             mockMvc.perform(
                 get("/api/users").contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().isOk).andReturn().response.contentAsString
@@ -64,15 +60,113 @@ class UserControllerTest @Autowired constructor(
     }
 
     @Test
-    fun `get currently logged user with existing but not logged in user`() {
-        userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
-
+    fun `get currently logged user with not logged user`() {
         mockMvc.perform(
             get("/api/users").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `update username with logged user`() {
+        val user = userRepository.save(mockUser(username = "johndoe", email = "john.doe@soodoku.com"))
+        val request = mockUserUsernameUpdateDto("newUsername")
+
+        authenticate(user.email)
+
+        mockMvc.perform(
+            put("/api/users/${user.id}/username")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        ).andExpect(status().isOk)
+    }
+
+    @Test
+    fun `update username with not logged user`() {
+        val user = userRepository.save(mockUser(username = "johndoe", email = "john.doe@soodoku.com"))
+        val request = mockUserUsernameUpdateDto("newUsername")
+
+        mockMvc.perform(
+            put("/api/users/${user.id}/username")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `update password with logged user`() {
+        val user = userRepository.save(mockUser(username = "johndoe", email = "john.doe@soodoku.com"))
+        val request = mockUserPasswordUpdateDto("NewP@ssw0rd")
+
+        authenticate(user.email)
+
+        mockMvc.perform(
+            put("/api/users/${user.id}/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        ).andExpect(status().isOk)
+    }
+
+    @Test
+    fun `update password with not logged user`() {
+        val user = userRepository.save(mockUser(username = "johndoe", email = "john.doe@soodoku.com"))
+        val dto = mockUserPasswordUpdateDto("NewP@ssw0rd")
+
+        mockMvc.perform(
+            put("/api/users/${user.id}/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto))
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `update language with logged user`() {
+        val user = userRepository.save(mockUser(username = "johndoe", email = "john.doe@soodoku.com"))
+        val request = mockUserLanguageUpdateDto("pl_PL")
+
+        authenticate(user.email)
+
+        mockMvc.perform(
+            put("/api/users/${user.id}/language")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        ).andExpect(status().isOk)
+    }
+
+    @Test
+    fun `update language with not logged user`() {
+        val user = userRepository.save(mockUser(username = "johndoe", email = "john.doe@soodoku.com"))
+        val request = mockUserLanguageUpdateDto("pl_PL")
+
+        mockMvc.perform(
+            put("/api/users/${user.id}/language")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `update theme with logged user`() {
+        val user = userRepository.save(mockUser(username = "johndoe", email = "john.doe@soodoku.com"))
+        val request = mockUserThemeUpdateDto("dark")
+
+        authenticate(user.email)
+
+        mockMvc.perform(
+            put("/api/users/${user.id}/theme")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        ).andExpect(status().isOk)
+    }
+
+    @Test
+    fun `update theme with not logged user`() {
+        val user = userRepository.save(mockUser(username = "johndoe", email = "john.doe@soodoku.com"))
+        val request = mockUserThemeUpdateDto("dark")
+
+        mockMvc.perform(
+            put("/api/users/${user.id}/theme")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
         ).andExpect(status().isUnauthorized)
     }
 }

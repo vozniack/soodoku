@@ -1,0 +1,136 @@
+@import 'theme.scss';
+
+.select {
+  margin: 0;
+  padding: 0;
+  position: relative;
+
+  .form {
+    width: 100%;
+    border-radius: 8px;
+    position: relative;
+
+    border: 1px solid color-mix(in srgb, $secondary 10%, transparent);
+    background-color: color-mix(in srgb, $secondary-container 25%, transparent);
+
+    transition: border-color 0.1s ease-in-out, background-color 0.1s ease-in-out;
+
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+
+    &:not(.disabled):hover {
+      border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
+      background-color: color-mix(in srgb, $primary 10%, transparent);
+    }
+
+    &.invalid {
+      border: 1px solid color-mix(in srgb, $error 10%, transparent);
+      background-color: color-mix(in srgb, $error-container 50%, transparent);
+
+      .label,
+      .value,
+      .icon {
+        color: $error;
+      }
+
+      &:hover {
+        border: 1px solid color-mix(in srgb, $error 25%, transparent);
+        background-color: color-mix(in srgb, $error-container 75%, transparent);
+      }
+    }
+
+    &.disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .label {
+      opacity: 1;
+      z-index: -1;
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      font-size: 8px;
+      font-weight: 500;
+      color: color-mix(in srgb, $neutral 50%, transparent);
+      transition: all 0.1s ease-in-out;
+
+      &.active {
+        z-index: 1;
+        top: -14px;
+        left: 2px;
+      }
+    }
+
+    .select-value {
+      height: 32px;
+      width: 100%;
+
+      padding: 4px 16px;
+      font-size: 12px;
+
+      color: $neutral;
+
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    .expand-icon {
+      position: absolute;
+
+      top: 4px;
+      right: 12px;
+
+      color: $primary;
+      transition: all 0.1s ease-in-out;
+
+      &.active {
+        top: 0 !important;
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .select-options {
+    position: absolute;
+    z-index: 100;
+
+    width: 100%;
+    max-height: 256px;
+
+    overflow-y: auto;
+
+    background-color: $surface;
+    border: 1px solid color-mix(in srgb, $primary 25%, transparent);
+    border-radius: 8px;
+
+    .option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 4px 16px;
+      font-size: 12px;
+      color: $neutral;
+      border-radius: 8px;
+
+      transition: background-color 0.1s ease-in-out;
+
+      &:hover {
+        cursor: pointer;
+        background-color: $surface-container;
+      }
+
+      soo-icon {
+        color: $primary;
+      }
+
+      &.empty {
+        font-style: italic;
+        color: color-mix(in srgb, $neutral 50%, transparent);
+      }
+    }
+  }
+}

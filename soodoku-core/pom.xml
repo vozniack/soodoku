@@ -23,6 +23,7 @@
 		<soodoku-lib.version>0.1</soodoku-lib.version>
 
 		<spring-boot.version>${project.parent.version}</spring-boot.version>
+		<spring-security.version>6.5.0</spring-security.version>
 
 		<kotlin-logging-jvm.version>5.1.0</kotlin-logging-jvm.version>
 
@@ -151,6 +152,15 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<version>${spring-boot.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Spring Security test -->
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>${spring-security.version}</version>
 			<scope>test</scope>
 		</dependency>
 

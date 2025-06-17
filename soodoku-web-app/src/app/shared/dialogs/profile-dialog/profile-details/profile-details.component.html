@@ -1,11 +1,96 @@
-<div class="column-container gap">
-  <h2>Profile</h2>
+<ng-container *ngIf="userState.user != undefined">
+  <div class="uer-profile column-container gap">
+    <h2>Profile</h2>
 
-  <div class="column-container">
-    <soo-button
-      (click)="logout()"
-      [text]="'Logout'"
-      [maxWidth]="'448px'">
-    </soo-button>
+    <soo-input
+      [control]="emailForm"
+      [id]="'email'"
+      [name]="'email'"
+      [placeholder]="'Email'"
+      [placeholderShrink]="false"
+      [icon]="'mail'"
+      [style.flex]="100">
+    </soo-input>
+
+    <soo-divider></soo-divider>
+
+    <div class="column-container gap-small">
+      <soo-input
+        [control]="usernameForm"
+        [id]="'username'"
+        [name]="'username'"
+        [placeholder]="'Username'"
+        [placeholderShrink]="false"
+        [icon]="'person'"
+        [style.flex]="100">
+      </soo-input>
+
+      <soo-button
+        (click)="updateUsername()"
+        [disabled]="usernameForm.invalid"
+        [text]="'Change username'"
+        [size]="'small'"
+        [style]="'flat'">
+      </soo-button>
+    </div>
+
+    <soo-divider></soo-divider>
+
+    <form class="column-container gap-small">
+      <soo-input
+        [control]="getControl('password')"
+        [id]="'password'"
+        [name]="'password'"
+        [type]="'password'"
+        [placeholder]="'Password'"
+        [placeholderShrink]="false"
+        [password]="true"
+        [style]="'tonal'"
+        [maxWidth]="'448px'">
+      </soo-input>
+
+      <soo-input
+        [control]="getControl('repeat')"
+        [id]="'password-repeat'"
+        [name]="'password-repeat'"
+        [type]="'password'"
+        [placeholder]="'Repeat password'"
+        [placeholderShrink]="false"
+        [password]="true"
+        [style]="'tonal'"
+        [maxWidth]="'448px'">
+      </soo-input>
+
+      <soo-button
+        (click)="updatePassword()"
+        [disabled]="passwordForm.invalid"
+        [size]="'small'"
+        [text]="'Change password'"
+        [style]="'flat'">
+      </soo-button>
+    </form>
+
+    <soo-divider></soo-divider>
+
+    <div class="row-container space-between gap">
+      <soo-select
+        [control]="languageForm"
+        [options]="languageOptions"
+        [icon]="'flag'"
+        [allowEmpty]="false"
+        [style.flex]="100">
+      </soo-select>
+
+      <soo-switch [control]="darkThemeForm" [iconOff]="'light_mode'" [iconOn]="'dark_mode'"></soo-switch>
+    </div>
+
+    <soo-divider></soo-divider>
+
+    <div class="column-container">
+      <soo-button
+        (click)="logout()"
+        [text]="'Logout'">
+      </soo-button>
+    </div>
   </div>
-</div>
+</ng-container>

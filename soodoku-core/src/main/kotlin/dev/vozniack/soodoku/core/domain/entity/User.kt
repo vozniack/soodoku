@@ -15,5 +15,7 @@ data class User(
     @Column(nullable = false) var email: String,
     @Column(nullable = true) var password: String? = null,
 
-    @Column(nullable = false) var username: String? = null,
+    @Column(nullable = false) var username: String,
+    @Column(nullable = false) var language: String,
+    @Column(nullable = false) var theme: String,
 )

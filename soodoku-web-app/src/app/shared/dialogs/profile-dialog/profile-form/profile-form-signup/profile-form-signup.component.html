@@ -11,6 +11,19 @@
   </soo-input>
 
   <soo-input
+    [control]="getControl('username')"
+    [id]="'username'"
+    [name]="'username'"
+    [placeholder]="'Username'"
+    [placeholderShrink]="false"
+    [icon]="'person'"
+    [style]="'tonal'"
+    [maxWidth]="'448px'">
+  </soo-input>
+
+  <soo-divider></soo-divider>
+
+  <soo-input
     [control]="getControl('password')"
     [id]="'password'"
     [name]="'password'"
@@ -23,13 +36,13 @@
   </soo-input>
 
   <soo-input
-    [control]="getControl('username')"
-    [id]="'username'"
-    [name]="'username'"
-    [type]="'text'"
-    [placeholder]="'Username'"
+    [control]="getControl('repeat')"
+    [id]="'password-repeat'"
+    [name]="'password-repeat'"
+    [type]="'password'"
+    [placeholder]="'Repeat password'"
     [placeholderShrink]="false"
-    [icon]="'person'"
+    [password]="true"
     [style]="'tonal'"
     [maxWidth]="'448px'">
   </soo-input>
