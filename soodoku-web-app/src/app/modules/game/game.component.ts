@@ -5,8 +5,8 @@ import { Store } from '@ngrx/store';
 import { filter, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../core/breakpoint/breakpoint.interface';
+import { ToolbarComponent } from '../../core/toolbar/toolbar.component';
 import { View } from '../../core/view/view.const';
-import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { fadeInAnimation } from '../../shared/animations/fade-in-animation';
@@ -22,7 +22,7 @@ import { GameNumbersComponent } from './game-numbers/game-numbers.component';
 @Component({
   selector: 'soo-game',
   standalone: true,
-  imports: [GameInfoComponent, GameBoardComponent, GameControlComponent, GameNumbersComponent, LogoComponent, AvatarComponent, NgIf, ButtonComponent, AsyncPipe],
+  imports: [GameInfoComponent, GameBoardComponent, GameControlComponent, GameNumbersComponent, LogoComponent, NgIf, ButtonComponent, AsyncPipe, ToolbarComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss',
   animations: [fadeInAnimation]

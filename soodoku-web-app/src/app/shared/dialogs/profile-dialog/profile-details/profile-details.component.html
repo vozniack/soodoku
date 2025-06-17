@@ -72,20 +72,6 @@
 
     <soo-divider></soo-divider>
 
-    <div class="row-container space-between gap">
-      <soo-select
-        [control]="languageForm"
-        [options]="languageOptions"
-        [icon]="'flag'"
-        [allowEmpty]="false"
-        [style.flex]="100">
-      </soo-select>
-
-      <soo-switch [control]="darkThemeForm" [iconOff]="'light_mode'" [iconOn]="'dark_mode'"></soo-switch>
-    </div>
-
-    <soo-divider></soo-divider>
-
     <div class="column-container">
       <soo-button
         (click)="logout()"

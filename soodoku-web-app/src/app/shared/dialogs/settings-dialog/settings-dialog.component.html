@@ -1,0 +1,25 @@
+<div class="settings-dialog column-container gap">
+  <h2>Settings</h2>
+
+  <div class="row-container space-between">
+    <h4>Dark mode</h4>
+
+    <soo-switch
+      [control]="darkThemeForm"
+      [iconOff]="'light_mode'"
+      [iconOn]="'dark_mode'"
+      [width]="'86px'">
+    </soo-switch>
+  </div>
+
+  <div class="column-container gap-small" [style.flex]="100">
+    <h4>Language</h4>
+
+    <div class="column-container gap">
+      <soo-button [text]="'Polski'" (click)="selectLanguage('pl_PL')"></soo-button>
+      <soo-button [text]="'English'" (click)="selectLanguage('en_EN')"></soo-button>
+    </div>
+  </div>
+
+  <soo-divider></soo-divider>
+</div>

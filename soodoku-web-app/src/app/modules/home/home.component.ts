@@ -5,9 +5,9 @@ import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../core/breakpoint/breakpoint.interface';
 import { DialogService } from '../../core/dialog/dialog.service';
+import { ToolbarComponent } from '../../core/toolbar/toolbar.component';
 import { User } from '../../core/user/user.interface';
 import { View } from '../../core/view/view.const';
-import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { DividerComponent } from '../../shared/components/divider/divider.component';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { ViewService } from '../../core/view/view.service';
@@ -22,7 +22,7 @@ import { HomeSectionComponent } from './home-section/home-section.component';
 @Component({
   selector: 'soo-home',
   standalone: true,
-  imports: [LogoComponent, AvatarComponent, HomeSectionComponent, HomeGameComponent, DividerComponent],
+  imports: [LogoComponent, HomeSectionComponent, HomeGameComponent, DividerComponent, ToolbarComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   animations: [fadeInAnimation]

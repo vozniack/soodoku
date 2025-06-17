@@ -16,6 +16,8 @@ export class SwitchComponent {
   @Input() iconOff?: string;
   @Input() iconOn?: string;
 
+  @Input() width = '80px';
+
   getIcon(): string {
     if (this.control.value === true) {
       return this.iconOn ?? '';
