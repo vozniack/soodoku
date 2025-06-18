@@ -1,6 +1,7 @@
 package dev.vozniack.soodoku.core.api.validator
 
 import dev.vozniack.soodoku.core.api.dto.LoginRequestDto
+import dev.vozniack.soodoku.core.api.dto.RefreshRequestDto
 import dev.vozniack.soodoku.core.api.dto.SignupRequestDto
 import dev.vozniack.soodoku.core.internal.exception.BadRequestException
 import dev.vozniack.soodoku.core.util.matchesEmailRegex
@@ -35,4 +36,8 @@ fun SignupRequestDto.validate() {
     }
 
     throwIfTrue(BadRequestException("Theme must not be empty")) { theme.isBlank() }
+}
+
+fun RefreshRequestDto.validate() {
+    throwIfTrue(BadRequestException("Refresh token must not be empty")) { refreshToken.isBlank() }
 }
