@@ -40,7 +40,7 @@ export class AppEffects {
       switchMap(([action, userState]) =>
         this.userService$.updateLanguage(userState.user.id, {language: action.language}).pipe(
           mergeMap((user: User) => [
-            ACTION_USER_SET({user}), ACTION_SHOW_SNACKBAR({message: 'Language updated', icon: 'flag'})
+            ACTION_USER_SET({user}), ACTION_SHOW_SNACKBAR({message: 'Language updated', icon: 'language'})
           ])
         )
       )

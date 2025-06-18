@@ -10,6 +10,8 @@
 
   border-radius: 8px;
 
+  transition: background-color 0.1s ease-in-out;
+
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 
@@ -65,6 +67,16 @@
 
         color: $white;
       }
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: $secondary-container;
+    }
+
+    &:active {
+      background: $secondary-container;
     }
   }
 }
