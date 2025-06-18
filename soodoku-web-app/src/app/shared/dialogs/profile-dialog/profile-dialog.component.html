@@ -1,9 +1,9 @@
 <div class="profile-dialog column-container gap">
-  <ng-container *ngIf="authState.token !== undefined">
+  <ng-container *ngIf="authState.accessToken !== undefined">
     <soo-profile-details [result]="result" @fadeInAnimation></soo-profile-details>
   </ng-container>
 
-  <ng-container *ngIf="authState.token === undefined">
+  <ng-container *ngIf="authState.accessToken === undefined">
     <soo-profile-form [result]="result" @fadeInAnimation></soo-profile-form>
   </ng-container>
 </div>

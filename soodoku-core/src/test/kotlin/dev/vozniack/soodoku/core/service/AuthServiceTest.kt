@@ -35,7 +35,7 @@ class AuthServiceTest @Autowired constructor(
         val request: LoginRequestDto = mockLoginRequest(password = "J0hn123!")
 
         val response: AuthResponseDto = authService.login(request)
-        assertNotNull(response.token)
+        assertNotNull(response.accessToken)
     }
 
     @Test
@@ -53,7 +53,7 @@ class AuthServiceTest @Autowired constructor(
         val request: SignupRequestDto = mockSignupRequest()
         val response: AuthResponseDto = authService.signup(request)
 
-        assertNotNull(response.token)
+        assertNotNull(response.accessToken)
         assertEquals(1, userRepository.count())
     }
 

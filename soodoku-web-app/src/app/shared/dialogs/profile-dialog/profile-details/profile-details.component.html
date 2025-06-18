@@ -27,7 +27,7 @@
 
       <soo-button
         (click)="updateUsername()"
-        [disabled]="usernameForm.invalid"
+        [disabled]="usernameForm.invalid || usernameForm.getRawValue() == userState.user.username"
         [text]="'Change username'"
         [size]="'small'"
         [style]="'flat'">

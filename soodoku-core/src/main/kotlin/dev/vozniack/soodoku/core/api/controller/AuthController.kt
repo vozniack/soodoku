@@ -2,6 +2,7 @@ package dev.vozniack.soodoku.core.api.controller
 
 import dev.vozniack.soodoku.core.api.dto.LoginRequestDto
 import dev.vozniack.soodoku.core.api.dto.AuthResponseDto
+import dev.vozniack.soodoku.core.api.dto.RefreshRequestDto
 import dev.vozniack.soodoku.core.api.dto.SignupRequestDto
 import dev.vozniack.soodoku.core.api.validator.validate
 import dev.vozniack.soodoku.core.internal.logging.KLogging
@@ -31,6 +32,15 @@ class AuthController(private val authService: AuthService) {
         }
 
         return authService.signup(request)
+    }
+
+    @PostMapping("/refresh")
+    fun refresh(@RequestBody request: RefreshRequestDto): AuthResponseDto {
+        request.validate().also {
+            logger.debug { "Refreshing token" }
+        }
+
+        return authService.refresh(request)
     }
 
     companion object : KLogging()

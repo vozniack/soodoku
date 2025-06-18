@@ -14,6 +14,11 @@ data class SignupRequestDto(
     val theme: String
 )
 
+data class RefreshRequestDto(
+    val refreshToken: String
+)
+
 data class AuthResponseDto(
-    val token: String
+    val accessToken: String,
+    val refreshToken: String
 )

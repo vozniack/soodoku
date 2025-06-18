@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, LoginResponse, SignupRequest, SignupResponse } from './auth.interface';
+import { AuthResponse, LoginRequest, RefreshRequest, SignupRequest } from './auth.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -14,11 +14,17 @@ export class AuthService {
   constructor(private httpClient: HttpClient) {
   }
 
-  login(request: LoginRequest): Observable<LoginResponse> {
-    return this.httpClient.post<LoginResponse>(`${this.baseUrl}/login`, request);
+  login(request: LoginRequest): Observable<AuthResponse> {
+    return this.httpClient.post<AuthResponse>(`${this.baseUrl}/login`, request);
   }
 
-  signup(request: SignupRequest): Observable<SignupResponse> {
-    return this.httpClient.post<LoginResponse>(`${this.baseUrl}/signup`, request);
+  signup(request: SignupRequest): Observable<AuthResponse> {
+    return this.httpClient.post<AuthResponse>(`${this.baseUrl}/signup`, request);
+  }
+
+  refresh(request: RefreshRequest): Observable<AuthResponse> {
+    return this.httpClient.post<AuthResponse>(`${this.baseUrl}/refresh`, request, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${request.refreshToken}`)
+    });
   }
 }

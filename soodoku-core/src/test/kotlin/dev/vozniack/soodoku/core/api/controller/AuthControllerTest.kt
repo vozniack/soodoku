@@ -51,7 +51,7 @@ class AuthControllerTest @Autowired constructor(
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
-        assertNotNull(response.token)
+        assertNotNull(response.accessToken)
     }
 
     @Test
@@ -66,6 +66,6 @@ class AuthControllerTest @Autowired constructor(
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
-        assertNotNull(response.token)
+        assertNotNull(response.accessToken)
     }
 }
