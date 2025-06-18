@@ -20,6 +20,15 @@ export class SettingsDialogLanguageComponent {
 
       case Language.ENGLISH:
         return 'English';
+
+      case Language.GERMAN:
+        return 'Deutsch';
+
+      case Language.ITALIAN:
+        return 'Italiano';
+
+      case Language.SPANISH:
+        return 'Español';
     }
   }
 

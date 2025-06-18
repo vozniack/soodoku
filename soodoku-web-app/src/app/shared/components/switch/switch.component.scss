@@ -74,5 +74,9 @@
     &:hover {
       background: $secondary-container;
     }
+
+    &:active {
+      background: $secondary-container;
+    }
   }
 }
