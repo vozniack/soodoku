@@ -9,18 +9,21 @@ import { Theme } from '../../../core/theme/theme.const';
 import { ACTION_SET_LANGUAGE, ACTION_SET_THEME } from '../../../store/app/app.actions';
 import { SELECT_APP_STATE } from '../../../store/app/app.selectors';
 import { AppState } from '../../../store/app/app.state';
-import { ButtonComponent } from '../../components/button/button.component';
 import { DividerComponent } from '../../components/divider/divider.component';
 import { SwitchComponent } from '../../components/switch/switch.component';
+import { SettingsDialogLanguageComponent } from './settings-dialog-language/settings-dialog-language.component';
 
 @Component({
   selector: 'soo-settings-dialog',
   standalone: true,
-  imports: [SwitchComponent, DividerComponent, ButtonComponent],
+  imports: [SwitchComponent, DividerComponent, SettingsDialogLanguageComponent],
   templateUrl: './settings-dialog.component.html',
   styleUrl: './settings-dialog.component.scss'
 })
 export class SettingsDialogComponent {
+
+  Language = Language;
+  language!: Language;
 
   languageForm!: FormControl;
   darkThemeForm!: FormControl;
@@ -28,6 +31,8 @@ export class SettingsDialogComponent {
   constructor(private store: Store) {
     this.store.select(SELECT_APP_STATE).pipe(
       tap((appState: AppState) => {
+        this.language = appState.language;
+
         this.languageForm = new FormControl(appState.language, [Validators.required]);
         this.darkThemeForm = new FormControl(appState.theme === Theme.DARK, [Validators.required]);
       }),

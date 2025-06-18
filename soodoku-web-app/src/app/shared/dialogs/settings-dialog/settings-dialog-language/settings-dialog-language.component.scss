@@ -1,0 +1,55 @@
+@import 'theme.scss';
+
+.language {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  gap: 24px;
+
+  padding: 8px 16px;
+  border-radius: 8px;
+
+  background: color-mix(in srgb, $secondary-container 25%, transparent);
+  border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
+
+  cursor: pointer;
+  transition: background-color 0.1s ease-in-out;
+
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+
+  .flag {
+    display: inline-block;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    box-shadow: 0 0 8px color-mix(in srgb, $primary 25%, transparent);
+    transition: all 0.1s ease-in-out;
+
+    img {
+      display: block;
+      object-fit: cover;
+    }
+  }
+
+  .text {
+    margin-top: 2px;
+    font-size: 18px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: $secondary-container;
+
+      .flag {
+        transform: scale(1.1);
+      }
+    }
+  }
+}
