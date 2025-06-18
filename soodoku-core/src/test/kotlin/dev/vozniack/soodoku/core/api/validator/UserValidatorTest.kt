@@ -21,7 +21,7 @@ class UserValidatorTest : AbstractUnitTest() {
     @ParameterizedTest
     @ValueSource(strings = ["", " "])
     fun `validate invalid username update request`(username: String) {
-        assertThrows<BadRequestException>("Invalid username: '$username'") {
+        assertThrows<BadRequestException> {
             mockUserUsernameUpdateDto(username).validate()
         }
     }
@@ -34,7 +34,7 @@ class UserValidatorTest : AbstractUnitTest() {
     @ParameterizedTest
     @ValueSource(strings = ["", " ", "password1!", "pAssword", "pAssword1", "P1!"])
     fun `validate invalid password update request`(password: String) {
-        assertThrows<BadRequestException>("Invalid password: '$password'") {
+        assertThrows<BadRequestException> {
             mockUserPasswordUpdateDto(password).validate()
         }
     }
@@ -48,7 +48,7 @@ class UserValidatorTest : AbstractUnitTest() {
     @ParameterizedTest
     @ValueSource(strings = ["", " ", "en_us", "english_us", "en"])
     fun `validate invalid language update request`(language: String) {
-        assertThrows<BadRequestException>("Invalid language: '$language'") {
+        assertThrows<BadRequestException> {
             mockUserLanguageUpdateDto(language).validate()
         }
     }
@@ -62,7 +62,7 @@ class UserValidatorTest : AbstractUnitTest() {
     @ParameterizedTest
     @ValueSource(strings = ["", " "])
     fun `validate invalid theme update request`(theme: String) {
-        assertThrows<BadRequestException>("Invalid theme: '$theme'") {
+        assertThrows<BadRequestException> {
             mockUserThemeUpdateDto(theme).validate()
         }
     }

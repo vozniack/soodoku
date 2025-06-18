@@ -10,6 +10,7 @@ import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.internal.config.JwtConfig
 import dev.vozniack.soodoku.core.internal.exception.ConflictException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
+import dev.vozniack.soodoku.core.internal.logging.KLogging
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import java.nio.charset.StandardCharsets
@@ -60,8 +61,16 @@ class AuthService(
         .signWith(Keys.hmacShaKeyFor(jwtConfig.secret.toByteArray(StandardCharsets.UTF_8)))
         .compact()
 
-    private fun parseRefreshToken(token: String): String = Jwts.parser()
-        .verifyWith(Keys.hmacShaKeyFor(jwtConfig.secret.toByteArray(StandardCharsets.UTF_8))).build()
-        .parseSignedClaims(token).takeIf { !it.payload.expiration.before(Date()) }?.payload?.subject
-        ?: throw UnauthorizedException("You don't have access to this resource")
+    private fun parseRefreshToken(token: String): String = try {
+        Jwts.parser()
+            .verifyWith(Keys.hmacShaKeyFor(jwtConfig.secret.toByteArray(StandardCharsets.UTF_8))).build()
+            .parseSignedClaims(token).takeIf { !it.payload.expiration.before(Date()) }?.payload?.subject
+            ?: throw UnauthorizedException("You don't have access to this resource")
+    } catch (exception: Exception) {
+        logger.warn { exception.message }
+
+        throw UnauthorizedException("You don't have access to this resource")
+    }
+
+    companion object : KLogging()
 }

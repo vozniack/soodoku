@@ -5,9 +5,11 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.vozniack.soodoku.core.AbstractWebMvcTest
 import dev.vozniack.soodoku.core.api.dto.LoginRequestDto
 import dev.vozniack.soodoku.core.api.dto.AuthResponseDto
+import dev.vozniack.soodoku.core.api.dto.RefreshRequestDto
 import dev.vozniack.soodoku.core.api.dto.SignupRequestDto
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.mock.mockLoginRequest
+import dev.vozniack.soodoku.core.mock.mockRefreshRequest
 import dev.vozniack.soodoku.core.mock.mockSignupRequest
 import dev.vozniack.soodoku.core.mock.mockUser
 import org.junit.jupiter.api.AfterEach
@@ -52,6 +54,7 @@ class AuthControllerTest @Autowired constructor(
         )
 
         assertNotNull(response.accessToken)
+        assertNotNull(response.refreshToken)
     }
 
     @Test
@@ -67,5 +70,24 @@ class AuthControllerTest @Autowired constructor(
         )
 
         assertNotNull(response.accessToken)
+        assertNotNull(response.refreshToken)
+    }
+
+    @Test
+    fun `refresh user`() {
+        userRepository.save(mockUser())
+
+        val request: RefreshRequestDto = mockRefreshRequest()
+
+        val response: AuthResponseDto = jacksonObjectMapper().readValue(
+            mockMvc.perform(
+                post("/api/auth/refresh")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jacksonObjectMapper().writeValueAsString(request))
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertNotNull(response.accessToken)
+        assertNotNull(response.refreshToken)
     }
 }

@@ -8,6 +8,7 @@ import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.internal.exception.ConflictException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
 import dev.vozniack.soodoku.core.mock.mockLoginRequest
+import dev.vozniack.soodoku.core.mock.mockRefreshRequest
 import dev.vozniack.soodoku.core.mock.mockSignupRequest
 import dev.vozniack.soodoku.core.mock.mockUser
 import kotlin.test.assertEquals
@@ -36,6 +37,7 @@ class AuthServiceTest @Autowired constructor(
 
         val response: AuthResponseDto = authService.login(request)
         assertNotNull(response.accessToken)
+        assertNotNull(response.refreshToken)
     }
 
     @Test
@@ -54,6 +56,8 @@ class AuthServiceTest @Autowired constructor(
         val response: AuthResponseDto = authService.signup(request)
 
         assertNotNull(response.accessToken)
+        assertNotNull(response.refreshToken)
+
         assertEquals(1, userRepository.count())
     }
 
@@ -65,6 +69,39 @@ class AuthServiceTest @Autowired constructor(
 
         assertThrows<ConflictException> {
             authService.signup(request)
+        }
+    }
+
+    @Test
+    fun `refresh when user exists`() {
+        val user = userRepository.save(mockUser(email = "john.doe@soodoku.com"))
+
+        val request = mockRefreshRequest(email = user.email)
+        val response = authService.refresh(request)
+
+        assertNotNull(response.accessToken)
+        assertNotNull(response.refreshToken)
+    }
+
+    @Test
+    fun `refresh when refresh token is expired`() {
+        val user = userRepository.save(mockUser(email = "john.doe@soodoku.com"))
+
+        val request = mockRefreshRequest(email = user.email, expiration = -128)
+
+        assertThrows<UnauthorizedException> {
+            authService.refresh(request)
+        }
+    }
+
+    @Test
+    fun `refresh when refresh token is incorrect`() {
+        userRepository.save(mockUser(email = "john.doe@soodoku.com"))
+
+        val request = mockRefreshRequest(refreshToken = "1234abcd")
+
+        assertThrows<UnauthorizedException> {
+            authService.refresh(request)
         }
     }
 }

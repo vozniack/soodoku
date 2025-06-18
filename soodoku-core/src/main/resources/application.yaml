@@ -30,5 +30,5 @@ soodoku:
   security:
     jwt:
       secret: 656uzf9s3JhPGu1HSj6nkhV8-Jc-TH43C5Wd5p_BH9Zfbq03n4hWMFlskVP6_tZScNWBOmUAmNxgPVTuOmv6lw
-      access-token-expiration: 180 # 900000 # 15 minutes
+      access-token-expiration: 900000 # 15 minutes
       refresh-token-expiration: 604800000 # 7 days
