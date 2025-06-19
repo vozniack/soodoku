@@ -9,7 +9,7 @@ import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { SELECT_APP_BREAKPOINT } from '../../../store/app/app.selectors';
 import { ACTION_GAME_SET_FOCUS } from '../../../store/app/game/game.actions';
 import { GameState } from '../../../store/app/game/game.state';
-import { Game, Move } from '../game.interface';
+import { Game, Move, Note } from '../game.interface';
 import { Cell } from './game-board.interface';
 
 @Component({
@@ -40,6 +40,15 @@ export class GameBoardComponent {
         focus: focus?.row == row && focus?.col == col ? undefined : {row, col, value}
       }));
     }
+  }
+
+  // Data methods
+
+  notes(game: Game, row: number, col: number, sign: string): string[] {
+    return game.notes.find((note: Note) => note.row === row && note.col === col)?.values
+      .filter(v => v.startsWith(sign))
+      .map(v => v.slice(1))
+      .sort() ?? [];
   }
 
   // Conditioning methods
@@ -88,5 +97,9 @@ export class GameBoardComponent {
 
   isIncorrect(game: Game, row: number, col: number): boolean {
     return game.solved != undefined && game.board[row][col] != game.solved[row][col];
+  }
+
+  hasNotes(game: Game, row: number, col: number): boolean {
+    return game.notes.some(note => note.row === row && note.col === col);
   }
 }

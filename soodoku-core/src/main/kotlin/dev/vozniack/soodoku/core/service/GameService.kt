@@ -1,12 +1,16 @@
 package dev.vozniack.soodoku.core.service
 
 import dev.vozniack.soodoku.core.api.dto.GameDto
-import dev.vozniack.soodoku.core.api.dto.NewGameDto
-import dev.vozniack.soodoku.core.api.dto.NewMoveDto
+import dev.vozniack.soodoku.core.api.dto.NewGameRequestDto
+import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
+import dev.vozniack.soodoku.core.api.dto.NoteRequestDto
 import dev.vozniack.soodoku.core.api.mapper.toDtoWithStatus
 import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.Move
 import dev.vozniack.soodoku.core.domain.entity.User
+import dev.vozniack.soodoku.core.domain.extension.parseNotes
+import dev.vozniack.soodoku.core.domain.extension.serializeNotes
+import dev.vozniack.soodoku.core.domain.extension.toGame
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.extension.toSoodoku
 import dev.vozniack.soodoku.core.domain.types.MoveType
@@ -16,7 +20,6 @@ import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
 import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.exception.SoodokuMappingException
 import dev.vozniack.soodoku.lib.extension.flatBoard
-import dev.vozniack.soodoku.lib.extension.flatLocks
 import dev.vozniack.soodoku.lib.extension.move
 import dev.vozniack.soodoku.lib.extension.status
 import dev.vozniack.soodoku.lib.extension.value
@@ -36,26 +39,18 @@ class GameService(
         return game toDtoWithStatus game.toSoodoku().status()
     }
 
-    fun new(newGameDto: NewGameDto): GameDto {
+    fun new(newGameRequestDto: NewGameRequestDto): GameDto {
         val user: User? = userService.currentlyLoggedUser()
 
-        val soodoku = Soodoku(Soodoku.Difficulty.valueOf(newGameDto.difficulty.name))
+        val soodoku = Soodoku(Soodoku.Difficulty.valueOf(newGameRequestDto.difficulty.name))
         val status: Soodoku.Status = soodoku.status()
 
         return gameRepository.save(
-            Game(
-                initialBoard = status.board.flatBoard(),
-                solvedBoard = status.solved.flatBoard(),
-                currentBoard = status.board.flatBoard(),
-                locks = status.locks.flatLocks(),
-                difficulty = newGameDto.difficulty,
-                hints = 3,
-                user = user
-            )
+            soodoku.toGame(user = user, difficulty = newGameRequestDto.difficulty, hints = 3)
         ) toDtoWithStatus status
     }
 
-    fun move(id: UUID, move: NewMoveDto): GameDto {
+    fun move(id: UUID, move: MoveRequestDto): GameDto {
         val game: Game = getGame(id)
 
         if (game.finishedAt != null) {
@@ -133,6 +128,30 @@ class GameService(
         return gameRepository.save(game) toDtoWithStatus status
     }
 
+    fun note(id: UUID, request: NoteRequestDto): GameDto {
+        val game: Game = getGame(id)
+
+        if (game.finishedAt != null) {
+            throw ConflictException("Game $id is already finished!")
+        }
+
+        val notes = game.parseNotes()
+        val key = request.row to request.col
+
+        if (request.values.isEmpty()) {
+            notes.remove(key)
+        } else {
+            notes[key] = request.values.toList()
+        }
+
+        game.apply {
+            this.notes = notes.serializeNotes()
+            updatedAt = LocalDateTime.now()
+        }
+
+        return gameRepository.save(game) toDtoWithStatus game.toSoodoku().status()
+    }
+
     fun hint(id: UUID): GameDto {
         val game: Game = getGame(id)
 
@@ -163,10 +182,14 @@ class GameService(
             soodoku.move(row, col, hint)
         }
 
+        val notes = game.parseNotes()
+        notes.remove(row to col)
+
         status = soodoku.status()
 
         game.apply {
             currentBoard = status.board.flatBoard()
+            this.notes = notes.serializeNotes()
             hints -= 1
             updatedAt = LocalDateTime.now()
         }.also {

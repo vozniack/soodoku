@@ -3,7 +3,9 @@ package dev.vozniack.soodoku.core.api.mapper
 import dev.vozniack.soodoku.core.api.dto.ConflictDto
 import dev.vozniack.soodoku.core.api.dto.GameDto
 import dev.vozniack.soodoku.core.api.dto.MoveDto
+import dev.vozniack.soodoku.core.api.dto.NoteDto
 import dev.vozniack.soodoku.core.domain.entity.Game
+import dev.vozniack.soodoku.core.domain.extension.parseNotes
 import dev.vozniack.soodoku.core.domain.types.ConflictType
 import dev.vozniack.soodoku.core.util.toISOTime
 import dev.vozniack.soodoku.lib.Soodoku
@@ -18,6 +20,9 @@ infix fun Game.toDtoWithStatus(status: Soodoku.Status): GameDto = GameDto(
     solved = finishedAt?.let { this.solvedBoard.mapBoard() },
     locks = locks.mapLocks().map { listOf(it.first, it.second) },
     conflicts = status.conflicts.map { it.toDto() },
+    notes = parseNotes().map { (pos, values) ->
+        NoteDto(row = pos.first, col = pos.second, values = values.toTypedArray())
+    },
 
     difficulty = difficulty,
 

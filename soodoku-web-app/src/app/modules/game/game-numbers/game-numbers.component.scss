@@ -9,6 +9,8 @@
   justify-content: center;
 
   .number {
+    position: relative;
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -25,7 +27,7 @@
     border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
     box-shadow: 0 0 12px color-mix(in srgb, $neutral 10%, transparent);
 
-    transition: background-color 0.05s ease-in-out, color 0.1s ease-in-out;
+    transition: background-color 0.05s ease-in-out, color 0.1s ease-in-out, border-color 0.1s ease-in-out;
     touch-action: manipulation;
 
     &.xs {
@@ -33,6 +35,18 @@
 
       width: calc((100% + 24px) / 6);
       aspect-ratio: 1.5 / 1;
+    }
+
+    &.note-positive {
+      color: $success;
+      background-color: color-mix(in srgb, $success-container 50%, transparent);
+      border-color: $success;
+    }
+
+    &.note-negative {
+      color: $error;
+      background-color: color-mix(in srgb, $error-container 50%, transparent);
+      border-color: $error;
     }
 
     &:not(:disabled) {
@@ -51,6 +65,13 @@
     &:disabled {
       cursor: auto;
       color: color-mix(in srgb, $neutral 25%, transparent);
+    }
+
+    soo-icon {
+      position: absolute;
+
+      top: 2px;
+      right: 6px;
     }
   }
 }

@@ -5,7 +5,8 @@ export interface Game {
   board: number[][],
   solved?: number[][],
   locks: [number, number][],
-  conflicts: Conflict[]
+  conflicts: Conflict[],
+  notes: Note[],
 
   difficulty: string,
 
@@ -20,10 +21,17 @@ export interface Game {
 }
 
 export interface Conflict {
-  type: 'ROW' | 'COL' | 'BOX';
-  value: number;
-  index: number;
-  cells: [number, number][];
+  type: 'ROW' | 'COL' | 'BOX',
+  value: number,
+  index: number,
+  cells: [number, number][]
+}
+
+export interface Note {
+  row: number,
+  col: number,
+
+  values: string[]
 }
 
 export interface Move {

@@ -18,6 +18,16 @@
               <ng-container *ngIf="isHint(gameState.game, rowIndex, colIndex)">
                 <soo-icon class="hint" [name]="'lightbulb'" [size]="breakpoint != 'xs' ? 12 : 8"></soo-icon>
               </ng-container>
+
+              <ng-container *ngIf="hasNotes(gameState.game, rowIndex, colIndex)">
+                <div class="notes positive">
+                  <span *ngFor="let note of notes(gameState.game, rowIndex, colIndex, '+')">{{ note }}</span>
+                </div>
+
+                <div class="notes negative">
+                  <span *ngFor="let note of notes(gameState.game, rowIndex, colIndex, '-')">{{ note }}</span>
+                </div>
+              </ng-container>
             </button>
           </ng-container>
 
@@ -28,7 +38,6 @@
               {{ cell !== 0 ? cell : '' }}
             </span>
           </ng-container>
-
         </ng-container>
       </ng-container>
     </div>

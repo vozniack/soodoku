@@ -5,7 +5,7 @@ import { concatMap, filter } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { DialogService } from '../../../core/dialog/dialog.service';
 import { View } from '../../../core/view/view.const';
-import { Game } from '../../../modules/game/game.interface';
+import { Game, Note } from '../../../modules/game/game.interface';
 import { GameService } from '../../../modules/game/game.service';
 import { GameEndDialogComponent } from '../../../shared/dialogs/game-end-dialog/game-end-dialog.component';
 import { ACTION_SET_VIEW } from '../app.actions';
@@ -17,9 +17,9 @@ import {
   ACTION_GAME_SET,
   ACTION_GAME_WIPE,
   ACTION_GAME_END,
-  ACTION_GAME_HINT
+  ACTION_GAME_HINT, ACTION_GAME_NOTE
 } from './game.actions';
-import { buildSetGameAction } from './game.function';
+import { noteValues, buildSetGameAction } from './game.function';
 import { SELECT_GAME_STATE } from './game.selectors';
 
 @Injectable()
@@ -37,7 +37,7 @@ export class GameEffects {
       concatMap(({difficulty}) =>
         this.gameService$.new(difficulty).pipe(
           switchMap(game => [
-            ACTION_GAME_SET({game}),
+            ACTION_GAME_SET({game: game, focus: undefined, sketch: false}),
             ACTION_SET_VIEW({view: View.GAME}),
           ])
         )
@@ -91,6 +91,29 @@ export class GameEffects {
           map((updatedGame: Game) => buildSetGameAction(updatedGame, gameState))
         )
       )
+    )
+  );
+
+  note$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ACTION_GAME_NOTE),
+      withLatestFrom(this.store$.select(SELECT_GAME_STATE)),
+      filter(([_, {game, focus}]) => !!game && !!focus),
+      switchMap(([action, gameState]) => {
+        const game = gameState.game!;
+        const focus = gameState.focus!;
+
+        const existing = game.notes.find((note: Note) => note.row === focus.row && note.col === focus.col);
+        const values = noteValues(existing?.values ?? [], action.value);
+
+        return this.gameService$
+          .note(game.id, focus.row, focus.col, values)
+          .pipe(
+            map((updatedGame: Game) =>
+              buildSetGameAction(updatedGame, gameState)
+            )
+          );
+      })
     )
   );
 
