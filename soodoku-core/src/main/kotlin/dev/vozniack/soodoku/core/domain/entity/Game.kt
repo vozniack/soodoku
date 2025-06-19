@@ -33,8 +33,8 @@ data class Game(
 
     @Column(nullable = false) var hints: Int,
 
-    @Column(nullable = false) val createdAt: LocalDateTime = LocalDateTime.now(),
-    @Column(nullable = true) var updatedAt: LocalDateTime? = null,
+    @Column(nullable = false) val createdAt: LocalDateTime,
+    @Column(nullable = true) var updatedAt: LocalDateTime,
     @Column(nullable = true) var finishedAt: LocalDateTime? = null,
 
     @ManyToOne

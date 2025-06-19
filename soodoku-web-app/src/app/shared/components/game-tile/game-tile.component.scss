@@ -1,0 +1,69 @@
+@import 'theme.scss';
+
+.game-tile-wrapper {
+  padding: 4px 12px;
+  border-radius: 8px;
+
+  color: $primary;
+  background: color-mix(in srgb, $secondary-container 50%, transparent);
+
+  cursor: pointer;
+  transition: background-color 0.1s ease-in-out;
+
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+
+  soo-icon {
+    transition: all 0.1s ease-in-out;
+  }
+
+  span {
+    font-size: 12px;
+
+    transition: background-color 0.1s ease-in-out;
+
+    &.difficulty {
+      padding: 4px 8px;
+      border-radius: 24px;
+
+      background: $secondary-container;
+
+      font-size: 8px;
+      font-weight: bold;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: $primary-container;
+
+      .difficulty {
+        background-color: $primary-container;
+      }
+
+      soo-icon {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  &:active {
+    background-color: $primary-container;
+
+    .difficulty {
+      background-color: $primary-container;
+    }
+
+    soo-icon {
+      transform: scale(1.1);
+    }
+  }
+
+  &.won soo-icon {
+    color: $success;
+  }
+
+  &.lost soo-icon {
+    color: $error;
+  }
+}

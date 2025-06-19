@@ -3,7 +3,7 @@
     <div class="game-info-wrapper row-container" [class.space-between]="breakpoint == 'xs'">
       <soo-button [text]="'New game'" [iconLeft]="'play_arrow'" (click)="newGame()"></soo-button>
 
-      <div class="game-details row-container" [class.center]="breakpoint != 'xs'">
+      <div class="game-details row-container" [class.centered]="breakpoint != 'xs'">
         <span class="separated">Missing: {{ gameState.game!!.missing }}</span>
 
         <span class="separated" *ngIf="gameState.game.finishedAt == undefined">{{ elapsedTime$ | async }}</span>

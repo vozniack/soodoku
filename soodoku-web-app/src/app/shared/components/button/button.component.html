@@ -1,5 +1,6 @@
 <button [disabled]="disabled"
         class="button {{size}} {{style}}"
+        [class.icon-only]="icon && !text"
         [class.disabled]="disabled"
         [style.width]="width"
         [style.max-width]="maxWidth">

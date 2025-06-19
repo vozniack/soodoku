@@ -25,6 +25,8 @@ import dev.vozniack.soodoku.lib.extension.status
 import dev.vozniack.soodoku.lib.extension.value
 import java.time.LocalDateTime
 import java.util.UUID
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.stereotype.Service
 
 @Service
@@ -37,6 +39,24 @@ class GameService(
         val game: Game = getGame(id)
 
         return game toDtoWithStatus game.toSoodoku().status()
+    }
+
+    fun getLastGame(): GameDto? {
+        val user: User = userService.currentlyLoggedUser()
+            ?: throw UnauthorizedException("You don't have access to this resource")
+
+        return gameRepository.findFirstByUserIdAndFinishedAtIsNullOrderByUpdatedAtDesc(user.id)?.let {
+            it toDtoWithStatus it.toSoodoku().status()
+        }
+    }
+
+    fun getGames(finished: Boolean, pageable: Pageable): Slice<GameDto> {
+        val user: User = userService.currentlyLoggedUser()
+            ?: throw UnauthorizedException("You don't have access to this resource")
+
+        return gameRepository.findByUserIdAndFinishedStatus(user.id, finished, pageable).map {
+            it.toDtoWithStatus(it.toSoodoku().status())
+        }
     }
 
     fun new(newGameRequestDto: NewGameRequestDto): GameDto {

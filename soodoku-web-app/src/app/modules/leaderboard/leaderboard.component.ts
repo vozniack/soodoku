@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { View } from '../../core/view/view.const';
-import { ViewService } from '../../core/view/view.service';
+import { ACTION_SET_VIEW } from '../../store/app/app.actions';
 
 @Component({
   selector: 'soo-leaderboard',
@@ -11,10 +12,10 @@ import { ViewService } from '../../core/view/view.service';
 })
 export class LeaderboardComponent {
 
-  constructor(private viewService: ViewService) {
+  constructor(private store: Store) {
   }
 
   setView(): void {
-    this.viewService.setView(View.HOME);
+    this.store.dispatch(ACTION_SET_VIEW({view: View.HOME}));
   }
 }

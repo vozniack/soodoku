@@ -31,7 +31,7 @@ export class GameInfoComponent implements OnInit {
   elapsedTime$ = new BehaviorSubject<string>('00:00');
   private timerSub?: Subscription;
 
-  constructor(private store: Store, private dialogService: DialogService) {
+  constructor(private store: Store, private dialogService: DialogService,) {
     this.store.select(SELECT_APP_BREAKPOINT).pipe(
       takeUntilDestroyed(),
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)

@@ -1,0 +1,10 @@
+<div class="segmented-button row-container">
+  <ng-container *ngFor="let segment of buttons; let i = index">
+    <div class="segment row-container gap-small"
+         [class.border]="i != 0"
+         [class.active]="active == segment"
+         (click)="setActive(segment)">
+      <span *ngIf="segment.text">{{ segment.text }}</span>
+    </div>
+  </ng-container>
+</div>

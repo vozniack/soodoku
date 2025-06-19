@@ -1,0 +1,11 @@
+<div class="game-tile-wrapper row-container space-between gap {{getState()}}" (click)="openGame()">
+
+  <div class="row-container gap">
+    <span>Recently played: <b>{{ game.updatedAt | date:  'dd/MM/yy, HH:mm' }}</b></span>
+    <span class="difficulty">{{ game.difficulty }}</span>
+  </div>
+
+  <div class="column-container">
+    <soo-icon [name]="getIcon()" [size]="24"></soo-icon>
+  </div>
+</div>
