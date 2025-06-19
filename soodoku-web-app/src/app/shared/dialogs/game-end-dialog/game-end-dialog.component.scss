@@ -3,14 +3,6 @@
 .game-end-dialog {
   color: $secondary;
 
-  &.victory soo-icon {
-    color: $success !important;
-  }
-
-  &.defeat soo-icon {
-    color: $error !important;
-  }
-
   .game-details {
     gap: 12px;
 

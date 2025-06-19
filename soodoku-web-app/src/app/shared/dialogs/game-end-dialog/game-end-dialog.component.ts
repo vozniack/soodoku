@@ -2,6 +2,7 @@ import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { tap } from 'rxjs/operators';
+import { DEFEAT_ICON, VICTORY_ICON } from '../../../modules/game/game.const';
 import { Game } from '../../../modules/game/game.interface';
 import { SELECT_GAME_STATE } from '../../../store/app/game/game.selectors';
 import { GameState } from '../../../store/app/game/game.state';
@@ -37,7 +38,7 @@ export class GameEndDialogComponent {
   }
 
   icon(): string {
-    return this.game.missing == 0 ? 'trophy' : 'skull';
+    return this.game.missing == 0 ? VICTORY_ICON : DEFEAT_ICON;
   }
 
   duration(): string {

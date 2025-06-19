@@ -1,5 +1,6 @@
 package dev.vozniack.soodoku.core.api.controller
 
+import dev.vozniack.soodoku.core.api.dto.GameDto
 import dev.vozniack.soodoku.core.api.dto.UserDto
 import dev.vozniack.soodoku.core.api.dto.UserLanguageUpdateDto
 import dev.vozniack.soodoku.core.api.dto.UserPasswordUpdateDto
@@ -9,22 +10,33 @@ import dev.vozniack.soodoku.core.api.mapper.toDto
 import dev.vozniack.soodoku.core.api.validator.validate
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
 import dev.vozniack.soodoku.core.internal.logging.KLogging
+import dev.vozniack.soodoku.core.service.GameService
 import dev.vozniack.soodoku.core.service.UserService
 import java.util.UUID
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/users")
-class UserController(private val userService: UserService) {
+class UserController(private val userService: UserService, private val gameService: GameService) {
 
     @GetMapping
     fun getCurrentlyLoggedUser(): UserDto = userService.currentlyLoggedUser()?.toDto()
         ?: throw UnauthorizedException("You don't have access to this resource")
+
+    @GetMapping("/lastGame")
+    fun getUserLastGame(): GameDto? = gameService.getLastGame()
+
+    @GetMapping("/games")
+    fun getUserGames(@RequestParam(defaultValue = "false") finished: Boolean, pageable: Pageable): Slice<GameDto> =
+        gameService.getGames(finished, pageable)
 
     @PutMapping("/{id}/username")
     fun updateUsername(@PathVariable id: UUID, @RequestBody request: UserUsernameUpdateDto): UserDto {

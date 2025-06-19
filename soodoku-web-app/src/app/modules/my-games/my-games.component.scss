@@ -1,0 +1,16 @@
+@import 'theme.scss';
+
+.my-games-wrapper {
+  align-items: center;
+
+  > * {
+    width: 100%;
+  }
+
+  .centered {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+}

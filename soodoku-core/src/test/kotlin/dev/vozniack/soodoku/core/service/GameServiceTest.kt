@@ -4,6 +4,7 @@ import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.api.dto.NewGameRequestDto
 import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
 import dev.vozniack.soodoku.core.domain.extension.parseNotes
+import dev.vozniack.soodoku.core.domain.extension.toGame
 import dev.vozniack.soodoku.core.domain.extension.toSoodoku
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.MoveRepository
@@ -15,6 +16,7 @@ import dev.vozniack.soodoku.core.internal.exception.NotFoundException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
 import dev.vozniack.soodoku.core.mock.mockNoteRequestDto
 import dev.vozniack.soodoku.core.mock.mockUser
+import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.extension.flatBoard
 import dev.vozniack.soodoku.lib.extension.mapBoard
 import dev.vozniack.soodoku.lib.extension.solve
@@ -31,6 +33,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 
@@ -43,6 +46,9 @@ class GameServiceTest @Autowired constructor(
 
     @BeforeEach
     fun `clear up before`() {
+        gameRepository.deleteAll()
+        userRepository.deleteAll()
+
         SecurityContextHolder.clearContext()
     }
 
@@ -83,6 +89,134 @@ class GameServiceTest @Autowired constructor(
         assertThrows<NotFoundException> {
             gameService.get(UUID.randomUUID())
         }
+    }
+
+    @Test
+    fun `get last game with anonymous user`() {
+        assertThrows<UnauthorizedException> {
+            gameService.getLastGame()
+        }
+    }
+
+    @Test
+    fun `get last game with existing user`() {
+        val user = userRepository.save(mockUser())
+        val game = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val lastGame = gameService.getLastGame()
+
+        assertNotNull(lastGame)
+        assertEquals(game.id, lastGame!!.id)
+    }
+
+    @Test
+    fun `get last game with existing user when game is finished`() {
+        val user = userRepository.save(mockUser())
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3)
+                .apply { finishedAt = LocalDateTime.now() }
+        )
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val lastGame = gameService.getLastGame()
+
+        assertNull(lastGame)
+    }
+
+    @Test
+    fun `get last game with existing user when there is no game`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val lastGame = gameService.getLastGame()
+
+        assertNull(lastGame)
+    }
+
+    @Test
+    fun `get user games with anonymous user`() {
+        assertThrows<UnauthorizedException> {
+            gameService.getGames(true, PageRequest.of(0, 16))
+        }
+    }
+
+    @Test
+    fun `get finished games with existing user`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3)
+                .apply { finishedAt = LocalDateTime.now() }
+        )
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3)
+                .apply { finishedAt = LocalDateTime.now() }
+        )
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(null, Difficulty.EASY, 3)
+        )
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(null, Difficulty.EASY, 3)
+                .apply { finishedAt = LocalDateTime.now() }
+        )
+
+        val games = gameService.getGames(true, PageRequest.of(0, 16))
+
+        assertEquals(2, games.content.size)
+    }
+
+    @Test
+    fun `get not finished games with existing user`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3)
+                .apply { finishedAt = LocalDateTime.now() }
+        )
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3)
+                .apply { finishedAt = LocalDateTime.now() }
+        )
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(null, Difficulty.EASY, 3)
+        )
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(null, Difficulty.EASY, 3)
+                .apply { finishedAt = LocalDateTime.now() }
+        )
+
+        val games = gameService.getGames(false, PageRequest.of(0, 16))
+
+        assertEquals(1, games.content.size)
     }
 
     @Test

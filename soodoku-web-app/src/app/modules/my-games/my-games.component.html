@@ -1,1 +1,38 @@
-<h1 (click)="setView()">My games</h1>
+<div class="my-games-wrapper column-container center gap-big" @fadeInAnimation>
+  <ng-container *ngIf="breakpoint != 'xs'">
+    <div class="row-container center">
+      <soo-logo [width]="'256px'"></soo-logo>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="breakpoint == 'xs'">
+    <div class="row-container space-between">
+      <soo-logo [width]="'104px'"></soo-logo>
+      <soo-toolbar></soo-toolbar>
+    </div>
+  </ng-container>
+
+  <div class="row-container space-between gap">
+    <div class="row-container gap-small">
+      <soo-button [icon]="'arrow_back'" [style]="'flat'" (click)="home()"></soo-button>
+      <h2>My games</h2>
+    </div>
+
+    <div [class.centered]="breakpoint != 'xs'">
+      <soo-button-group [buttons]="gameTypes" [active]="gameType" (buttonChange)="onGameTypeChange($event)">
+      </soo-button-group>
+    </div>
+
+    <div *ngIf="breakpoint != 'xs'">
+      <soo-toolbar></soo-toolbar>
+    </div>
+  </div>
+
+  <div class="my-games column-container gap" infiniteScroll (scrollReached)="loadGames()">
+    <soo-game-tile *ngFor="let game of games" [game]="game" @fadeInAnimation></soo-game-tile>
+  </div>
+
+  <ng-container *ngIf="games.length < 1 && isLast">
+    <h3 style="text-align: center" @fadeInAnimation>No games yet</h3>
+  </ng-container>
+</div>

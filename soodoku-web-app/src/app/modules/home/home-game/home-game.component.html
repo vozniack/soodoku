@@ -1,9 +1,9 @@
-<ng-container *ngIf="game$ | async">
+<ng-container *ngIf="game$ | async as game">
   <div class="home-game column-container center gap" @fadeInAnimation>
     <soo-divider></soo-divider>
 
     <span>Hey, you have ongoing game!</span>
 
-    <soo-button [text]="'Take me to the game'" [width]="'256px'" (click)="openGame()"></soo-button>
+    <soo-game-tile [game]="game"></soo-game-tile>
   </div>
 </ng-container>

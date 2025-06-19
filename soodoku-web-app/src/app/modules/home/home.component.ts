@@ -10,9 +10,9 @@ import { User } from '../../core/user/user.interface';
 import { View } from '../../core/view/view.const';
 import { DividerComponent } from '../../shared/components/divider/divider.component';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
-import { ViewService } from '../../core/view/view.service';
 import { fadeInAnimation } from '../../shared/animations/fade-in-animation';
 import { DifficultyDialogComponent } from '../../shared/dialogs/difficulty-dialog/difficulty-dialog.component';
+import { ACTION_SET_VIEW } from '../../store/app/app.actions';
 import { SELECT_APP_BREAKPOINT } from '../../store/app/app.selectors';
 import { SELECT_USER_STATE } from '../../store/app/user/user.selector';
 import { UserState } from '../../store/app/user/user.state';
@@ -33,7 +33,7 @@ export class HomeComponent {
 
   user?: User;
 
-  constructor(private viewService: ViewService, private store: Store, private dialogService: DialogService) {
+  constructor(private store: Store, private dialogService: DialogService) {
     this.store.select(SELECT_APP_BREAKPOINT).pipe(
       takeUntilDestroyed(),
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)
@@ -50,13 +50,13 @@ export class HomeComponent {
 
   myGames(): void {
     if (this.user) {
-      this.viewService.setView(View.MY_GAMES);
+      this.store.dispatch(ACTION_SET_VIEW({view: View.MY_GAMES}));
     }
   }
 
   leaderboard(): void {
     if (this.user) {
-      this.viewService.setView(View.LEADERBOARD);
+      this.store.dispatch(ACTION_SET_VIEW({view: View.LEADERBOARD}));
     }
   }
 }
