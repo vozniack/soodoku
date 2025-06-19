@@ -5,7 +5,7 @@ import dev.vozniack.soodoku.core.api.dto.GameDto
 import dev.vozniack.soodoku.core.api.dto.MoveDto
 import dev.vozniack.soodoku.core.api.dto.NoteDto
 import dev.vozniack.soodoku.core.domain.entity.Game
-import dev.vozniack.soodoku.core.domain.entity.extension.parseNotes
+import dev.vozniack.soodoku.core.domain.extension.parseNotes
 import dev.vozniack.soodoku.core.domain.types.ConflictType
 import dev.vozniack.soodoku.core.util.toISOTime
 import dev.vozniack.soodoku.lib.Soodoku

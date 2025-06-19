@@ -3,6 +3,7 @@ package dev.vozniack.soodoku.core.service
 import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.api.dto.NewGameRequestDto
 import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
+import dev.vozniack.soodoku.core.domain.extension.parseNotes
 import dev.vozniack.soodoku.core.domain.extension.toSoodoku
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.MoveRepository
@@ -12,6 +13,7 @@ import dev.vozniack.soodoku.core.domain.types.MoveType
 import dev.vozniack.soodoku.core.internal.exception.ConflictException
 import dev.vozniack.soodoku.core.internal.exception.NotFoundException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
+import dev.vozniack.soodoku.core.mock.mockNoteRequestDto
 import dev.vozniack.soodoku.core.mock.mockUser
 import dev.vozniack.soodoku.lib.extension.flatBoard
 import dev.vozniack.soodoku.lib.extension.mapBoard
@@ -21,6 +23,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -437,6 +440,153 @@ class GameServiceTest @Autowired constructor(
     }
 
     @Test
+    fun `make a note with anonymous user`() {
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        val firstNoteRow = 1
+        val firstNoteCol = 3
+        val firstNoteValues = listOf("+1", "-2", "+8")
+
+        val secondNoteRow = 4
+        val secondNoteCol = 7
+        val secondNoteValues = listOf("+3", "-7", "+1")
+
+        var updatedGameDto = gameService.note(
+            gameDto.id, mockNoteRequestDto(firstNoteRow, firstNoteCol, firstNoteValues)
+        )
+
+        assertEquals(gameDto.id, updatedGameDto.id)
+
+        updatedGameDto = gameService.note(
+            gameDto.id, mockNoteRequestDto(secondNoteRow, secondNoteCol, secondNoteValues)
+        )
+
+        assertEquals(gameDto.id, updatedGameDto.id)
+
+        var savedGame = gameRepository.findById(gameDto.id).orElse(null)
+        assertNotNull(savedGame)
+
+        var notes = savedGame.parseNotes()
+
+        assertEquals(2, notes.size)
+
+        assertTrue(notes.containsKey(firstNoteRow to firstNoteCol))
+        assertEquals(firstNoteValues, notes[firstNoteRow to firstNoteCol])
+
+        assertTrue(notes.containsKey(secondNoteRow to secondNoteCol))
+        assertEquals(secondNoteValues, notes[secondNoteRow to secondNoteCol])
+
+        updatedGameDto = gameService.note(
+            gameDto.id, mockNoteRequestDto(secondNoteRow, secondNoteCol, listOf())
+        )
+
+        assertEquals(gameDto.id, updatedGameDto.id)
+
+        savedGame = gameRepository.findById(gameDto.id).orElse(null)
+        assertNotNull(savedGame)
+
+        notes = savedGame.parseNotes()
+
+        assertEquals(1, notes.size)
+
+        assertTrue(notes.containsKey(firstNoteRow to firstNoteCol))
+        assertEquals(firstNoteValues, notes[firstNoteRow to firstNoteCol])
+    }
+
+    @Test
+    fun `make a note with existing user`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        val firstNoteRow = 1
+        val firstNoteCol = 3
+        val firstNoteValues = listOf("+1", "-2", "+8")
+
+        val secondNoteRow = 4
+        val secondNoteCol = 7
+        val secondNoteValues = listOf("+3", "-7", "+1")
+
+        var updatedGameDto = gameService.note(
+            gameDto.id, mockNoteRequestDto(firstNoteRow, firstNoteCol, firstNoteValues)
+        )
+
+        assertEquals(gameDto.id, updatedGameDto.id)
+
+        updatedGameDto = gameService.note(
+            gameDto.id, mockNoteRequestDto(secondNoteRow, secondNoteCol, secondNoteValues)
+        )
+
+        assertEquals(gameDto.id, updatedGameDto.id)
+
+        var savedGame = gameRepository.findById(gameDto.id).orElse(null)
+        assertNotNull(savedGame)
+
+        var notes = savedGame.parseNotes()
+
+        assertEquals(2, notes.size)
+
+        assertTrue(notes.containsKey(firstNoteRow to firstNoteCol))
+        assertEquals(firstNoteValues, notes[firstNoteRow to firstNoteCol])
+
+        assertTrue(notes.containsKey(secondNoteRow to secondNoteCol))
+        assertEquals(secondNoteValues, notes[secondNoteRow to secondNoteCol])
+
+
+        updatedGameDto = gameService.note(
+            gameDto.id, mockNoteRequestDto(secondNoteRow, secondNoteCol, listOf())
+        )
+
+        assertEquals(gameDto.id, updatedGameDto.id)
+
+        savedGame = gameRepository.findById(gameDto.id).orElse(null)
+        assertNotNull(savedGame)
+
+        notes = savedGame.parseNotes()
+
+        assertEquals(1, notes.size)
+
+        assertTrue(notes.containsKey(firstNoteRow to firstNoteCol))
+        assertEquals(firstNoteValues, notes[firstNoteRow to firstNoteCol])
+    }
+
+    @Test
+    fun `make a note with user different than owner`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            "jane.doe@soodoku.com", null, emptyList()
+        )
+
+        assertThrows<UnauthorizedException> {
+            gameService.note(gameDto.id, mockNoteRequestDto(1, 1, listOf("+1", "-1")))
+        }
+    }
+
+    @Test
+    fun `make a note when game is finished`() {
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        gameRepository.findById(gameDto.id).ifPresent {
+            gameRepository.save(it.apply { finishedAt = LocalDateTime.now() })
+        }
+
+        assertThrows<ConflictException> {
+            gameService.note(gameDto.id, mockNoteRequestDto(1, 1, listOf("+1", "-1")))
+        }
+    }
+
+    @Test
     fun `use hint with anonymous user`() {
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -571,6 +721,27 @@ class GameServiceTest @Autowired constructor(
         assertThrows<ConflictException> {
             gameService.hint(gameDto.id)
         }
+    }
+
+    @Test
+    fun `use hint and clean up the notes`() {
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.DEV_FILLED))
+
+        val (row, col) = gameDto.board
+            .withIndex()
+            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
+            .first { it.third == 0 }
+            .let { it.first to it.second }
+
+        gameService.note(gameDto.id, mockNoteRequestDto(row, col, listOf("+1", "-2", "+8")))
+
+        val updatedGameDto = gameService.hint(gameDto.id)
+        assertEquals(gameDto.id, updatedGameDto.id)
+
+        val savedGame = gameRepository.findById(gameDto.id).orElse(null)
+
+        assertNotNull(savedGame)
+        assertFalse(savedGame.parseNotes().contains(row to col))
     }
 
     @Test

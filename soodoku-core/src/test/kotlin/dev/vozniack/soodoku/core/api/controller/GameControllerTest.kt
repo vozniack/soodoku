@@ -9,6 +9,7 @@ import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.mock.mockNoteRequestDto
 import dev.vozniack.soodoku.core.mock.mockUser
 import dev.vozniack.soodoku.core.service.GameService
 import kotlin.test.assertEquals
@@ -293,6 +294,64 @@ class GameControllerTest @Autowired constructor(
         mockMvc.perform(
             put("/api/games/${gameDto.id}/revert")
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `make a note with anonymous user`() {
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        val response: GameDto = jacksonObjectMapper().readValue(
+            mockMvc.perform(
+                put("/api/games/${gameDto.id}/note")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jacksonObjectMapper().writeValueAsString(mockNoteRequestDto()))
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertEquals(gameDto.id, response.id)
+    }
+
+    @Test
+    fun `make a note with existing user`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        val response: GameDto = jacksonObjectMapper().readValue(
+            mockMvc.perform(
+                put("/api/games/${gameDto.id}/note")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jacksonObjectMapper().writeValueAsString(mockNoteRequestDto()))
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertEquals(gameDto.id, response.id)
+    }
+
+    @Test
+    fun `make a note with user different than owner`() {
+        val user = userRepository.save(mockUser())
+        userRepository.save(mockUser("jane.doe@soodoku.com"))
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            "jane.doe@soodoku.com", null, emptyList()
+        )
+
+        mockMvc.perform(
+            put("/api/games/${gameDto.id}/note")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jacksonObjectMapper().writeValueAsString(mockNoteRequestDto()))
         ).andExpect(status().isUnauthorized)
     }
 

@@ -8,8 +8,9 @@ import dev.vozniack.soodoku.core.api.mapper.toDtoWithStatus
 import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.Move
 import dev.vozniack.soodoku.core.domain.entity.User
-import dev.vozniack.soodoku.core.domain.entity.extension.parseNotes
-import dev.vozniack.soodoku.core.domain.entity.extension.serializeNotes
+import dev.vozniack.soodoku.core.domain.extension.parseNotes
+import dev.vozniack.soodoku.core.domain.extension.serializeNotes
+import dev.vozniack.soodoku.core.domain.extension.toGame
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.extension.toSoodoku
 import dev.vozniack.soodoku.core.domain.types.MoveType
@@ -19,7 +20,6 @@ import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
 import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.exception.SoodokuMappingException
 import dev.vozniack.soodoku.lib.extension.flatBoard
-import dev.vozniack.soodoku.lib.extension.flatLocks
 import dev.vozniack.soodoku.lib.extension.move
 import dev.vozniack.soodoku.lib.extension.status
 import dev.vozniack.soodoku.lib.extension.value
@@ -46,15 +46,7 @@ class GameService(
         val status: Soodoku.Status = soodoku.status()
 
         return gameRepository.save(
-            Game(
-                initialBoard = status.board.flatBoard(),
-                solvedBoard = status.solved.flatBoard(),
-                currentBoard = status.board.flatBoard(),
-                locks = status.locks.flatLocks(),
-                difficulty = newGameRequestDto.difficulty,
-                hints = 3,
-                user = user
-            )
+            soodoku.toGame(user = user, difficulty = newGameRequestDto.difficulty, hints = 3)
         ) toDtoWithStatus status
     }
 
@@ -190,10 +182,14 @@ class GameService(
             soodoku.move(row, col, hint)
         }
 
+        val notes = game.parseNotes()
+        notes.remove(row to col)
+
         status = soodoku.status()
 
         game.apply {
             currentBoard = status.board.flatBoard()
+            this.notes = notes.serializeNotes()
             hints -= 1
             updatedAt = LocalDateTime.now()
         }.also {
