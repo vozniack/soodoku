@@ -20,6 +20,7 @@ CREATE TABLE games
     solved_board  VARCHAR(128) NOT NULL,
     current_board VARCHAR(128) NOT NULL,
     locks         VARCHAR(512) NOT NULL,
+    notes         VARCHAR(2048),
 
     difficulty    VARCHAR(16)  NOT NULL,
 

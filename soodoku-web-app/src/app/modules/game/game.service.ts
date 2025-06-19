@@ -30,6 +30,10 @@ export class GameService {
     return this.httpClient.put<Game>(`${this.baseUrl}/${id}/revert`, {});
   }
 
+  note(id: string, row: number, col: number, values: string[]): Observable<Game> {
+    return this.httpClient.put<Game>(`${this.baseUrl}/${id}/note`, {row, col, values});
+  }
+
   hint(id: string): Observable<Game> {
     return this.httpClient.put<Game>(`${this.baseUrl}/${id}/hint`, {});
   }

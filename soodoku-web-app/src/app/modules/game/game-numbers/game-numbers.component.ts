@@ -6,8 +6,10 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
 import { SELECT_APP_BREAKPOINT } from '../../../store/app/app.selectors';
-import { ACTION_GAME_MOVE } from '../../../store/app/game/game.actions';
+import { ACTION_GAME_MOVE, ACTION_GAME_NOTE } from '../../../store/app/game/game.actions';
 import { GameState } from '../../../store/app/game/game.state';
+import { Cell } from '../game-board/game-board.interface';
+import { Note } from '../game.interface';
 
 @Component({
   selector: 'soo-game-numbers',
@@ -33,5 +35,18 @@ export class GameNumbersComponent {
 
   move(value: number): void {
     this.store.dispatch(ACTION_GAME_MOVE({value}));
+  }
+
+  note(value: number): void {
+    this.store.dispatch(ACTION_GAME_NOTE({value}));
+  }
+
+  hasNotes(value: number, sketch: boolean, sign: string, notes: Note[], focus?: Cell): boolean {
+    if (!focus || !sketch) {
+      return false;
+    }
+
+    const note = notes.find(n => n.row === focus.row && n.col === focus.col);
+    return note?.values.includes(sign + value) ?? false;
   }
 }

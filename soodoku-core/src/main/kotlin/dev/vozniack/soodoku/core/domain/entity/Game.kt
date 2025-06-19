@@ -26,6 +26,7 @@ data class Game(
     @Column(nullable = false, length = 128) var solvedBoard: String,
     @Column(nullable = false, length = 128) var currentBoard: String,
     @Column(nullable = false, length = 512) var locks: String,
+    @Column(nullable = true, length = 2048) var notes: String? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false) var difficulty: Difficulty,

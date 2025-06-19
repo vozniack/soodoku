@@ -12,3 +12,14 @@ export function buildSetGameAction(updatedGame: Game, gameState: GameState) {
     } : undefined
   });
 }
+
+export function noteValues(values: string[], value: number): string[] {
+  const key = (p: string) => `${p}${value.toString()}`;
+  const filtered = values.filter(v => v !== key('+') && v !== key('-'));
+
+  return values.includes(key('+'))
+    ? [...filtered, key('-')]
+    : values.includes(key('-'))
+      ? filtered
+      : [...filtered, key('+')];
+}

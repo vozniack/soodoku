@@ -37,12 +37,49 @@
         top: -5px;
         right: 1px;
       }
+
+      .notes {
+        gap: 2px;
+        font-size: 6px;
+        left: 2px;
+
+        &.positive {
+          top: 2px;
+        }
+
+        &.negative {
+          bottom: 2px;
+        }
+      }
     }
 
     soo-icon {
       position: absolute;
       top: -2px;
       right: 2px;
+    }
+
+    .notes {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 4px;
+
+      position: absolute;
+      left: 8px;
+
+      font-size: 12px;
+      opacity: 0.5;
+
+      &.positive {
+        color: $success;
+        top: 4px;
+      }
+
+      &.negative {
+        color: $error;
+        bottom: 4px;
+      }
     }
 
     // Specific cells formatting

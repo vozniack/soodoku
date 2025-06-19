@@ -1,8 +1,9 @@
 package dev.vozniack.soodoku.core.api.controller
 
 import dev.vozniack.soodoku.core.api.dto.GameDto
-import dev.vozniack.soodoku.core.api.dto.NewGameDto
-import dev.vozniack.soodoku.core.api.dto.NewMoveDto
+import dev.vozniack.soodoku.core.api.dto.NewGameRequestDto
+import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
+import dev.vozniack.soodoku.core.api.dto.NoteRequestDto
 import dev.vozniack.soodoku.core.service.GameService
 import java.util.UUID
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -22,13 +23,16 @@ class GameController(private val gameService: GameService) {
     fun get(@PathVariable id: UUID): GameDto = gameService.get(id)
 
     @PostMapping
-    fun new(@RequestBody newGameDto: NewGameDto): GameDto = gameService.new(newGameDto)
+    fun new(@RequestBody newGameRequestDto: NewGameRequestDto): GameDto = gameService.new(newGameRequestDto)
 
     @PutMapping("/{id}/move")
-    fun move(@PathVariable id: UUID, @RequestBody move: NewMoveDto): GameDto = gameService.move(id, move)
+    fun move(@PathVariable id: UUID, @RequestBody move: MoveRequestDto): GameDto = gameService.move(id, move)
 
     @PutMapping("/{id}/revert")
     fun revert(@PathVariable id: UUID): GameDto = gameService.revert(id)
+
+    @PutMapping("/{id}/note")
+    fun note(@PathVariable id: UUID, @RequestBody request: NoteRequestDto): GameDto = gameService.note(id, request)
 
     @PutMapping("/{id}/hint")
     fun hint(@PathVariable id: UUID): GameDto = gameService.hint(id)

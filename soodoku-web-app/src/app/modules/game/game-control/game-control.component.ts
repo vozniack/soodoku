@@ -13,7 +13,8 @@ import {
   ACTION_GAME_SURRENDER,
   ACTION_GAME_REVERT,
   ACTION_GAME_WIPE,
-  ACTION_GAME_HINT
+  ACTION_GAME_HINT,
+  ACTION_GAME_SKETCH
 } from '../../../store/app/game/game.actions';
 import { GameState } from '../../../store/app/game/game.state';
 import { Game, Move } from '../game.interface';
@@ -44,6 +45,10 @@ export class GameControlComponent {
 
   wipe(): void {
     this.store.dispatch(ACTION_GAME_WIPE());
+  }
+
+  sketch(): void {
+    this.store.dispatch(ACTION_GAME_SKETCH());
   }
 
   hint(): void {

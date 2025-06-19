@@ -2,10 +2,12 @@
   <ng-container *ngIf="gameState.game !== undefined && gameState.game.finishedAt == undefined">
     <div class="game-numbers-wrapper {{ breakpoint }}">
       <ng-container *ngFor="let number of numbers; let i = index">
-        <button class="number {{breakpoint}}" [class.second-row]="breakpoint === 'xs' && i >= 5"
-                [disabled]="gameState.focus === undefined || gameState.focus.value === number"
-                (click)="move(number)">
-          {{ number }}
+        <button class="number {{breakpoint}}"
+                [class.note-positive]="hasNotes(number, gameState.sketch, '+', gameState.game.notes, gameState.focus)"
+                [class.note-negative]="hasNotes(number, gameState.sketch, '-', gameState.game.notes, gameState.focus)"
+                [disabled]="(gameState.focus === undefined || gameState.focus.value === number) && !gameState.sketch"
+                (click)="gameState.sketch ? note(number) : move(number)">
+          <span>{{ number }}</span>
         </button>
       </ng-container>
     </div>

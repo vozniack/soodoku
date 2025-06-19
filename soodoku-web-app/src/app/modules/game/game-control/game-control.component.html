@@ -11,7 +11,7 @@
         <soo-icon [name]="'ink_eraser'" [size]="32"></soo-icon>
       </button>
 
-      <button>
+      <button (click)="sketch()" [class.active]="gameState.sketch">
         <soo-icon [name]="'draw'" [size]="32"></soo-icon>
       </button>
 
