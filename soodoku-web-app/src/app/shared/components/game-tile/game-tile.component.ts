@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { View } from '../../../core/view/view.const';
+import { DEFEAT_ICON, VICTORY_ICON } from '../../../modules/game/game.const';
 import { Game } from '../../../modules/game/game.interface';
 import { ACTION_SET_VIEW } from '../../../store/app/app.actions';
 import { ACTION_GAME_SET } from '../../../store/app/game/game.actions';
@@ -37,10 +38,10 @@ export class GameTileComponent {
   getIcon(): string {
     switch (this.getState()) {
       case 'won':
-        return 'trophy';
+        return VICTORY_ICON;
 
       case 'lost':
-        return 'skull';
+        return DEFEAT_ICON;
 
       default:
         return 'play_arrow';

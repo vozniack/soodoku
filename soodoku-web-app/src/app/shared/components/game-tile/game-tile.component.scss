@@ -58,12 +58,4 @@
       transform: scale(1.1);
     }
   }
-
-  &.won soo-icon {
-    color: $success;
-  }
-
-  &.lost soo-icon {
-    color: $error;
-  }
 }
