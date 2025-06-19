@@ -26,6 +26,10 @@ export class GameTileComponent {
     this.store.dispatch(ACTION_SET_VIEW({view: View.GAME}));
   }
 
+  getTime(): string {
+    return this.game.updatedAt ?? this.game.createdAt;
+  }
+
   getState(): string {
     return this.game.finishedAt == null ? 'ongoing' : this.game.missing == 0 ? 'won' : 'lost';
   }

@@ -1,7 +1,7 @@
 <div class="game-tile-wrapper row-container space-between gap {{getState()}}" (click)="openGame()">
 
   <div class="row-container gap">
-    <span>Recently played: <b>{{ game.updatedAt | date:  'dd/MM/yy, HH:mm' }}</b></span>
+    <span>Recently played: <b>{{ getTime() | date:  'dd/MM/yy, HH:mm' }}</b></span>
     <span class="difficulty">{{ game.difficulty }}</span>
   </div>
 
