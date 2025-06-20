@@ -33,6 +33,8 @@
     &.xs {
       font-size: 16px;
 
+      border: 0.5px solid color-mix(in srgb, $secondary 10%, transparent);
+
       soo-icon {
         top: -5px;
         right: 1px;
@@ -40,7 +42,7 @@
 
       .notes {
         gap: 2px;
-        font-size: 6px;
+        font-size: 10px;
         left: 2px;
 
         &.positive {
@@ -69,7 +71,6 @@
       left: 8px;
 
       font-size: 12px;
-      opacity: 0.5;
 
       &.positive {
         color: $success;
@@ -85,12 +86,20 @@
     // Specific cells formatting
 
     &:nth-child(9n + 3), &:nth-child(9n + 6) {
-      border-right: 1px solid color-mix(in srgb, $primary 75%, transparent);
+      border-right: 1px solid color-mix(in srgb, $primary 50%, transparent);
+
+      &.xs {
+        border-right: 0.5px solid color-mix(in srgb, $primary 50%, transparent);
+      }
     }
 
     &:nth-child(n + 19):nth-child(-n + 27),
     &:nth-child(n + 46):nth-child(-n + 54) {
-      border-bottom: 1px solid color-mix(in srgb, $primary 75%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, $primary 50%, transparent);
+
+      &.xs {
+        border-bottom: 0.5px solid color-mix(in srgb, $primary 50%, transparent);
+      }
     }
 
     &:first-child {

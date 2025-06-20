@@ -34,6 +34,10 @@ export class GameService {
     return this.httpClient.put<Game>(`${this.baseUrl}/${id}/note`, {row, col, values});
   }
 
+  wipeNotes(id: string): Observable<Game> {
+    return this.httpClient.delete<Game>(`${this.baseUrl}/${id}/note`);
+  }
+
   hint(id: string): Observable<Game> {
     return this.httpClient.put<Game>(`${this.baseUrl}/${id}/hint`, {});
   }

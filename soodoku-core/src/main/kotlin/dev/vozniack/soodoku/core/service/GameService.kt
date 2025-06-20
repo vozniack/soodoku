@@ -73,10 +73,6 @@ class GameService(
     fun move(id: UUID, move: MoveRequestDto): GameDto {
         val game: Game = getGame(id)
 
-        if (game.finishedAt != null) {
-            throw ConflictException("Game $id is already finished!")
-        }
-
         val soodoku = game.toSoodoku()
 
         val valueBefore: Int = try {
@@ -107,10 +103,6 @@ class GameService(
 
     fun revert(id: UUID): GameDto {
         val game: Game = getGame(id)
-
-        if (game.finishedAt != null) {
-            throw ConflictException("Game $id is already finished!")
-        }
 
         if (game.moves.isEmpty()) {
             throw ConflictException("Nothing to revert")
@@ -151,10 +143,6 @@ class GameService(
     fun note(id: UUID, request: NoteRequestDto): GameDto {
         val game: Game = getGame(id)
 
-        if (game.finishedAt != null) {
-            throw ConflictException("Game $id is already finished!")
-        }
-
         val notes = game.parseNotes()
         val key = request.row to request.col
 
@@ -172,12 +160,19 @@ class GameService(
         return gameRepository.save(game) toDtoWithStatus game.toSoodoku().status()
     }
 
-    fun hint(id: UUID): GameDto {
+    fun deleteNotes(id: UUID): GameDto {
         val game: Game = getGame(id)
 
-        if (game.finishedAt != null) {
-            throw ConflictException("Game $id is already finished!")
+        game.apply {
+            this.notes = null
+            updatedAt = LocalDateTime.now()
         }
+
+        return gameRepository.save(game) toDtoWithStatus game.toSoodoku().status()
+    }
+
+    fun hint(id: UUID): GameDto {
+        val game: Game = getGame(id)
 
         if (game.hints < 1) {
             throw ConflictException("You don't have more hints for game $id!")
@@ -237,10 +232,6 @@ class GameService(
     fun end(id: UUID): GameDto {
         val game: Game = getGame(id)
 
-        if (game.finishedAt != null) {
-            throw ConflictException("Game $id is already finished!")
-        }
-
         game.apply {
             updatedAt = LocalDateTime.now()
             finishedAt = LocalDateTime.now()
@@ -250,14 +241,18 @@ class GameService(
     }
 
     fun delete(id: UUID) {
-        gameRepository.delete(getGame(id))
+        gameRepository.delete(getGame(id, true))
     }
 
-    private fun getGame(id: UUID): Game = gameRepository.findById(id).takeIf { it.isPresent }?.get()?.let { game ->
+    private fun getGame(id: UUID, allowFinished: Boolean = false): Game = gameRepository.findById(id).takeIf { it.isPresent }?.get()?.let { game ->
         game.takeIf { it.user != null }?.let {
             if (it.user != userService.currentlyLoggedUser()) {
                 throw UnauthorizedException("You don't have access to this game")
             }
+        }
+
+        if (!allowFinished && game.finishedAt != null) {
+            throw ConflictException("Game $id is already finished!")
         }
 
         game
