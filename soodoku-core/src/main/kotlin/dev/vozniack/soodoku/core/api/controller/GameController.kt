@@ -34,6 +34,9 @@ class GameController(private val gameService: GameService) {
     @PutMapping("/{id}/note")
     fun note(@PathVariable id: UUID, @RequestBody request: NoteRequestDto): GameDto = gameService.note(id, request)
 
+    @DeleteMapping("/{id}/note")
+    fun wipeNotes(@PathVariable id: UUID) = gameService.deleteNotes(id)
+
     @PutMapping("/{id}/hint")
     fun hint(@PathVariable id: UUID): GameDto = gameService.hint(id)
 

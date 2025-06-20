@@ -6,6 +6,7 @@ import { filter, from, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
 import { DialogService } from '../../../core/dialog/dialog.service';
+import { fadeInAnimation } from '../../../shared/animations/fade-in-animation';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { ConfirmationDialogComponent } from '../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
 import { SELECT_APP_BREAKPOINT } from '../../../store/app/app.selectors';
@@ -14,9 +15,12 @@ import {
   ACTION_GAME_REVERT,
   ACTION_GAME_WIPE,
   ACTION_GAME_HINT,
-  ACTION_GAME_SKETCH
+  ACTION_GAME_SKETCH,
+  ACTION_GAME_NOTE,
+  ACTION_GAME_NOTES_WIPE
 } from '../../../store/app/game/game.actions';
 import { GameState } from '../../../store/app/game/game.state';
+import { Cell } from '../game-board/game-board.interface';
 import { Game, Move } from '../game.interface';
 
 @Component({
@@ -24,7 +28,8 @@ import { Game, Move } from '../game.interface';
   standalone: true,
   imports: [IconComponent, AsyncPipe, NgIf],
   templateUrl: './game-control.component.html',
-  styleUrl: './game-control.component.scss'
+  styleUrl: './game-control.component.scss',
+  animations: [fadeInAnimation]
 })
 export class GameControlComponent {
 
@@ -51,6 +56,14 @@ export class GameControlComponent {
     this.store.dispatch(ACTION_GAME_SKETCH());
   }
 
+  note(): void {
+    this.store.dispatch(ACTION_GAME_NOTE({value: undefined}));
+  }
+
+  wipeNotes(): void {
+    this.store.dispatch(ACTION_GAME_NOTES_WIPE());
+  }
+
   hint(): void {
     this.store.dispatch(ACTION_GAME_HINT());
   }
@@ -71,5 +84,9 @@ export class GameControlComponent {
 
   moves(game: Game): number {
     return game.moves.filter((move: Move) => (move.type == 'NORMAL') && !move.reverted).length;
+  }
+
+  hasNotes(game: Game, focus?: Cell): boolean {
+    return focus != undefined ? game.notes.some(note => note.row === focus.row && note.col === focus.col) : false;
   }
 }

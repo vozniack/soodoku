@@ -17,7 +17,9 @@ import {
   ACTION_GAME_SET,
   ACTION_GAME_WIPE,
   ACTION_GAME_END,
-  ACTION_GAME_HINT, ACTION_GAME_NOTE
+  ACTION_GAME_HINT,
+  ACTION_GAME_NOTE,
+  ACTION_GAME_NOTES_WIPE
 } from './game.actions';
 import { noteValues, buildSetGameAction } from './game.function';
 import { SELECT_GAME_STATE } from './game.selectors';
@@ -104,10 +106,28 @@ export class GameEffects {
         const focus = gameState.focus!;
 
         const existing = game.notes.find((note: Note) => note.row === focus.row && note.col === focus.col);
-        const values = noteValues(existing?.values ?? [], action.value);
+        const values = action.value != undefined ? noteValues(existing?.values ?? [], action.value) : [];
 
         return this.gameService$
           .note(game.id, focus.row, focus.col, values)
+          .pipe(
+            map((updatedGame: Game) =>
+              buildSetGameAction(updatedGame, gameState)
+            )
+          );
+      })
+    )
+  );
+
+  noteWipe$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ACTION_GAME_NOTES_WIPE),
+      withLatestFrom(this.store$.select(SELECT_GAME_STATE)),
+      filter(([_, gameState]) => !!gameState.game),
+      switchMap(([_, gameState]) => {
+        const game = gameState.game!;
+
+        return this.gameService$.wipeNotes(game.id)
           .pipe(
             map((updatedGame: Game) =>
               buildSetGameAction(updatedGame, gameState)

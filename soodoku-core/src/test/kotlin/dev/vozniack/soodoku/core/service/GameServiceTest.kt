@@ -721,6 +721,76 @@ class GameServiceTest @Autowired constructor(
     }
 
     @Test
+    fun `delete notes with anonymous user`() {
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        val savedGame = gameRepository.findById(gameDto.id).orElse(null)
+        assertNotNull(savedGame)
+
+        gameRepository.save(
+            savedGame.apply {
+                notes = "1,3,+1,-2,+8;1,4,+4,+7,-1"
+            }
+        )
+
+        val updatedGameDto = gameService.deleteNotes(gameDto.id)
+
+        assertTrue(updatedGameDto.notes.isEmpty())
+    }
+
+    @Test
+    fun `delete notes with existing user`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        val savedGame = gameRepository.findById(gameDto.id).orElse(null)
+        assertNotNull(savedGame)
+
+        gameRepository.save(
+            savedGame.apply {
+                notes = "1,3,+1,-2,+8;1,4,+4,+7,-1"
+            }
+        )
+
+        val updatedGameDto = gameService.deleteNotes(gameDto.id)
+
+        assertTrue(updatedGameDto.notes.isEmpty())
+    }
+
+    @Test
+    fun `delete notes with user different than owner`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        val savedGame = gameRepository.findById(gameDto.id).orElse(null)
+        assertNotNull(savedGame)
+
+        gameRepository.save(
+            savedGame.apply {
+                notes = "1,3,+1,-2,+8;1,4,+4,+7,-1"
+            }
+        )
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            "jane.doe@soodoku.com", null, emptyList()
+        )
+
+        assertThrows<UnauthorizedException> {
+            gameService.deleteNotes(gameDto.id)
+        }
+    }
+
+    @Test
     fun `use hint with anonymous user`() {
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 

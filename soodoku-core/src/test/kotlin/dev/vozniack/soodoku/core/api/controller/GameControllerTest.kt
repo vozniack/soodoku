@@ -356,6 +356,61 @@ class GameControllerTest @Autowired constructor(
     }
 
     @Test
+    fun `delete notes with anonymous user`() {
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        val response: GameDto = jacksonObjectMapper().readValue(
+            mockMvc.perform(
+                delete("/api/games/${gameDto.id}/note")
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertEquals(gameDto.id, response.id)
+    }
+
+    @Test
+    fun `delete notes with existing user`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        val response: GameDto = jacksonObjectMapper().readValue(
+            mockMvc.perform(
+                delete("/api/games/${gameDto.id}/note")
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertEquals(gameDto.id, response.id)
+    }
+
+    @Test
+    fun `delete notes with user different than owner`() {
+        val user = userRepository.save(mockUser())
+        userRepository.save(mockUser("jane.doe@soodoku.com"))
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            "jane.doe@soodoku.com", null, emptyList()
+        )
+
+        mockMvc.perform(
+            delete("/api/games/${gameDto.id}/note")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
     fun `use hint with anonymous user`() {
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 

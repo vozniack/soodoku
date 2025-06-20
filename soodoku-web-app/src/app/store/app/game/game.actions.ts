@@ -31,8 +31,12 @@ export const ACTION_GAME_WIPE = createAction(
 );
 
 export const ACTION_GAME_NOTE = createAction(
-  '[Game] Change note', props<{ value: number }>()
+  '[Game] Change note', props<{ value?: number }>()
 );
+
+export const ACTION_GAME_NOTES_WIPE = createAction(
+  '[Game] Wipe all notes'
+)
 
 export const ACTION_GAME_HINT = createAction(
   '[Game] Use hint'
