@@ -5,6 +5,7 @@ import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { IconComponent } from '../../shared/components/icon/icon.component';
+import { HelpDialogComponent } from '../../shared/dialogs/help-dialog/help-dialog.component';
 import { SettingsDialogComponent } from '../../shared/dialogs/settings-dialog/settings-dialog.component';
 import { SELECT_APP_BREAKPOINT } from '../../store/app/app.selectors';
 import { Breakpoint } from '../breakpoint/breakpoint.interface';
@@ -32,5 +33,9 @@ export class ToolbarComponent {
 
   openSettings(): void {
     from(this.dialogService.open(SettingsDialogComponent)).subscribe();
+  }
+
+  openHelp(): void {
+    from(this.dialogService.open(HelpDialogComponent)).subscribe();
   }
 }

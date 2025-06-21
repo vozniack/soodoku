@@ -13,6 +13,7 @@ import { UserState } from '../../../../store/app/user/user.state';
 import { ButtonComponent } from '../../../components/button/button.component';
 import { DividerComponent } from '../../../components/divider/divider.component';
 import { InputComponent } from '../../../components/input/input.component';
+import { passwordRegex } from '../../../const/regex.const';
 
 @Component({
   selector: 'soo-profile-details',
@@ -41,8 +42,8 @@ export class ProfileDetailsComponent {
         this.usernameForm = new FormControl(this.userState.user?.username, [Validators.required]);
 
         this.passwordForm = this.formBuilder.group({
-          password: new FormControl('', [Validators.required]),
-          repeat: new FormControl('', [Validators.required]),
+          password: new FormControl('', [Validators.required, Validators.pattern(passwordRegex)]),
+          repeat: new FormControl('', [Validators.required, Validators.pattern(passwordRegex)]),
         });
       })
     ).subscribe();

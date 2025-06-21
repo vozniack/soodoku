@@ -1,5 +1,6 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { select, Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
@@ -25,6 +26,7 @@ export class HomeGameComponent {
 
   constructor(private store: Store, private userService: UserService) {
     this.game$ = this.store.pipe(
+      takeUntilDestroyed(),
       select(SELECT_AUTH_STATE),
       map((authState: AuthState) => authState.accessToken),
       distinctUntilChanged(),

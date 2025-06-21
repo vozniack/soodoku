@@ -11,15 +11,15 @@ import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { ConfirmationDialogComponent } from '../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
 import { SELECT_APP_BREAKPOINT } from '../../../store/app/app.selectors';
 import {
-  ACTION_GAME_SURRENDER,
-  ACTION_GAME_REVERT,
-  ACTION_GAME_WIPE,
   ACTION_GAME_HINT,
-  ACTION_GAME_SKETCH,
+  ACTION_GAME_MODE,
   ACTION_GAME_NOTE,
-  ACTION_GAME_NOTES_WIPE
+  ACTION_GAME_NOTES_WIPE,
+  ACTION_GAME_REVERT,
+  ACTION_GAME_SURRENDER,
+  ACTION_GAME_WIPE
 } from '../../../store/app/game/game.actions';
-import { GameState } from '../../../store/app/game/game.state';
+import { GameMode, GameState } from '../../../store/app/game/game.state';
 import { Cell } from '../game-board/game-board.interface';
 import { Game, Move } from '../game.interface';
 
@@ -35,6 +35,7 @@ export class GameControlComponent {
 
   @Input() gameState$!: Observable<GameState>;
 
+  GameMode = GameMode;
   breakpoint!: Breakpoint;
 
   constructor(private store: Store, private dialogService: DialogService) {
@@ -52,8 +53,8 @@ export class GameControlComponent {
     this.store.dispatch(ACTION_GAME_WIPE());
   }
 
-  sketch(): void {
-    this.store.dispatch(ACTION_GAME_SKETCH());
+  sketch(mode?: GameMode): void {
+    this.store.dispatch(ACTION_GAME_MODE({mode: (!mode || mode == GameMode.SKETCH) ? GameMode.PLAY : GameMode.SKETCH}));
   }
 
   note(): void {
@@ -86,7 +87,11 @@ export class GameControlComponent {
     return game.moves.filter((move: Move) => (move.type == 'NORMAL') && !move.reverted).length;
   }
 
-  hasNotes(game: Game, focus?: Cell): boolean {
+  hasNotes(game: Game): boolean {
+    return game.notes.length > 0;
+  }
+
+  hasCellNotes(game: Game, focus?: Cell): boolean {
     return focus != undefined ? game.notes.some(note => note.row === focus.row && note.col === focus.col) : false;
   }
 }

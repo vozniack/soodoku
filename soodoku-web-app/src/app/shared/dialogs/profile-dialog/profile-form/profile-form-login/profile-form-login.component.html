@@ -1,4 +1,4 @@
-<div class="column-container gap">
+<form class="column-container gap">
   <soo-input
     [control]="getControl('email')"
     [id]="'email'"
@@ -23,16 +23,16 @@
   </soo-input>
 
   <soo-button
+    [disabled]="loginForm.invalid"
+    [text]="'Login'"
+    [maxWidth]="'448px'"
+    (click)="login()">
+  </soo-button>
+
+  <soo-button
     [text]="'Don\'t have an account yet? Sign up!'"
     [style]="'flat'"
     [size]="'small'"
     (click)="onSwitchMode()">
   </soo-button>
-
-  <soo-button
-    (click)="login()"
-    [disabled]="loginForm.invalid"
-    [text]="'Login'"
-    [maxWidth]="'448px'">
-  </soo-button>
-</div>
+</form>

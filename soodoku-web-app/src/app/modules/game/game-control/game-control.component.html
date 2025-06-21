@@ -3,38 +3,39 @@
     <div class="game-control-wrapper center"
          [class.row-container]="breakpoint != 'xl'"
          [class.column-container]="breakpoint == 'xl'">
-      <button *ngIf="!gameState.sketch"
+      <button *ngIf="gameState.mode == GameMode.PLAY"
               [disabled]="moves(gameState.game) < 1"
               (click)="revert()"
               @fadeInAnimation>
         <soo-icon [name]="'undo'" [size]="32"></soo-icon>
       </button>
 
-      <button *ngIf="!gameState.sketch"
+      <button *ngIf="gameState.mode == GameMode.PLAY"
               [disabled]="gameState.focus === undefined || gameState.focus.value == 0"
               (click)="wipe()"
               @fadeInAnimation>
         <soo-icon [name]="'ink_eraser'" [size]="32"></soo-icon>
       </button>
 
-      <button *ngIf="gameState.sketch"
-              [disabled]="gameState.focus === undefined || !hasNotes(gameState.game, gameState.focus)"
+      <button *ngIf="gameState.mode == GameMode.SKETCH"
+              [disabled]="gameState.focus === undefined || !hasCellNotes(gameState.game, gameState.focus)"
               (click)="note()"
               @fadeInAnimation>
         <soo-icon [name]="'ink_eraser'" [size]="32"></soo-icon>
       </button>
 
-      <button [class.active]="gameState.sketch"
-              (click)="sketch()">
+      <button [class.active]="gameState.mode == GameMode.SKETCH"
+              (click)="sketch(gameState.mode)">
         <soo-icon [name]="'draw'" [size]="32"></soo-icon>
       </button>
 
-      <button *ngIf="gameState.sketch"
+      <button *ngIf="gameState.mode == GameMode.SKETCH"
+              [disabled]="!hasNotes(gameState.game)"
               (click)="wipeNotes()">
         <soo-icon [name]="'cleaning_services'" [size]="32"></soo-icon>
       </button>
 
-      <button *ngIf="!gameState.sketch"
+      <button *ngIf="gameState.mode == GameMode.PLAY"
               [disabled]="gameState.game.hints < 1"
               (click)="hint()"
               @fadeInAnimation>
@@ -42,9 +43,10 @@
         <span class="badge">{{ gameState.game.hints }}</span>
       </button>
 
-      <button *ngIf="!gameState.sketch" (click)="surrender()"
+      <button *ngIf="gameState.mode == GameMode.PLAY"
+              (click)="surrender()"
               @fadeInAnimation>
-        <soo-icon [name]="'flag'" [size]="32"></soo-icon>
+        <soo-icon [name]="'exit_to_app'" [size]="32"></soo-icon>
       </button>
     </div>
   </ng-container>

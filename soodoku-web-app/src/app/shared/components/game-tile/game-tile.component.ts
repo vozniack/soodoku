@@ -6,6 +6,7 @@ import { DEFEAT_ICON, VICTORY_ICON } from '../../../modules/game/game.const';
 import { Game } from '../../../modules/game/game.interface';
 import { ACTION_SET_VIEW } from '../../../store/app/app.actions';
 import { ACTION_GAME_SET } from '../../../store/app/game/game.actions';
+import { GameMode } from '../../../store/app/game/game.state';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -23,7 +24,7 @@ export class GameTileComponent {
   }
 
   openGame(): void {
-    this.store.dispatch(ACTION_GAME_SET({game: this.game, focus: undefined, sketch: false}));
+    this.store.dispatch(ACTION_GAME_SET({game: this.game, mode: GameMode.PLAY, focus: undefined}));
     this.store.dispatch(ACTION_SET_VIEW({view: View.GAME}));
   }
 

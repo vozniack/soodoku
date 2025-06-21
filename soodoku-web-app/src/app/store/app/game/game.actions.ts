@@ -1,17 +1,18 @@
 import { createAction, props } from '@ngrx/store';
 import { Cell } from '../../../modules/game/game-board/game-board.interface';
 import { Game } from '../../../modules/game/game.interface';
+import { GameMode } from './game.state';
 
 export const ACTION_GAME_SET = createAction(
-  '[Game] Set game', props<{ game: Game, focus?: Cell, sketch?: boolean }>()
+  '[Game] Set game', props<{ game: Game, mode: GameMode, focus?: Cell }>()
+);
+
+export const ACTION_GAME_MODE = createAction(
+  '[Game] Set game mode', props<{ mode: GameMode }>()
 );
 
 export const ACTION_GAME_SET_FOCUS = createAction(
   '[Game] Set game focused cell', props<{ focus?: Cell }>()
-);
-
-export const ACTION_GAME_SKETCH = createAction(
-  '[Game] Switch sketching state'
 );
 
 export const ACTION_GAME_NEW = createAction(
@@ -36,7 +37,7 @@ export const ACTION_GAME_NOTE = createAction(
 
 export const ACTION_GAME_NOTES_WIPE = createAction(
   '[Game] Wipe all notes'
-)
+);
 
 export const ACTION_GAME_HINT = createAction(
   '[Game] Use hint'

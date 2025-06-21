@@ -7,6 +7,9 @@ export interface SignupRequest {
   email: string;
   password: string;
   username: string;
+
+  theme: string;
+  language: string;
 }
 
 export interface RefreshRequest {

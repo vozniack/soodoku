@@ -1,5 +1,6 @@
 import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, Output, Type, ViewChild, ViewContainerRef, } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { tap } from 'rxjs/operators';
 import { ButtonComponent } from '../../shared/components/button/button.component';
@@ -27,6 +28,7 @@ export class DialogComponent {
 
   constructor(private store: Store) {
     this.store.select(SELECT_APP_BREAKPOINT).pipe(
+      takeUntilDestroyed(),
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)
     ).subscribe();
   }

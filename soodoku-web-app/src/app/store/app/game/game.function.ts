@@ -1,10 +1,11 @@
 import { Game } from '../../../modules/game/game.interface';
 import { ACTION_GAME_SET } from './game.actions';
-import { GameState } from './game.state';
+import { GameMode, GameState } from './game.state';
 
 export function buildSetGameAction(updatedGame: Game, gameState: GameState) {
   return ACTION_GAME_SET({
     game: updatedGame,
+    mode: gameState.mode ?? GameMode.PLAY,
     focus: gameState.focus !== undefined ? {
       row: gameState.focus.row,
       col: gameState.focus.col,

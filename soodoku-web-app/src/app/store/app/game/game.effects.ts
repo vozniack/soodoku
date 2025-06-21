@@ -10,19 +10,20 @@ import { GameService } from '../../../modules/game/game.service';
 import { GameEndDialogComponent } from '../../../shared/dialogs/game-end-dialog/game-end-dialog.component';
 import { ACTION_SET_VIEW } from '../app.actions';
 import {
-  ACTION_GAME_SURRENDER,
-  ACTION_GAME_MOVE,
-  ACTION_GAME_NEW,
-  ACTION_GAME_REVERT,
-  ACTION_GAME_SET,
-  ACTION_GAME_WIPE,
   ACTION_GAME_END,
   ACTION_GAME_HINT,
+  ACTION_GAME_MOVE,
+  ACTION_GAME_NEW,
   ACTION_GAME_NOTE,
-  ACTION_GAME_NOTES_WIPE
+  ACTION_GAME_NOTES_WIPE,
+  ACTION_GAME_REVERT,
+  ACTION_GAME_SET,
+  ACTION_GAME_SURRENDER,
+  ACTION_GAME_WIPE
 } from './game.actions';
-import { noteValues, buildSetGameAction } from './game.function';
+import { buildSetGameAction, noteValues } from './game.function';
 import { SELECT_GAME_STATE } from './game.selectors';
+import { GameMode } from './game.state';
 
 @Injectable()
 export class GameEffects {
@@ -39,7 +40,7 @@ export class GameEffects {
       concatMap(({difficulty}) =>
         this.gameService$.new(difficulty).pipe(
           switchMap(game => [
-            ACTION_GAME_SET({game: game, focus: undefined, sketch: false}),
+            ACTION_GAME_SET({game: game, mode: GameMode.PLAY, focus: undefined,}),
             ACTION_SET_VIEW({view: View.GAME}),
           ])
         )

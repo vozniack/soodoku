@@ -18,7 +18,7 @@ export class ProfileFormComponent {
 
   mode: 'login' | 'signup' = 'login';
 
-  onSwitchMode(newMode: 'login' | 'signup') {
-    this.mode = newMode;
+  onSwitchMode(mode: 'login' | 'signup') {
+    this.mode = mode;
   }
 }
