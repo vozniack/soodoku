@@ -79,7 +79,6 @@ class GameServiceTest @Autowired constructor(
         }
     }
 
-
     @Test
     fun `get ongoing games with anonymous user`() {
         assertThrows<UnauthorizedException> {
@@ -559,7 +558,6 @@ class GameServiceTest @Autowired constructor(
 
         assertTrue(notes.containsKey(secondNoteRow to secondNoteCol))
         assertEquals(secondNoteValues, notes[secondNoteRow to secondNoteCol])
-
 
         updatedGameDto = gameService.note(
             gameDto.id, mockNoteRequestDto(secondNoteRow, secondNoteCol, listOf())

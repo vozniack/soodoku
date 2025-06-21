@@ -1,6 +1,7 @@
 package dev.vozniack.soodoku.core.service
 
 import dev.vozniack.soodoku.core.AbstractUnitTest
+import dev.vozniack.soodoku.core.api.dto.GameDto
 import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.GameHistory
 import dev.vozniack.soodoku.core.domain.extension.toGame
@@ -136,18 +137,12 @@ class GameHistoryServiceTest @Autowired constructor(
         authenticate(user.email)
 
         val gameDto = gameService.new(mockNewGameRequestDto())
-        val (row, col) = gameDto.findEmptyCell()
-
-        gameService.move(gameDto.id, mockMoveRequestDto(row, col, 5))
-        gameService.move(gameDto.id, mockMoveRequestDto(row, col, 0))
-        gameService.revert(gameDto.id)
-        gameService.move(gameDto.id, mockMoveRequestDto(row, col, 3))
-        gameService.hint(gameDto.id)
+        gameDto.simulateMoves()
 
         var game: Game = gameRepository.findById(gameDto.id).orElse(null)
         assertNotNull(game)
 
-        Thread.sleep(1024)
+        Thread.sleep(1024) // sleep to increase game duration
 
         game = gameRepository.save(game.apply {
             finishedAt = LocalDateTime.now()
@@ -184,13 +179,7 @@ class GameHistoryServiceTest @Autowired constructor(
         authenticate(user.email)
 
         val gameDto = gameService.new(mockNewGameRequestDto())
-        val (row, col) = gameDto.findEmptyCell()
-
-        gameService.move(gameDto.id, mockMoveRequestDto(row, col, 5))
-        gameService.move(gameDto.id, mockMoveRequestDto(row, col, 0))
-        gameService.revert(gameDto.id)
-        gameService.move(gameDto.id, mockMoveRequestDto(row, col, 3))
-        gameService.hint(gameDto.id)
+        gameDto.simulateMoves()
 
         val game: Game = gameRepository.findById(gameDto.id).orElse(null)
         assertNotNull(game)
@@ -205,13 +194,7 @@ class GameHistoryServiceTest @Autowired constructor(
     @Test
     fun `save history for anonymous game`() {
         val gameDto = gameService.new(mockNewGameRequestDto())
-        val (row, col) = gameDto.findEmptyCell()
-
-        gameService.move(gameDto.id, mockMoveRequestDto(row, col, 5))
-        gameService.move(gameDto.id, mockMoveRequestDto(row, col, 0))
-        gameService.revert(gameDto.id)
-        gameService.move(gameDto.id, mockMoveRequestDto(row, col, 3))
-        gameService.hint(gameDto.id)
+        gameDto.simulateMoves()
 
         var game: Game = gameRepository.findById(gameDto.id).orElse(null)
         assertNotNull(game)
@@ -223,6 +206,16 @@ class GameHistoryServiceTest @Autowired constructor(
         })
 
         gameHistoryService.save(game)
+    }
+
+    private fun GameDto.simulateMoves() {
+        val (row, col) = findEmptyCell()
+
+        gameService.move(this.id, mockMoveRequestDto(row, col, 5))
+        gameService.move(this.id, mockMoveRequestDto(row, col, 0))
+        gameService.revert(this.id)
+        gameService.move(this.id, mockMoveRequestDto(row, col, 3))
+        gameService.hint(this.id)
     }
 
     private fun LocalDateTime.truncate(): LocalDateTime = truncatedTo(ChronoUnit.SECONDS)
