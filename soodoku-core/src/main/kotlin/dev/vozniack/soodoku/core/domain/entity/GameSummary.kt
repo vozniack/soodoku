@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Entity
@@ -34,5 +35,8 @@ data class GameSummary(
     @Column(nullable = false) val totalMoves: Int,
     @Column(nullable = false) val usedHints: Int,
 
-    @Column(nullable = false) val victory: Boolean
+    @Column(nullable = false) val victory: Boolean,
+
+    @Column(nullable = false) var createdAt: LocalDateTime,
+    @Column(nullable = false) var finishedAt: LocalDateTime,
 )

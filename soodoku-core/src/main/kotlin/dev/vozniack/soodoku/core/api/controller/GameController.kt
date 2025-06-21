@@ -1,13 +1,18 @@
 package dev.vozniack.soodoku.core.api.controller
 
 import dev.vozniack.soodoku.core.api.dto.GameDto
+import dev.vozniack.soodoku.core.api.dto.GameSummaryDto
 import dev.vozniack.soodoku.core.api.dto.NewGameRequestDto
 import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
 import dev.vozniack.soodoku.core.api.dto.NoteRequestDto
+import dev.vozniack.soodoku.core.domain.types.Difficulty
 import dev.vozniack.soodoku.core.service.GameService
+import dev.vozniack.soodoku.core.service.GameSummaryService
 import java.util.UUID
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
+import org.springframework.data.domain.Sort
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -15,11 +20,12 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/games")
-class GameController(private val gameService: GameService) {
+class GameController(private val gameService: GameService, private val gameSummaryService: GameSummaryService) {
 
     @GetMapping("/{id}")
     fun get(@PathVariable id: UUID): GameDto = gameService.get(id)
@@ -29,6 +35,18 @@ class GameController(private val gameService: GameService) {
 
     @GetMapping("/last")
     fun getLast(): GameDto? = gameService.getLast()
+
+    @GetMapping("/summary")
+    fun getSummary(
+        @RequestParam(required = false) difficulty: Difficulty?,
+        @RequestParam(required = false) victory: Boolean?,
+        @RequestParam(required = false, defaultValue = "duration") sortBy: String,
+        @RequestParam(required = false, defaultValue = "ASC") direction: Sort.Direction,
+        @RequestParam(required = false, defaultValue = "0") page: Int,
+        @RequestParam(required = false, defaultValue = "24") size: Int,
+    ): Slice<GameSummaryDto> = gameSummaryService.getSummary(
+        difficulty, victory, PageRequest.of(page, size, Sort.by(direction, sortBy))
+    )
 
     @PostMapping
     fun new(@RequestBody newGameRequestDto: NewGameRequestDto): GameDto = gameService.new(newGameRequestDto)

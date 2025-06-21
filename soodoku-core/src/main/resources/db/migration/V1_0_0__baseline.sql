@@ -71,6 +71,9 @@ CREATE TABLE game_summaries
 
     victory       BOOLEAN     NOT NULL,
 
+    created_at    TIMESTAMP   NOT NULL,
+    finished_at   TIMESTAMP   NOT NULL,
+
     CONSTRAINT fk_game_summaries_game FOREIGN KEY (game_id) REFERENCES games (id),
     CONSTRAINT fk_game_summaries_user FOREIGN KEY (user_id) REFERENCES users (id)
 );

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.vozniack.soodoku.core.AbstractWebMvcTest
 import dev.vozniack.soodoku.core.api.dto.GameDto
+import dev.vozniack.soodoku.core.api.dto.GameSummaryDto
 import dev.vozniack.soodoku.core.api.dto.NewGameRequestDto
 import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
 import dev.vozniack.soodoku.core.domain.extension.toGame
@@ -12,6 +13,7 @@ import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.GameSummaryRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.mock.mockGameSummary
 import dev.vozniack.soodoku.core.mock.mockNoteRequestDto
 import dev.vozniack.soodoku.core.mock.mockUser
 import dev.vozniack.soodoku.core.service.GameService
@@ -183,6 +185,55 @@ class GameControllerTest @Autowired constructor(
     }
 
     @Test
+    fun `get summary with logged user`() {
+        val user = userRepository.save(mockUser())
+
+        val game1 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+        val game2 = gameRepository.save(Soodoku(Soodoku.Difficulty.HARD).toGame(user, Difficulty.HARD, 3))
+
+        gameSummaryRepository.saveAll(
+            listOf(
+                mockGameSummary(user, game1, difficulty = Difficulty.EASY, duration = 1000, victory = true),
+                mockGameSummary(user, game2, difficulty = Difficulty.HARD, duration = 2000, victory = false)
+            )
+        )
+
+        authenticate(user.email)
+
+        val response = mockMvc.perform(
+            get("/api/games/summary").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        val content: List<GameSummaryDto> = objectMapper.readValue(
+            objectMapper.readTree(response)["content"].toString(),
+            object : TypeReference<List<GameSummaryDto>>() {}
+        )
+
+        assertEquals(2, content.size)
+    }
+
+    @Test
+    fun `get summary with anonymous user`() {
+        val user = userRepository.save(mockUser())
+
+        val game1 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+        val game2 = gameRepository.save(Soodoku(Soodoku.Difficulty.HARD).toGame(user, Difficulty.HARD, 3))
+
+        gameSummaryRepository.saveAll(
+            listOf(
+                mockGameSummary(user, game1, difficulty = Difficulty.EASY, duration = 1000, victory = true),
+                mockGameSummary(user, game2, difficulty = Difficulty.HARD, duration = 2000, victory = false)
+            )
+        )
+
+        authenticate(user.email)
+
+        mockMvc.perform(
+            get("/api/games/summary").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk) // #todo unauthorized with better endpoint security
+    }
+
+    @Test
     fun `create new game with anonymous user`() {
         val request = NewGameRequestDto(Difficulty.EASY)
 
@@ -241,7 +292,6 @@ class GameControllerTest @Autowired constructor(
 
         assertEquals(gameDto.id, response.id)
     }
-
 
     @Test
     fun `make a move with existing user`() {
