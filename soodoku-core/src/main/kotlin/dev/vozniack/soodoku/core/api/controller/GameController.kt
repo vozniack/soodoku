@@ -9,10 +9,8 @@ import dev.vozniack.soodoku.core.domain.types.Difficulty
 import dev.vozniack.soodoku.core.service.GameService
 import dev.vozniack.soodoku.core.service.GameSummaryService
 import java.util.UUID
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
-import org.springframework.data.domain.Sort
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -40,13 +38,8 @@ class GameController(private val gameService: GameService, private val gameSumma
     fun getSummary(
         @RequestParam(required = false) difficulty: Difficulty?,
         @RequestParam(required = false) victory: Boolean?,
-        @RequestParam(required = false, defaultValue = "duration") sortBy: String,
-        @RequestParam(required = false, defaultValue = "ASC") direction: Sort.Direction,
-        @RequestParam(required = false, defaultValue = "0") page: Int,
-        @RequestParam(required = false, defaultValue = "24") size: Int,
-    ): Slice<GameSummaryDto> = gameSummaryService.getSummary(
-        difficulty, victory, PageRequest.of(page, size, Sort.by(direction, sortBy))
-    )
+        pageable: Pageable,
+    ): Slice<GameSummaryDto> = gameSummaryService.getSummary(difficulty, victory, pageable)
 
     @PostMapping
     fun new(@RequestBody newGameRequestDto: NewGameRequestDto): GameDto = gameService.new(newGameRequestDto)
