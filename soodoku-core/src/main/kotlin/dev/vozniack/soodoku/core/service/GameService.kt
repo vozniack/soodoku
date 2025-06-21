@@ -47,21 +47,12 @@ class GameService(
         return game toDtoWithStatus game.toSoodoku().status()
     }
 
-    fun get(pageable: Pageable): Slice<GameDto> {
+    fun getOngoing(pageable: Pageable): Slice<GameDto> {
         val user: User = userService.currentlyLoggedUser()
             ?: throw UnauthorizedException("You don't have access to this resource")
 
         return gameRepository.findByUserIdAndFinishedAtIsNullOrderByUpdatedAtDesc(user.id, pageable).map {
             it.toDtoWithStatus(it.toSoodoku().status())
-        }
-    }
-
-    fun getLast(): GameDto? {
-        val user: User = userService.currentlyLoggedUser()
-            ?: throw UnauthorizedException("You don't have access to this resource")
-
-        return gameRepository.findFirstByUserIdAndFinishedAtIsNullOrderByUpdatedAtDesc(user.id)?.let {
-            it toDtoWithStatus it.toSoodoku().status()
         }
     }
 

@@ -27,8 +27,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -51,8 +49,6 @@ class GameControllerTest @Autowired constructor(
         gameSummaryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()
-
-        SecurityContextHolder.clearContext()
     }
 
     @AfterEach
@@ -60,8 +56,6 @@ class GameControllerTest @Autowired constructor(
         gameSummaryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()
-
-        SecurityContextHolder.clearContext()
     }
 
     @Test
@@ -81,10 +75,7 @@ class GameControllerTest @Autowired constructor(
     @Test
     fun `get game with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -103,15 +94,11 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         mockMvc.perform(
             get("/api/games/${gameDto.id}")
@@ -120,7 +107,14 @@ class GameControllerTest @Autowired constructor(
     }
 
     @Test
-    fun `get games with logged user`() {
+    fun `get ongoing games with anonymous user`() {
+        mockMvc.perform(
+            get("/api/games/ongoing").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `get ongoing games with existing user`() {
         val user = userRepository.save(mockUser())
 
         gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
@@ -143,70 +137,12 @@ class GameControllerTest @Autowired constructor(
         authenticate(user.email)
 
         val response = mockMvc.perform(
-            get("/api/games").contentType(MediaType.APPLICATION_JSON)
+            get("/api/games/ongoing").contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk).andReturn().response.contentAsString
 
         val content: List<GameDto> = objectMapper.readValue(
             objectMapper.readTree(response)["content"].toString(),
             object : TypeReference<List<GameDto>>() {}
-        )
-
-        assertEquals(2, content.size)
-    }
-
-    @Test
-    fun `get games with not logged user`() {
-        mockMvc.perform(
-            get("/api/games").contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isUnauthorized)
-    }
-
-    @Test
-    fun `get last game with logged user`() {
-        val user = userRepository.save(mockUser())
-        val game = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
-
-        authenticate(user.email)
-
-        val response: GameDto = objectMapper.readValue(
-            mockMvc.perform(
-                get("/api/games/last").contentType(MediaType.APPLICATION_JSON)
-            ).andExpect(status().isOk).andReturn().response.contentAsString
-        )
-
-        assertEquals(game.id, response.id)
-    }
-
-    @Test
-    fun `get last game with not logged user`() {
-        mockMvc.perform(
-            get("/api/games/last").contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isUnauthorized)
-    }
-
-    @Test
-    fun `get summary with logged user`() {
-        val user = userRepository.save(mockUser())
-
-        val game1 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
-        val game2 = gameRepository.save(Soodoku(Soodoku.Difficulty.HARD).toGame(user, Difficulty.HARD, 3))
-
-        gameSummaryRepository.saveAll(
-            listOf(
-                mockGameSummary(user, game1, difficulty = Difficulty.EASY, duration = 1000, victory = true),
-                mockGameSummary(user, game2, difficulty = Difficulty.HARD, duration = 2000, victory = false)
-            )
-        )
-
-        authenticate(user.email)
-
-        val response = mockMvc.perform(
-            get("/api/games/summary").contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk).andReturn().response.contentAsString
-
-        val content: List<GameSummaryDto> = objectMapper.readValue(
-            objectMapper.readTree(response)["content"].toString(),
-            object : TypeReference<List<GameSummaryDto>>() {}
         )
 
         assertEquals(2, content.size)
@@ -234,6 +170,34 @@ class GameControllerTest @Autowired constructor(
     }
 
     @Test
+    fun `get summary with existing user`() {
+        val user = userRepository.save(mockUser())
+
+        val game1 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+        val game2 = gameRepository.save(Soodoku(Soodoku.Difficulty.HARD).toGame(user, Difficulty.HARD, 3))
+
+        gameSummaryRepository.saveAll(
+            listOf(
+                mockGameSummary(user, game1, difficulty = Difficulty.EASY, duration = 1000, victory = true),
+                mockGameSummary(user, game2, difficulty = Difficulty.HARD, duration = 2000, victory = false)
+            )
+        )
+
+        authenticate(user.email)
+
+        val response = mockMvc.perform(
+            get("/api/games/summary").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        val content: List<GameSummaryDto> = objectMapper.readValue(
+            objectMapper.readTree(response)["content"].toString(),
+            object : TypeReference<List<GameSummaryDto>>() {}
+        )
+
+        assertEquals(2, content.size)
+    }
+
+    @Test
     fun `create new game with anonymous user`() {
         val request = NewGameRequestDto(Difficulty.EASY)
 
@@ -252,10 +216,7 @@ class GameControllerTest @Autowired constructor(
     @Test
     fun `create new game with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val request = NewGameRequestDto(Difficulty.EASY)
 
@@ -296,10 +257,7 @@ class GameControllerTest @Autowired constructor(
     @Test
     fun `make a move with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -327,9 +285,7 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -341,9 +297,7 @@ class GameControllerTest @Autowired constructor(
 
         val request = MoveRequestDto(row, col, 5)
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         mockMvc.perform(
             put("/api/games/${gameDto.id}/move")
@@ -377,10 +331,7 @@ class GameControllerTest @Autowired constructor(
     @Test
     fun `revert last move with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -407,9 +358,7 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -421,9 +370,7 @@ class GameControllerTest @Autowired constructor(
 
         gameService.move(gameDto.id, MoveRequestDto(row = row, col = col, value = 5))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         mockMvc.perform(
             put("/api/games/${gameDto.id}/revert")
@@ -449,10 +396,7 @@ class GameControllerTest @Autowired constructor(
     @Test
     fun `make a note with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -472,15 +416,11 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         mockMvc.perform(
             put("/api/games/${gameDto.id}/note")
@@ -506,10 +446,7 @@ class GameControllerTest @Autowired constructor(
     @Test
     fun `delete notes with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -528,15 +465,11 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         mockMvc.perform(
             delete("/api/games/${gameDto.id}/note")
@@ -561,10 +494,7 @@ class GameControllerTest @Autowired constructor(
     @Test
     fun `use hint with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -583,15 +513,11 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         mockMvc.perform(
             put("/api/games/${gameDto.id}/hint")
@@ -616,10 +542,7 @@ class GameControllerTest @Autowired constructor(
     @Test
     fun `end game with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -640,15 +563,11 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         mockMvc.perform(
             put("/api/games/${gameDto.id}/end")
@@ -671,10 +590,7 @@ class GameControllerTest @Autowired constructor(
     @Test
     fun `delete game with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -691,15 +607,11 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         mockMvc.perform(
             delete("/api/games/${gameDto.id}")

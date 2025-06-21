@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.security.core.context.SecurityContextHolder
 
 class GameSummaryServiceTest @Autowired constructor(
     private val gameSummaryService: GameSummaryService,
@@ -40,8 +39,6 @@ class GameSummaryServiceTest @Autowired constructor(
         gameSummaryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()
-
-        SecurityContextHolder.clearContext()
     }
 
     @AfterEach
@@ -49,8 +46,6 @@ class GameSummaryServiceTest @Autowired constructor(
         gameSummaryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()
-
-        SecurityContextHolder.clearContext()
     }
 
     @Test

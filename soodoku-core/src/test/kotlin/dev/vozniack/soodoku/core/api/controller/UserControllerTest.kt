@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -32,21 +31,16 @@ class UserControllerTest @Autowired constructor(
     @BeforeEach
     fun `clear up before`() {
         userRepository.deleteAll()
-
-        SecurityContextHolder.clearContext()
     }
 
     @AfterEach
     fun `clear up after`() {
         userRepository.deleteAll()
-
-        SecurityContextHolder.clearContext()
     }
 
     @Test
     fun `get currently logged user with logged user`() {
         val user = userRepository.save(mockUser())
-
         authenticate(user.email)
 
         val response: UserDto = objectMapper.readValue(

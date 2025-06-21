@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.context.SecurityContextHolder
 
 class UserServiceTest @Autowired constructor(
     private val userService: UserService,
@@ -28,7 +27,6 @@ class UserServiceTest @Autowired constructor(
     @BeforeEach
     fun `clear up before`() {
         userRepository.deleteAll()
-        SecurityContextHolder.clearContext()
     }
 
     @AfterEach

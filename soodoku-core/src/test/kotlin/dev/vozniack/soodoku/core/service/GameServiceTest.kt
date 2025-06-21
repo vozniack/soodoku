@@ -35,8 +35,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.context.SecurityContextHolder
 
 class GameServiceTest @Autowired constructor(
     private val gameService: GameService,
@@ -51,8 +49,6 @@ class GameServiceTest @Autowired constructor(
         gameSummaryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()
-
-        SecurityContextHolder.clearContext()
     }
 
     @AfterEach
@@ -60,8 +56,6 @@ class GameServiceTest @Autowired constructor(
         gameSummaryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()
-
-        SecurityContextHolder.clearContext()
     }
 
     @Test
@@ -76,10 +70,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `get game with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -95,73 +86,18 @@ class GameServiceTest @Autowired constructor(
         }
     }
 
+
     @Test
-    fun `get last game with anonymous user`() {
+    fun `get ongoing games with anonymous user`() {
         assertThrows<UnauthorizedException> {
-            gameService.getLast()
+            gameService.getOngoing(PageRequest.of(0, 16))
         }
     }
 
     @Test
-    fun `get last game with existing user`() {
+    fun `get ongoing games with existing user`() {
         val user = userRepository.save(mockUser())
-        val game = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
-
-        val lastGame = gameService.getLast()
-
-        assertNotNull(lastGame)
-        assertEquals(game.id, lastGame!!.id)
-    }
-
-    @Test
-    fun `get last game with existing user when game is finished`() {
-        val user = userRepository.save(mockUser())
-
-        gameRepository.save(
-            Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3)
-                .apply { finishedAt = LocalDateTime.now() }
-        )
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
-
-        val lastGame = gameService.getLast()
-
-        assertNull(lastGame)
-    }
-
-    @Test
-    fun `get last game with existing user when there is no game`() {
-        val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
-
-        val lastGame = gameService.getLast()
-
-        assertNull(lastGame)
-    }
-
-    @Test
-    fun `get user games with anonymous user`() {
-        assertThrows<UnauthorizedException> {
-            gameService.get(PageRequest.of(0, 16))
-        }
-    }
-
-    @Test
-    fun `get games with existing user`() {
-        val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
         gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
@@ -180,7 +116,7 @@ class GameServiceTest @Autowired constructor(
                 .apply { finishedAt = LocalDateTime.now() }
         )
 
-        val games = gameService.get(PageRequest.of(0, 16))
+        val games = gameService.getOngoing(PageRequest.of(0, 16))
 
         assertEquals(2, games.content.size)
     }
@@ -213,10 +149,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `create new game with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -276,10 +209,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `make a move with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val initialGameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -316,9 +246,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val initialGameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -328,9 +256,7 @@ class GameServiceTest @Autowired constructor(
             .first { it.third == 0 }
             .let { it.first to it.second }
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         assertThrows<UnauthorizedException> {
             gameService.move(initialGameDto.id, MoveRequestDto(row = row, col = col, value = 5))
@@ -384,10 +310,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `make a move and finish the game with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val initialGameDto = gameService.new(NewGameRequestDto(Difficulty.DEV_FILLED))
 
@@ -469,10 +392,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `revert last move with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -522,9 +442,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -539,9 +457,7 @@ class GameServiceTest @Autowired constructor(
         assertEquals(1, updatedGameDto.moves.size)
         assertEquals(5, updatedGameDto.board[row][col])
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         assertThrows<UnauthorizedException> {
             gameService.revert(gameDto.id)
@@ -629,10 +545,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `make a note with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -690,16 +603,11 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `make a note with user different than owner`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         assertThrows<UnauthorizedException> {
             gameService.note(gameDto.id, mockNoteRequestDto(1, 1, listOf("+1", "-1")))
@@ -740,10 +648,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `delete notes with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -764,10 +669,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `delete notes with user different than owner`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -780,9 +682,7 @@ class GameServiceTest @Autowired constructor(
             }
         )
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         assertThrows<UnauthorizedException> {
             gameService.deleteNotes(gameDto.id)
@@ -827,10 +727,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `use hint with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -870,15 +767,11 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         assertThrows<UnauthorizedException> {
             gameService.hint(gameDto.id)
@@ -965,10 +858,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `use hint and finish the game with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.DEV_FILLED))
         val updatedGameDto = gameService.hint(gameDto.id)
@@ -1000,10 +890,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `end game with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
         val endedGameDto = gameService.end(gameDto.id)
@@ -1022,15 +909,11 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         assertThrows<UnauthorizedException> {
             gameService.end(gameDto.id)
@@ -1040,10 +923,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `end game when game is finished`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -1083,10 +963,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `delete game and its moves with existing user`() {
         val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -1115,9 +992,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
+        authenticate(user.email)
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
@@ -1134,9 +1009,7 @@ class GameServiceTest @Autowired constructor(
         assertNotNull(savedGameBeforeDelete)
         assertEquals(1, savedGameBeforeDelete.moves.size)
 
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            "jane.doe@soodoku.com", null, emptyList()
-        )
+        authenticate("jane.doe@soodoku.com")
 
         assertThrows<UnauthorizedException> {
             gameService.delete(updatedGameDto.id)

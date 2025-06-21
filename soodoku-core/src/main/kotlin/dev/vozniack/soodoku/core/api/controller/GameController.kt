@@ -28,11 +28,8 @@ class GameController(private val gameService: GameService, private val gameSumma
     @GetMapping("/{id}")
     fun get(@PathVariable id: UUID): GameDto = gameService.get(id)
 
-    @GetMapping
-    fun get(pageable: Pageable): Slice<GameDto> = gameService.get(pageable)
-
-    @GetMapping("/last")
-    fun getLast(): GameDto? = gameService.getLast()
+    @GetMapping("/ongoing")
+    fun getOngoing(pageable: Pageable): Slice<GameDto> = gameService.getOngoing(pageable)
 
     @GetMapping("/summary")
     fun getSummary(
