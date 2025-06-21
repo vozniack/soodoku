@@ -8,10 +8,11 @@ import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.GameHistoryRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
-import dev.vozniack.soodoku.core.mock.mockGameHistory
-import dev.vozniack.soodoku.core.mock.mockMoveRequestDto
-import dev.vozniack.soodoku.core.mock.mockNewGameRequestDto
-import dev.vozniack.soodoku.core.mock.mockUser
+import dev.vozniack.soodoku.core.fixture.findEmptyCell
+import dev.vozniack.soodoku.core.fixture.mockGameHistory
+import dev.vozniack.soodoku.core.fixture.mockMoveRequestDto
+import dev.vozniack.soodoku.core.fixture.mockNewGameRequestDto
+import dev.vozniack.soodoku.core.fixture.mockUser
 import dev.vozniack.soodoku.lib.Soodoku
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -135,12 +136,7 @@ class GameHistoryServiceTest @Autowired constructor(
         authenticate(user.email)
 
         val gameDto = gameService.new(mockNewGameRequestDto())
-
-        val (row, col) = gameDto.board
-            .withIndex()
-            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
-            .first { it.third == 0 }
-            .let { it.first to it.second }
+        val (row, col) = gameDto.findEmptyCell()
 
         gameService.move(gameDto.id, mockMoveRequestDto(row, col, 5))
         gameService.move(gameDto.id, mockMoveRequestDto(row, col, 0))
@@ -188,12 +184,7 @@ class GameHistoryServiceTest @Autowired constructor(
         authenticate(user.email)
 
         val gameDto = gameService.new(mockNewGameRequestDto())
-
-        val (row, col) = gameDto.board
-            .withIndex()
-            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
-            .first { it.third == 0 }
-            .let { it.first to it.second }
+        val (row, col) = gameDto.findEmptyCell()
 
         gameService.move(gameDto.id, mockMoveRequestDto(row, col, 5))
         gameService.move(gameDto.id, mockMoveRequestDto(row, col, 0))
@@ -214,12 +205,7 @@ class GameHistoryServiceTest @Autowired constructor(
     @Test
     fun `save history for anonymous game`() {
         val gameDto = gameService.new(mockNewGameRequestDto())
-
-        val (row, col) = gameDto.board
-            .withIndex()
-            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
-            .first { it.third == 0 }
-            .let { it.first to it.second }
+        val (row, col) = gameDto.findEmptyCell()
 
         gameService.move(gameDto.id, mockMoveRequestDto(row, col, 5))
         gameService.move(gameDto.id, mockMoveRequestDto(row, col, 0))

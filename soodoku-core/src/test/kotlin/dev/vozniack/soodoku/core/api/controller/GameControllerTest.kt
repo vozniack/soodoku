@@ -6,16 +6,17 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.vozniack.soodoku.core.AbstractWebMvcTest
 import dev.vozniack.soodoku.core.api.dto.GameDto
 import dev.vozniack.soodoku.core.api.dto.GameHistoryDto
-import dev.vozniack.soodoku.core.api.dto.NewGameRequestDto
-import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
 import dev.vozniack.soodoku.core.domain.extension.toGame
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.GameHistoryRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
-import dev.vozniack.soodoku.core.mock.mockGameHistory
-import dev.vozniack.soodoku.core.mock.mockNoteRequestDto
-import dev.vozniack.soodoku.core.mock.mockUser
+import dev.vozniack.soodoku.core.fixture.findEmptyCell
+import dev.vozniack.soodoku.core.fixture.mockGameHistory
+import dev.vozniack.soodoku.core.fixture.mockMoveRequestDto
+import dev.vozniack.soodoku.core.fixture.mockNewGameRequestDto
+import dev.vozniack.soodoku.core.fixture.mockNoteRequestDto
+import dev.vozniack.soodoku.core.fixture.mockUser
 import dev.vozniack.soodoku.core.service.GameService
 import dev.vozniack.soodoku.lib.Soodoku
 import java.time.LocalDateTime
@@ -52,7 +53,7 @@ class GameControllerTest @Autowired constructor(
 
     @Test
     fun `get game with anonymous user`() {
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -69,7 +70,7 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -88,7 +89,7 @@ class GameControllerTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         authenticate("jane.doe@soodoku.com")
 
@@ -191,7 +192,7 @@ class GameControllerTest @Autowired constructor(
 
     @Test
     fun `create new game with anonymous user`() {
-        val request = NewGameRequestDto(Difficulty.EASY)
+        val request = mockNewGameRequestDto(Difficulty.EASY)
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -210,7 +211,7 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val request = NewGameRequestDto(Difficulty.EASY)
+        val request = mockNewGameRequestDto(Difficulty.EASY)
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -225,15 +226,10 @@ class GameControllerTest @Autowired constructor(
 
     @Test
     fun `make a move with anonymous user`() {
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val (row, col) = gameDto.findEmptyCell()
 
-        val (row, col) = gameDto.board
-            .withIndex()
-            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
-            .first { it.third == 0 }
-            .let { it.first to it.second }
-
-        val request = MoveRequestDto(row, col, 5)
+        val request = mockMoveRequestDto(row, col, 5)
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -251,15 +247,10 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val (row, col) = gameDto.findEmptyCell()
 
-        val (row, col) = gameDto.board
-            .withIndex()
-            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
-            .first { it.third == 0 }
-            .let { it.first to it.second }
-
-        val request = MoveRequestDto(row, col, 5)
+        val request = mockMoveRequestDto(row, col, 5)
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -279,15 +270,10 @@ class GameControllerTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val (row, col) = gameDto.findEmptyCell()
 
-        val (row, col) = gameDto.board
-            .withIndex()
-            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
-            .first { it.third == 0 }
-            .let { it.first to it.second }
-
-        val request = MoveRequestDto(row, col, 5)
+        val request = mockMoveRequestDto(row, col, 5)
 
         authenticate("jane.doe@soodoku.com")
 
@@ -300,15 +286,10 @@ class GameControllerTest @Autowired constructor(
 
     @Test
     fun `revert last move with anonymous user`() {
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val (row, col) = gameDto.findEmptyCell()
 
-        val (row, col) = gameDto.board
-            .withIndex()
-            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
-            .first { it.third == 0 }
-            .let { it.first to it.second }
-
-        gameService.move(gameDto.id, MoveRequestDto(row = row, col = col, value = 5))
+        gameService.move(gameDto.id, mockMoveRequestDto(row = row, col = col, value = 5))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -325,15 +306,10 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val (row, col) = gameDto.findEmptyCell()
 
-        val (row, col) = gameDto.board
-            .withIndex()
-            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
-            .first { it.third == 0 }
-            .let { it.first to it.second }
-
-        gameService.move(gameDto.id, MoveRequestDto(row = row, col = col, value = 5))
+        gameService.move(gameDto.id, mockMoveRequestDto(row = row, col = col, value = 5))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -352,15 +328,10 @@ class GameControllerTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val (row, col) = gameDto.findEmptyCell()
 
-        val (row, col) = gameDto.board
-            .withIndex()
-            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
-            .first { it.third == 0 }
-            .let { it.first to it.second }
-
-        gameService.move(gameDto.id, MoveRequestDto(row = row, col = col, value = 5))
+        gameService.move(gameDto.id, mockMoveRequestDto(row = row, col = col, value = 5))
 
         authenticate("jane.doe@soodoku.com")
 
@@ -372,7 +343,7 @@ class GameControllerTest @Autowired constructor(
 
     @Test
     fun `make a note with anonymous user`() {
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -390,7 +361,7 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -410,7 +381,7 @@ class GameControllerTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         authenticate("jane.doe@soodoku.com")
 
@@ -423,7 +394,7 @@ class GameControllerTest @Autowired constructor(
 
     @Test
     fun `delete notes with anonymous user`() {
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -440,7 +411,7 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -459,7 +430,7 @@ class GameControllerTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         authenticate("jane.doe@soodoku.com")
 
@@ -471,7 +442,7 @@ class GameControllerTest @Autowired constructor(
 
     @Test
     fun `use hint with anonymous user`() {
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -488,7 +459,7 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -507,7 +478,7 @@ class GameControllerTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         authenticate("jane.doe@soodoku.com")
 
@@ -519,7 +490,7 @@ class GameControllerTest @Autowired constructor(
 
     @Test
     fun `end game with anonymous user`() {
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -536,7 +507,7 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
@@ -557,7 +528,7 @@ class GameControllerTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         authenticate("jane.doe@soodoku.com")
 
@@ -569,7 +540,7 @@ class GameControllerTest @Autowired constructor(
 
     @Test
     fun `delete game with anonymous user`() {
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         mockMvc.perform(
             delete("/api/games/${gameDto.id}")
@@ -584,7 +555,7 @@ class GameControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         mockMvc.perform(
             delete("/api/games/${gameDto.id}")
@@ -601,7 +572,7 @@ class GameControllerTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
         authenticate("jane.doe@soodoku.com")
 

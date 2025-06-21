@@ -2,7 +2,7 @@ package dev.vozniack.soodoku.core.api.mapper
 
 import dev.vozniack.soodoku.core.api.dto.SignupRequestDto
 import dev.vozniack.soodoku.core.domain.entity.User
-import dev.vozniack.soodoku.core.mock.mockSignupRequest
+import dev.vozniack.soodoku.core.fixture.mockSignupRequest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test

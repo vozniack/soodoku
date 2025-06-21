@@ -7,10 +7,10 @@ import dev.vozniack.soodoku.core.api.dto.SignupRequestDto
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.internal.exception.ConflictException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
-import dev.vozniack.soodoku.core.mock.mockLoginRequest
-import dev.vozniack.soodoku.core.mock.mockRefreshRequest
-import dev.vozniack.soodoku.core.mock.mockSignupRequest
-import dev.vozniack.soodoku.core.mock.mockUser
+import dev.vozniack.soodoku.core.fixture.mockLoginRequest
+import dev.vozniack.soodoku.core.fixture.mockRefreshRequest
+import dev.vozniack.soodoku.core.fixture.mockSignupRequest
+import dev.vozniack.soodoku.core.fixture.mockUser
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertNotNull

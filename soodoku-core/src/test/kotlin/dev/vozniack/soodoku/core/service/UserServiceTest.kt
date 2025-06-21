@@ -3,11 +3,11 @@ package dev.vozniack.soodoku.core.service
 import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
-import dev.vozniack.soodoku.core.mock.mockUser
-import dev.vozniack.soodoku.core.mock.mockUserLanguageUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserPasswordUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserThemeUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserUsernameUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUser
+import dev.vozniack.soodoku.core.fixture.mockUserLanguageUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserPasswordUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserThemeUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserUsernameUpdateDto
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals

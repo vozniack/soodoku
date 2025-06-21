@@ -8,10 +8,10 @@ import dev.vozniack.soodoku.core.api.dto.AuthResponseDto
 import dev.vozniack.soodoku.core.api.dto.RefreshRequestDto
 import dev.vozniack.soodoku.core.api.dto.SignupRequestDto
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
-import dev.vozniack.soodoku.core.mock.mockLoginRequest
-import dev.vozniack.soodoku.core.mock.mockRefreshRequest
-import dev.vozniack.soodoku.core.mock.mockSignupRequest
-import dev.vozniack.soodoku.core.mock.mockUser
+import dev.vozniack.soodoku.core.fixture.mockLoginRequest
+import dev.vozniack.soodoku.core.fixture.mockRefreshRequest
+import dev.vozniack.soodoku.core.fixture.mockSignupRequest
+import dev.vozniack.soodoku.core.fixture.mockUser
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test

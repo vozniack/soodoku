@@ -1,4 +1,4 @@
-package dev.vozniack.soodoku.core.mock
+package dev.vozniack.soodoku.core.fixture
 
 import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.GameHistory

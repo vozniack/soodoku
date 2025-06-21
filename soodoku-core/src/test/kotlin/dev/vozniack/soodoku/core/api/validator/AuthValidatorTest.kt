@@ -2,9 +2,9 @@ package dev.vozniack.soodoku.core.api.validator
 
 import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.internal.exception.BadRequestException
-import dev.vozniack.soodoku.core.mock.mockLoginRequest
-import dev.vozniack.soodoku.core.mock.mockRefreshRequest
-import dev.vozniack.soodoku.core.mock.mockSignupRequest
+import dev.vozniack.soodoku.core.fixture.mockLoginRequest
+import dev.vozniack.soodoku.core.fixture.mockRefreshRequest
+import dev.vozniack.soodoku.core.fixture.mockSignupRequest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest

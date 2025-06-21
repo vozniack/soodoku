@@ -3,7 +3,7 @@ package dev.vozniack.soodoku.core.api.mapper
 import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.api.dto.UserDto
 import dev.vozniack.soodoku.core.domain.entity.User
-import dev.vozniack.soodoku.core.mock.mockUser
+import dev.vozniack.soodoku.core.fixture.mockUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

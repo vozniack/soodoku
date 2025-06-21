@@ -5,11 +5,11 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.vozniack.soodoku.core.AbstractWebMvcTest
 import dev.vozniack.soodoku.core.api.dto.UserDto
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
-import dev.vozniack.soodoku.core.mock.mockUser
-import dev.vozniack.soodoku.core.mock.mockUserLanguageUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserPasswordUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserThemeUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserUsernameUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUser
+import dev.vozniack.soodoku.core.fixture.mockUserLanguageUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserPasswordUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserThemeUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserUsernameUpdateDto
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
