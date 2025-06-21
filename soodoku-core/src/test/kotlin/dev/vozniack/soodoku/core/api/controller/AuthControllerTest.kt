@@ -14,7 +14,6 @@ import dev.vozniack.soodoku.core.mock.mockSignupRequest
 import dev.vozniack.soodoku.core.mock.mockUser
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -31,13 +30,8 @@ class AuthControllerTest @Autowired constructor(
 
     private val objectMapper = jacksonObjectMapper()
 
-    @BeforeEach
-    fun `clear up before`() {
-        userRepository.deleteAll()
-    }
-
     @AfterEach
-    fun `clear up after`() {
+    fun `clean up`() {
         userRepository.deleteAll()
     }
 

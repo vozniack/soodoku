@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
@@ -34,15 +33,8 @@ class GameSummaryServiceTest @Autowired constructor(
     private val userRepository: UserRepository
 ) : AbstractUnitTest() {
 
-    @BeforeEach
-    fun `clean up before`() {
-        gameSummaryRepository.deleteAll()
-        gameRepository.deleteAll()
-        userRepository.deleteAll()
-    }
-
     @AfterEach
-    fun `clean up after`() {
+    fun `clean up`() {
         gameSummaryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()

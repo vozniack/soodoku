@@ -12,7 +12,6 @@ import dev.vozniack.soodoku.core.mock.mockUserThemeUpdateDto
 import dev.vozniack.soodoku.core.mock.mockUserUsernameUpdateDto
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -28,13 +27,8 @@ class UserControllerTest @Autowired constructor(
 
     private val objectMapper = jacksonObjectMapper()
 
-    @BeforeEach
-    fun `clear up before`() {
-        userRepository.deleteAll()
-    }
-
     @AfterEach
-    fun `clear up after`() {
+    fun `clean up`() {
         userRepository.deleteAll()
     }
 
