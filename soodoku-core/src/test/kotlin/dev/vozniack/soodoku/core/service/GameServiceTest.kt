@@ -7,6 +7,7 @@ import dev.vozniack.soodoku.core.domain.extension.parseNotes
 import dev.vozniack.soodoku.core.domain.extension.toGame
 import dev.vozniack.soodoku.core.domain.extension.toSoodoku
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
+import dev.vozniack.soodoku.core.domain.repository.GameSummaryRepository
 import dev.vozniack.soodoku.core.domain.repository.MoveRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
@@ -41,11 +42,13 @@ class GameServiceTest @Autowired constructor(
     private val gameService: GameService,
     private val gameRepository: GameRepository,
     private val moveRepository: MoveRepository,
+    private val gameSummaryRepository: GameSummaryRepository,
     private val userRepository: UserRepository
 ) : AbstractUnitTest() {
 
     @BeforeEach
     fun `clear up before`() {
+        gameSummaryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()
 
@@ -54,6 +57,7 @@ class GameServiceTest @Autowired constructor(
 
     @AfterEach
     fun `clean up after`() {
+        gameSummaryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()
 
@@ -94,7 +98,7 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `get last game with anonymous user`() {
         assertThrows<UnauthorizedException> {
-            gameService.getLastGame()
+            gameService.getLast()
         }
     }
 
@@ -107,7 +111,7 @@ class GameServiceTest @Autowired constructor(
             user.email, null, emptyList()
         )
 
-        val lastGame = gameService.getLastGame()
+        val lastGame = gameService.getLast()
 
         assertNotNull(lastGame)
         assertEquals(game.id, lastGame!!.id)
@@ -126,7 +130,7 @@ class GameServiceTest @Autowired constructor(
             user.email, null, emptyList()
         )
 
-        val lastGame = gameService.getLastGame()
+        val lastGame = gameService.getLast()
 
         assertNull(lastGame)
     }
@@ -139,7 +143,7 @@ class GameServiceTest @Autowired constructor(
             user.email, null, emptyList()
         )
 
-        val lastGame = gameService.getLastGame()
+        val lastGame = gameService.getLast()
 
         assertNull(lastGame)
     }
@@ -147,18 +151,19 @@ class GameServiceTest @Autowired constructor(
     @Test
     fun `get user games with anonymous user`() {
         assertThrows<UnauthorizedException> {
-            gameService.getGames(true, PageRequest.of(0, 16))
+            gameService.get(PageRequest.of(0, 16))
         }
     }
 
     @Test
-    fun `get finished games with existing user`() {
+    fun `get games with existing user`() {
         val user = userRepository.save(mockUser())
 
         SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
             user.email, null, emptyList()
         )
 
+        gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
         gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
 
         gameRepository.save(
@@ -167,11 +172,6 @@ class GameServiceTest @Autowired constructor(
         )
 
         gameRepository.save(
-            Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3)
-                .apply { finishedAt = LocalDateTime.now() }
-        )
-
-        gameRepository.save(
             Soodoku(Soodoku.Difficulty.EASY).toGame(null, Difficulty.EASY, 3)
         )
 
@@ -180,43 +180,9 @@ class GameServiceTest @Autowired constructor(
                 .apply { finishedAt = LocalDateTime.now() }
         )
 
-        val games = gameService.getGames(true, PageRequest.of(0, 16))
+        val games = gameService.get(PageRequest.of(0, 16))
 
         assertEquals(2, games.content.size)
-    }
-
-    @Test
-    fun `get not finished games with existing user`() {
-        val user = userRepository.save(mockUser())
-
-        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-            user.email, null, emptyList()
-        )
-
-        gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
-
-        gameRepository.save(
-            Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3)
-                .apply { finishedAt = LocalDateTime.now() }
-        )
-
-        gameRepository.save(
-            Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3)
-                .apply { finishedAt = LocalDateTime.now() }
-        )
-
-        gameRepository.save(
-            Soodoku(Soodoku.Difficulty.EASY).toGame(null, Difficulty.EASY, 3)
-        )
-
-        gameRepository.save(
-            Soodoku(Soodoku.Difficulty.EASY).toGame(null, Difficulty.EASY, 3)
-                .apply { finishedAt = LocalDateTime.now() }
-        )
-
-        val games = gameService.getGames(false, PageRequest.of(0, 16))
-
-        assertEquals(1, games.content.size)
     }
 
     @Test
@@ -391,7 +357,7 @@ class GameServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `make a move and finish the game`() {
+    fun `make a move and finish the game with anonymous user`() {
         val initialGameDto = gameService.new(NewGameRequestDto(Difficulty.DEV_FILLED))
 
         val game = gameRepository.findById(initialGameDto.id).get()
@@ -411,6 +377,39 @@ class GameServiceTest @Autowired constructor(
 
         assertNotNull(savedGame)
         assertNotNull(savedGame.finishedAt)
+
+        Thread.sleep(128).run { assertEquals(0, gameSummaryRepository.count()) }
+    }
+
+    @Test
+    fun `make a move and finish the game with existing user`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val initialGameDto = gameService.new(NewGameRequestDto(Difficulty.DEV_FILLED))
+
+        val game = gameRepository.findById(initialGameDto.id).get()
+
+        val (row, col) = initialGameDto.board
+            .withIndex()
+            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
+            .first { it.third == 0 }
+            .let { it.first to it.second }
+
+        val value = game.solvedBoard.mapBoard()[row][col]
+
+        val updatedGameDto = gameService.move(initialGameDto.id, MoveRequestDto(row = row, col = col, value = value))
+        assertEquals(initialGameDto.id, updatedGameDto.id)
+
+        val savedGame = gameRepository.findById(updatedGameDto.id).orElse(null)
+
+        assertNotNull(savedGame)
+        assertNotNull(savedGame.finishedAt)
+
+        Thread.sleep(128).run { assertEquals(1, gameSummaryRepository.count()) }
     }
 
     @Test
@@ -949,7 +948,7 @@ class GameServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `use hint and finish the game`() {
+    fun `use hint and finish the game with anonymous user`() {
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.DEV_FILLED))
         val updatedGameDto = gameService.hint(gameDto.id)
 
@@ -959,6 +958,29 @@ class GameServiceTest @Autowired constructor(
 
         assertNotNull(savedGame)
         assertNotNull(savedGame.finishedAt)
+
+        Thread.sleep(128).run { assertEquals(0, gameSummaryRepository.count()) }
+    }
+
+    @Test
+    fun `use hint and finish the game with existing user`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
+        val gameDto = gameService.new(NewGameRequestDto(Difficulty.DEV_FILLED))
+        val updatedGameDto = gameService.hint(gameDto.id)
+
+        assertEquals(gameDto.id, updatedGameDto.id)
+
+        val savedGame = gameRepository.findById(gameDto.id).orElse(null)
+
+        assertNotNull(savedGame)
+        assertNotNull(savedGame.finishedAt)
+
+        Thread.sleep(128).run { assertEquals(1, gameSummaryRepository.count()) }
     }
 
     @Test
@@ -970,9 +992,9 @@ class GameServiceTest @Autowired constructor(
         assertNotNull(savedGame)
 
         assertEquals(gameDto.id, endedGameDto.id)
+        assertNotNull(savedGame.finishedAt)
 
-        assertNotNull(savedGame!!.finishedAt)
-        assertNotNull(savedGame.updatedAt)
+        Thread.sleep(128).run { assertEquals(0, gameSummaryRepository.count()) }
     }
 
     @Test
@@ -990,9 +1012,9 @@ class GameServiceTest @Autowired constructor(
         assertNotNull(savedGame)
 
         assertEquals(gameDto.id, endedGameDto.id)
+        assertNotNull(savedGame.finishedAt)
 
-        assertNotNull(savedGame!!.finishedAt)
-        assertNotNull(savedGame.updatedAt)
+        Thread.sleep(128).run { assertEquals(1, gameSummaryRepository.count()) }
     }
 
     @Test
@@ -1017,6 +1039,12 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `end game when game is finished`() {
+        val user = userRepository.save(mockUser())
+
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            user.email, null, emptyList()
+        )
+
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
         gameRepository.findById(gameDto.id).ifPresent {
@@ -1027,7 +1055,6 @@ class GameServiceTest @Autowired constructor(
             gameService.end(gameDto.id)
         }
     }
-
 
     @Test
     fun `delete game and its moves with anonymous user`() {

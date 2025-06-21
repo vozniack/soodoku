@@ -4,13 +4,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { select, Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
-import { UserService } from '../../../core/user/user.service';
 import { fadeInAnimation } from '../../../shared/animations/fade-in-animation';
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
 import { GameTileComponent } from '../../../shared/components/game-tile/game-tile.component';
 import { SELECT_AUTH_STATE } from '../../../store/app/auth/auth.selectors';
 import { AuthState } from '../../../store/app/auth/auth.state';
 import { Game } from '../../game/game.interface';
+import { GameService } from '../../game/game.service';
 
 @Component({
   selector: 'soo-home-game',
@@ -24,7 +24,7 @@ export class HomeGameComponent {
 
   game$!: Observable<Game | null>;
 
-  constructor(private store: Store, private userService: UserService) {
+  constructor(private store: Store, private gameService: GameService) {
     this.game$ = this.store.pipe(
       takeUntilDestroyed(),
       select(SELECT_AUTH_STATE),
@@ -33,7 +33,7 @@ export class HomeGameComponent {
       switchMap((token) => {
         if (!token) return of(null);
 
-        return this.userService.getLastGame().pipe(
+        return this.gameService.getLast().pipe(
           catchError(() => of(null))
         );
       })

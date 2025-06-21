@@ -17,6 +17,7 @@ import dev.vozniack.soodoku.core.domain.types.MoveType
 import dev.vozniack.soodoku.core.internal.exception.ConflictException
 import dev.vozniack.soodoku.core.internal.exception.NotFoundException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
+import dev.vozniack.soodoku.core.internal.logging.KLogging
 import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.exception.SoodokuMappingException
 import dev.vozniack.soodoku.lib.extension.flatBoard
@@ -25,14 +26,19 @@ import dev.vozniack.soodoku.lib.extension.status
 import dev.vozniack.soodoku.lib.extension.value
 import java.time.LocalDateTime
 import java.util.UUID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class GameService(
     private val gameRepository: GameRepository,
-    private val userService: UserService
+    private val gameSummaryService: GameSummaryService,
+    private val userService: UserService,
+    private val coroutineScope: CoroutineScope
 ) {
 
     fun get(id: UUID): GameDto {
@@ -41,21 +47,21 @@ class GameService(
         return game toDtoWithStatus game.toSoodoku().status()
     }
 
-    fun getLastGame(): GameDto? {
+    fun get(pageable: Pageable): Slice<GameDto> {
+        val user: User = userService.currentlyLoggedUser()
+            ?: throw UnauthorizedException("You don't have access to this resource")
+
+        return gameRepository.findByUserIdAndFinishedAtIsNullOrderByUpdatedAtDesc(user.id, pageable).map {
+            it.toDtoWithStatus(it.toSoodoku().status())
+        }
+    }
+
+    fun getLast(): GameDto? {
         val user: User = userService.currentlyLoggedUser()
             ?: throw UnauthorizedException("You don't have access to this resource")
 
         return gameRepository.findFirstByUserIdAndFinishedAtIsNullOrderByUpdatedAtDesc(user.id)?.let {
             it toDtoWithStatus it.toSoodoku().status()
-        }
-    }
-
-    fun getGames(finished: Boolean, pageable: Pageable): Slice<GameDto> {
-        val user: User = userService.currentlyLoggedUser()
-            ?: throw UnauthorizedException("You don't have access to this resource")
-
-        return gameRepository.findByUserIdAndFinishedStatus(user.id, finished, pageable).map {
-            it.toDtoWithStatus(it.toSoodoku().status())
         }
     }
 
@@ -71,7 +77,7 @@ class GameService(
     }
 
     fun move(id: UUID, move: MoveRequestDto): GameDto {
-        val game: Game = getGame(id)
+        var game: Game = getGame(id)
 
         val soodoku = game.toSoodoku()
 
@@ -92,13 +98,8 @@ class GameService(
             it.moves.add(Move(game = it, row = move.row, col = move.col, before = valueBefore, after = move.value))
         }
 
-        if (game.currentBoard.count { it == '0' } == 0 && status.conflicts.isEmpty()) {
-            game.apply {
-                finishedAt = LocalDateTime.now()
-            }
-        }
-
-        return gameRepository.save(game) toDtoWithStatus status
+        game = gameRepository.save(game checkEndGameWith status)
+        return game toDtoWithStatus game.toSoodoku().status()
     }
 
     fun revert(id: UUID): GameDto {
@@ -172,7 +173,7 @@ class GameService(
     }
 
     fun hint(id: UUID): GameDto {
-        val game: Game = getGame(id)
+        var game: Game = getGame(id)
 
         if (game.hints < 1) {
             throw ConflictException("You don't have more hints for game $id!")
@@ -220,41 +221,58 @@ class GameService(
             )
         }
 
-        if (game.currentBoard.count { it == '0' } == 0 && status.conflicts.isEmpty()) {
-            game.apply {
-                finishedAt = LocalDateTime.now()
-            }
-        }
-
-        return gameRepository.save(game) toDtoWithStatus status
+        game = gameRepository.save(game checkEndGameWith status)
+        return game toDtoWithStatus game.toSoodoku().status()
     }
 
     fun end(id: UUID): GameDto {
-        val game: Game = getGame(id)
+        var game: Game = getGame(id)
 
         game.apply {
-            updatedAt = LocalDateTime.now()
             finishedAt = LocalDateTime.now()
         }
 
-        return gameRepository.save(game) toDtoWithStatus game.toSoodoku().status()
+        game = gameRepository.save(game)
+        summarize(game)
+
+        return game toDtoWithStatus game.toSoodoku().status()
     }
 
+    @Transactional
     fun delete(id: UUID) {
+        gameSummaryService.delete(id)
         gameRepository.delete(getGame(id, true))
     }
 
-    private fun getGame(id: UUID, allowFinished: Boolean = false): Game = gameRepository.findById(id).takeIf { it.isPresent }?.get()?.let { game ->
-        game.takeIf { it.user != null }?.let {
-            if (it.user != userService.currentlyLoggedUser()) {
-                throw UnauthorizedException("You don't have access to this game")
+    private fun getGame(id: UUID, allowFinished: Boolean = false): Game =
+        gameRepository.findById(id).takeIf { it.isPresent }?.get()?.let { game ->
+            game.takeIf { it.user != null }?.let {
+                if (it.user != userService.currentlyLoggedUser()) {
+                    throw UnauthorizedException("You don't have access to this game")
+                }
+            }
+
+            if (!allowFinished && game.finishedAt != null) {
+                throw ConflictException("Game $id is already finished!")
+            }
+
+            game
+        } ?: throw NotFoundException("Not found game with id $id")
+
+    private infix fun Game.checkEndGameWith(status: Soodoku.Status): Game = also {
+        if (currentBoard.count { it == '0' } == 0 && status.conflicts.isEmpty()) {
+            apply {
+                finishedAt = LocalDateTime.now()
+                summarize(it)
             }
         }
+    }
 
-        if (!allowFinished && game.finishedAt != null) {
-            throw ConflictException("Game $id is already finished!")
+    private fun summarize(game: Game) = coroutineScope.launch {
+        runCatching { gameSummaryService.summarize(game) }.onFailure {
+            logger.error { "Failed to summarize game ${game.id}: ${it.message}" }
         }
+    }
 
-        game
-    } ?: throw NotFoundException("Not found game with id $id")
+    companion object : KLogging()
 }

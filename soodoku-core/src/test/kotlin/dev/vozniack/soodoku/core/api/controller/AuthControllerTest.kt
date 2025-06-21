@@ -29,6 +29,8 @@ class AuthControllerTest @Autowired constructor(
     context: WebApplicationContext
 ) : AbstractWebMvcTest(context) {
 
+    private val objectMapper = jacksonObjectMapper()
+
     @BeforeEach
     fun `clear up before`() {
         userRepository.deleteAll()
@@ -45,11 +47,11 @@ class AuthControllerTest @Autowired constructor(
 
         val request: LoginRequestDto = mockLoginRequest(password = "J0hn123!")
 
-        val response: AuthResponseDto = jacksonObjectMapper().readValue(
+        val response: AuthResponseDto = objectMapper.readValue(
             mockMvc.perform(
                 post("/api/auth/login")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(jacksonObjectMapper().writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
@@ -61,11 +63,11 @@ class AuthControllerTest @Autowired constructor(
     fun `signup user`() {
         val request: SignupRequestDto = mockSignupRequest()
 
-        val response: AuthResponseDto = jacksonObjectMapper().readValue(
+        val response: AuthResponseDto = objectMapper.readValue(
             mockMvc.perform(
                 post("/api/auth/signup")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(jacksonObjectMapper().writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
@@ -79,11 +81,11 @@ class AuthControllerTest @Autowired constructor(
 
         val request: RefreshRequestDto = mockRefreshRequest()
 
-        val response: AuthResponseDto = jacksonObjectMapper().readValue(
+        val response: AuthResponseDto = objectMapper.readValue(
             mockMvc.perform(
                 post("/api/auth/refresh")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(jacksonObjectMapper().writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
