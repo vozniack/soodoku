@@ -1,13 +1,13 @@
 package dev.vozniack.soodoku.core.api.controller
 
 import dev.vozniack.soodoku.core.api.dto.GameDto
-import dev.vozniack.soodoku.core.api.dto.GameSummaryDto
+import dev.vozniack.soodoku.core.api.dto.GameHistoryDto
 import dev.vozniack.soodoku.core.api.dto.NewGameRequestDto
 import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
 import dev.vozniack.soodoku.core.api.dto.NoteRequestDto
 import dev.vozniack.soodoku.core.domain.types.Difficulty
 import dev.vozniack.soodoku.core.service.GameService
-import dev.vozniack.soodoku.core.service.GameSummaryService
+import dev.vozniack.soodoku.core.service.GameHistoryService
 import java.util.UUID
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -23,23 +23,20 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/games")
-class GameController(private val gameService: GameService, private val gameSummaryService: GameSummaryService) {
+class GameController(private val gameService: GameService, private val gameHistoryService: GameHistoryService) {
 
     @GetMapping("/{id}")
     fun get(@PathVariable id: UUID): GameDto = gameService.get(id)
 
-    @GetMapping
-    fun get(pageable: Pageable): Slice<GameDto> = gameService.get(pageable)
+    @GetMapping("/ongoing")
+    fun getOngoing(pageable: Pageable): Slice<GameDto> = gameService.getOngoing(pageable)
 
-    @GetMapping("/last")
-    fun getLast(): GameDto? = gameService.getLast()
-
-    @GetMapping("/summary")
-    fun getSummary(
+    @GetMapping("/history")
+    fun getHistory(
         @RequestParam(required = false) difficulty: Difficulty?,
         @RequestParam(required = false) victory: Boolean?,
         pageable: Pageable,
-    ): Slice<GameSummaryDto> = gameSummaryService.getSummary(difficulty, victory, pageable)
+    ): Slice<GameHistoryDto> = gameHistoryService.get(difficulty, victory, pageable)
 
     @PostMapping
     fun new(@RequestBody newGameRequestDto: NewGameRequestDto): GameDto = gameService.new(newGameRequestDto)

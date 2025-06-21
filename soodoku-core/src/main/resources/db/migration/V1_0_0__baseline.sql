@@ -54,7 +54,7 @@ CREATE TABLE moves
     CONSTRAINT fk_moves_game FOREIGN KEY (game_id) REFERENCES games (id)
 );
 
-CREATE TABLE game_summaries
+CREATE TABLE games_history
 (
     id            UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -74,8 +74,8 @@ CREATE TABLE game_summaries
     created_at    TIMESTAMP   NOT NULL,
     finished_at   TIMESTAMP   NOT NULL,
 
-    CONSTRAINT fk_game_summaries_game FOREIGN KEY (game_id) REFERENCES games (id),
-    CONSTRAINT fk_game_summaries_user FOREIGN KEY (user_id) REFERENCES users (id)
+    CONSTRAINT fk_game_history_game FOREIGN KEY (game_id) REFERENCES games (id),
+    CONSTRAINT fk_game_history_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 INSERT INTO users (email, password, username, language, theme)

@@ -1,10 +1,10 @@
 package dev.vozniack.soodoku.core.api.mapper
 
-import dev.vozniack.soodoku.core.api.dto.GameSummaryDto
-import dev.vozniack.soodoku.core.domain.entity.GameSummary
+import dev.vozniack.soodoku.core.api.dto.GameHistoryDto
+import dev.vozniack.soodoku.core.domain.entity.GameHistory
 import dev.vozniack.soodoku.core.util.toISOTime
 
-fun GameSummary.toDto(): GameSummaryDto = GameSummaryDto(
+fun GameHistory.toDto(): GameHistoryDto = GameHistoryDto(
     userId = user.id,
     gameId = game.id,
     difficulty = difficulty,

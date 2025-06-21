@@ -5,18 +5,16 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.vozniack.soodoku.core.AbstractWebMvcTest
 import dev.vozniack.soodoku.core.api.dto.UserDto
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
-import dev.vozniack.soodoku.core.mock.mockUser
-import dev.vozniack.soodoku.core.mock.mockUserLanguageUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserPasswordUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserThemeUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserUsernameUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUser
+import dev.vozniack.soodoku.core.fixture.mockUserLanguageUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserPasswordUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserThemeUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserUsernameUpdateDto
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -29,24 +27,14 @@ class UserControllerTest @Autowired constructor(
 
     private val objectMapper = jacksonObjectMapper()
 
-    @BeforeEach
-    fun `clear up before`() {
-        userRepository.deleteAll()
-
-        SecurityContextHolder.clearContext()
-    }
-
     @AfterEach
-    fun `clear up after`() {
+    fun `clean up`() {
         userRepository.deleteAll()
-
-        SecurityContextHolder.clearContext()
     }
 
     @Test
     fun `get currently logged user with logged user`() {
         val user = userRepository.save(mockUser())
-
         authenticate(user.email)
 
         val response: UserDto = objectMapper.readValue(

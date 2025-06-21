@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class GameService(
     private val gameRepository: GameRepository,
-    private val gameSummaryService: GameSummaryService,
+    private val gameHistoryService: GameHistoryService,
     private val userService: UserService,
     private val coroutineScope: CoroutineScope
 ) {
@@ -47,21 +47,12 @@ class GameService(
         return game toDtoWithStatus game.toSoodoku().status()
     }
 
-    fun get(pageable: Pageable): Slice<GameDto> {
+    fun getOngoing(pageable: Pageable): Slice<GameDto> {
         val user: User = userService.currentlyLoggedUser()
             ?: throw UnauthorizedException("You don't have access to this resource")
 
-        return gameRepository.findByUserIdAndFinishedAtIsNullOrderByUpdatedAtDesc(user.id, pageable).map {
+        return gameRepository.findOngoingGames(user.id, pageable).map {
             it.toDtoWithStatus(it.toSoodoku().status())
-        }
-    }
-
-    fun getLast(): GameDto? {
-        val user: User = userService.currentlyLoggedUser()
-            ?: throw UnauthorizedException("You don't have access to this resource")
-
-        return gameRepository.findFirstByUserIdAndFinishedAtIsNullOrderByUpdatedAtDesc(user.id)?.let {
-            it toDtoWithStatus it.toSoodoku().status()
         }
     }
 
@@ -233,14 +224,14 @@ class GameService(
         }
 
         game = gameRepository.save(game)
-        summarize(game)
+        saveHistory(game)
 
         return game toDtoWithStatus game.toSoodoku().status()
     }
 
     @Transactional
     fun delete(id: UUID) {
-        gameSummaryService.delete(id)
+        gameHistoryService.delete(id)
         gameRepository.delete(getGame(id, true))
     }
 
@@ -263,14 +254,14 @@ class GameService(
         if (currentBoard.count { it == '0' } == 0 && status.conflicts.isEmpty()) {
             apply {
                 finishedAt = LocalDateTime.now()
-                summarize(it)
+                saveHistory(it)
             }
         }
     }
 
-    private fun summarize(game: Game) = coroutineScope.launch {
-        runCatching { gameSummaryService.summarize(game) }.onFailure {
-            logger.error { "Failed to summarize game ${game.id}: ${it.message}" }
+    private fun saveHistory(game: Game) = coroutineScope.launch {
+        runCatching { gameHistoryService.save(game) }.onFailure {
+            logger.error { "Failed to store game history ${game.id}: ${it.message}" }
         }
     }
 

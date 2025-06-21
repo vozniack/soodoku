@@ -1,4 +1,4 @@
-package dev.vozniack.soodoku.core.mock
+package dev.vozniack.soodoku.core.fixture
 
 import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
 import dev.vozniack.soodoku.core.api.dto.NewGameRequestDto

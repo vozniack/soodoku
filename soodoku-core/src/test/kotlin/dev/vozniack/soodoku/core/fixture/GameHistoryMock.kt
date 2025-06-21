@@ -1,12 +1,12 @@
-package dev.vozniack.soodoku.core.mock
+package dev.vozniack.soodoku.core.fixture
 
 import dev.vozniack.soodoku.core.domain.entity.Game
-import dev.vozniack.soodoku.core.domain.entity.GameSummary
+import dev.vozniack.soodoku.core.domain.entity.GameHistory
 import dev.vozniack.soodoku.core.domain.entity.User
 import dev.vozniack.soodoku.core.domain.types.Difficulty
 import java.time.LocalDateTime
 
-fun mockGameSummary(
+fun mockGameHistory(
     user: User,
     game: Game,
     difficulty: Difficulty = Difficulty.EASY,
@@ -17,7 +17,7 @@ fun mockGameSummary(
     victory: Boolean = true,
     createdAt: LocalDateTime = LocalDateTime.now().minusHours(2),
     finishedAt: LocalDateTime = LocalDateTime.now()
-): GameSummary = GameSummary(
+): GameHistory = GameHistory(
     user = user,
     game = game,
     difficulty = difficulty,

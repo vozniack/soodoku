@@ -7,6 +7,7 @@ import { catchError, distinctUntilChanged, map, switchMap } from 'rxjs/operators
 import { fadeInAnimation } from '../../../shared/animations/fade-in-animation';
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
 import { GameTileComponent } from '../../../shared/components/game-tile/game-tile.component';
+import { Slice } from '../../../shared/models/slice';
 import { SELECT_AUTH_STATE } from '../../../store/app/auth/auth.selectors';
 import { AuthState } from '../../../store/app/auth/auth.state';
 import { Game } from '../../game/game.interface';
@@ -33,7 +34,8 @@ export class HomeGameComponent {
       switchMap((token) => {
         if (!token) return of(null);
 
-        return this.gameService.getLast().pipe(
+        return this.gameService.getOngoing(0, 1).pipe(
+          map((games: Slice<Game>) => games.content[0]),
           catchError(() => of(null))
         );
       })

@@ -3,36 +3,28 @@ package dev.vozniack.soodoku.core.service
 import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
-import dev.vozniack.soodoku.core.mock.mockUser
-import dev.vozniack.soodoku.core.mock.mockUserLanguageUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserPasswordUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserThemeUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserUsernameUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUser
+import dev.vozniack.soodoku.core.fixture.mockUserLanguageUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserPasswordUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserThemeUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserUsernameUpdateDto
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.core.context.SecurityContextHolder
 
 class UserServiceTest @Autowired constructor(
     private val userService: UserService,
     private val userRepository: UserRepository
 ) : AbstractUnitTest() {
 
-    @BeforeEach
-    fun `clear up before`() {
-        userRepository.deleteAll()
-        SecurityContextHolder.clearContext()
-    }
-
     @AfterEach
-    fun `clear up after`() {
+    fun `clean up`() {
         userRepository.deleteAll()
     }
 

@@ -2,10 +2,10 @@ package dev.vozniack.soodoku.core.api.validator
 
 import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.internal.exception.BadRequestException
-import dev.vozniack.soodoku.core.mock.mockUserLanguageUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserPasswordUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserThemeUpdateDto
-import dev.vozniack.soodoku.core.mock.mockUserUsernameUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserLanguageUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserPasswordUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserThemeUpdateDto
+import dev.vozniack.soodoku.core.fixture.mockUserUsernameUpdateDto
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest

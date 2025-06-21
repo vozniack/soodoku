@@ -14,8 +14,8 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Entity
-@Table(name = "game_summaries")
-data class GameSummary(
+@Table(name = "games_history")
+data class GameHistory(
 
     @Id
     @Column(nullable = false) val id: UUID = UUID.randomUUID(),
