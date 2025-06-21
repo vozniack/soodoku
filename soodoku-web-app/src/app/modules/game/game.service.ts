@@ -15,16 +15,8 @@ export class GameService {
   constructor(private httpClient: HttpClient) {
   }
 
-  getGame(id: string): Observable<Game> {
-    return this.httpClient.get<Game>(`${this.baseUrl}/${id}`);
-  }
-
-  getGames(page: number, size: number): Observable<Slice<Game>> {
-    return this.httpClient.get<Slice<Game>>(`${this.baseUrl}?page=${page}&size=${size}`);
-  }
-
-  getLast(): Observable<Game> {
-    return this.httpClient.get<Game>(`${this.baseUrl}/last`);
+  getOngoing(page: number, size: number): Observable<Slice<Game>> {
+    return this.httpClient.get<Slice<Game>>(`${this.baseUrl}/ongoing?page=${page}&size=${size}`);
   }
 
   new(difficulty: string): Observable<Game> {

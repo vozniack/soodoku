@@ -2,13 +2,13 @@ package dev.vozniack.soodoku.core.service
 
 import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.domain.entity.Game
-import dev.vozniack.soodoku.core.domain.entity.GameSummary
+import dev.vozniack.soodoku.core.domain.entity.GameHistory
 import dev.vozniack.soodoku.core.domain.extension.toGame
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
-import dev.vozniack.soodoku.core.domain.repository.GameSummaryRepository
+import dev.vozniack.soodoku.core.domain.repository.GameHistoryRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
-import dev.vozniack.soodoku.core.mock.mockGameSummary
+import dev.vozniack.soodoku.core.mock.mockGameHistory
 import dev.vozniack.soodoku.core.mock.mockMoveRequestDto
 import dev.vozniack.soodoku.core.mock.mockNewGameRequestDto
 import dev.vozniack.soodoku.core.mock.mockUser
@@ -25,38 +25,38 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
-class GameSummaryServiceTest @Autowired constructor(
-    private val gameSummaryService: GameSummaryService,
+class GameHistoryServiceTest @Autowired constructor(
+    private val gameHistoryService: GameHistoryService,
     private val gameService: GameService,
     private val gameRepository: GameRepository,
-    private val gameSummaryRepository: GameSummaryRepository,
+    private val gameHistoryRepository: GameHistoryRepository,
     private val userRepository: UserRepository
 ) : AbstractUnitTest() {
 
     @AfterEach
     fun `clean up`() {
-        gameSummaryRepository.deleteAll()
+        gameHistoryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()
     }
 
     @Test
-    fun `get all summaries when no filter is applied`() {
+    fun `get history when no filter is applied`() {
         val user = userRepository.save(mockUser())
 
         val game1 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
         val game2 = gameRepository.save(Soodoku(Soodoku.Difficulty.HARD).toGame(user, Difficulty.HARD, 3))
 
-        gameSummaryRepository.saveAll(
+        gameHistoryRepository.saveAll(
             listOf(
-                mockGameSummary(user, game1, difficulty = Difficulty.EASY, duration = 1000, victory = true),
-                mockGameSummary(user, game2, difficulty = Difficulty.HARD, duration = 2000, victory = false)
+                mockGameHistory(user, game1, difficulty = Difficulty.EASY, duration = 1000, victory = true),
+                mockGameHistory(user, game2, difficulty = Difficulty.HARD, duration = 2000, victory = false)
             )
         )
 
         val pageable = PageRequest.of(0, 10, Sort.by("duration").ascending())
 
-        val result = gameSummaryService.getSummary(null, null, pageable)
+        val result = gameHistoryService.get(null, null, pageable)
 
         assertEquals(2, result.content.size)
         assertEquals(1000, result.content[0].duration)
@@ -64,69 +64,73 @@ class GameSummaryServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `get summary with filtering by difficulty`() {
+    fun `get history with filtering by difficulty`() {
         val user = userRepository.save(mockUser())
 
         val gameEasy = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
         val gameHard = gameRepository.save(Soodoku(Soodoku.Difficulty.HARD).toGame(user, Difficulty.HARD, 3))
 
-        gameSummaryRepository.saveAll(
+        gameHistoryRepository.saveAll(
             listOf(
-                mockGameSummary(user, gameEasy, difficulty = Difficulty.EASY, duration = 1000),
-                mockGameSummary(user, gameHard, difficulty = Difficulty.HARD, duration = 2000)
+                mockGameHistory(user, gameEasy, difficulty = Difficulty.EASY, duration = 1000),
+                mockGameHistory(user, gameHard, difficulty = Difficulty.HARD, duration = 2000)
             )
         )
 
         val pageable = PageRequest.of(0, 10, Sort.by("duration").ascending())
 
-        val result = gameSummaryService.getSummary(Difficulty.EASY, null, pageable)
+        val result = gameHistoryService.get(Difficulty.EASY, null, pageable)
 
         assertEquals(1, result.content.size)
         assertEquals(Difficulty.EASY, result.content[0].difficulty)
     }
 
     @Test
-    fun `get summary with filtering by victory`() {
+    fun `get history with filtering by victory`() {
         val user = userRepository.save(mockUser())
 
         val game1 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
         val game2 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
 
-        gameSummaryRepository.saveAll(listOf(
-            mockGameSummary(user, game1, victory = true),
-            mockGameSummary(user, game2, victory = false)
-        ))
+        gameHistoryRepository.saveAll(
+            listOf(
+                mockGameHistory(user, game1, victory = true),
+                mockGameHistory(user, game2, victory = false)
+            )
+        )
 
         val pageable = PageRequest.of(0, 10, Sort.by("duration").ascending())
 
-        val result = gameSummaryService.getSummary(null, true, pageable)
+        val result = gameHistoryService.get(null, true, pageable)
 
         assertEquals(1, result.content.size)
         assertTrue(result.content.all { it.victory })
     }
 
     @Test
-    fun `get summary with sorting by total moves descending`() {
+    fun `get history with sorting by total moves descending`() {
         val user = userRepository.save(mockUser())
 
         val game1 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
         val game2 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
 
-        val summary1 = mockGameSummary(user, game1, totalMoves = 10)
-        val summary2 = mockGameSummary(user, game2, totalMoves = 20)
-
-        gameSummaryRepository.saveAll(listOf(summary1, summary2))
+        gameHistoryRepository.saveAll(
+            listOf(
+                mockGameHistory(user, game1, totalMoves = 10),
+                mockGameHistory(user, game2, totalMoves = 20)
+            )
+        )
 
         val pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "totalMoves"))
 
-        val result = gameSummaryService.getSummary(null, null, pageable)
+        val result = gameHistoryService.get(null, null, pageable)
 
         assertEquals(2, result.content.size)
         assertTrue(result.content[0].totalMoves > result.content[1].totalMoves)
     }
 
     @Test
-    fun `summarize game`() {
+    fun `save history`() {
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
@@ -155,31 +159,31 @@ class GameSummaryServiceTest @Autowired constructor(
 
         Thread.sleep(128)
 
-        gameSummaryService.summarize(game)
+        gameHistoryService.save(game)
 
-        assertEquals(1, gameSummaryRepository.count())
+        assertEquals(1, gameHistoryRepository.count())
 
-        val gameSummary: GameSummary = gameSummaryRepository.findAll().first()
+        val gameHistory: GameHistory = gameHistoryRepository.findAll().first()
 
-        assertEquals(user.id, gameSummary.user.id)
-        assertEquals(game.id, gameSummary.game.id)
+        assertEquals(user.id, gameHistory.user.id)
+        assertEquals(game.id, gameHistory.game.id)
 
-        assertEquals(game.difficulty, gameSummary.difficulty)
+        assertEquals(game.difficulty, gameHistory.difficulty)
 
-        assertTrue(gameSummary.duration > 0)
+        assertTrue(gameHistory.duration > 0)
 
-        assertEquals(38, gameSummary.missingCells)
-        assertEquals(5, gameSummary.totalMoves)
-        assertEquals(1, gameSummary.usedHints)
+        assertEquals(38, gameHistory.missingCells)
+        assertEquals(5, gameHistory.totalMoves)
+        assertEquals(1, gameHistory.usedHints)
 
-        assertFalse(gameSummary.victory)
+        assertFalse(gameHistory.victory)
 
-        assertEquals(game.createdAt.truncate(), gameSummary.createdAt.truncate())
-        assertEquals(game.finishedAt!!.truncate(), gameSummary.finishedAt.truncate())
+        assertEquals(game.createdAt.truncate(), gameHistory.createdAt.truncate())
+        assertEquals(game.finishedAt!!.truncate(), gameHistory.finishedAt.truncate())
     }
 
     @Test
-    fun `summarize not finished game`() {
+    fun `save history for not finished game`() {
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
@@ -202,13 +206,13 @@ class GameSummaryServiceTest @Autowired constructor(
 
         Thread.sleep(1024)
 
-        gameSummaryService.summarize(game)
+        gameHistoryService.save(game)
 
-        assertEquals(0, gameSummaryRepository.count())
+        assertEquals(0, gameHistoryRepository.count())
     }
 
     @Test
-    fun `summarize anonymous game`() {
+    fun `save history for anonymous game`() {
         val gameDto = gameService.new(mockNewGameRequestDto())
 
         val (row, col) = gameDto.board
@@ -232,7 +236,7 @@ class GameSummaryServiceTest @Autowired constructor(
             finishedAt = LocalDateTime.now()
         })
 
-        gameSummaryService.summarize(game)
+        gameHistoryService.save(game)
     }
 
     private fun LocalDateTime.truncate(): LocalDateTime = truncatedTo(ChronoUnit.SECONDS)

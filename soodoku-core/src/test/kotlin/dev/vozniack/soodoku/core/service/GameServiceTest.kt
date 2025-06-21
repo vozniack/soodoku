@@ -7,7 +7,7 @@ import dev.vozniack.soodoku.core.domain.extension.parseNotes
 import dev.vozniack.soodoku.core.domain.extension.toGame
 import dev.vozniack.soodoku.core.domain.extension.toSoodoku
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
-import dev.vozniack.soodoku.core.domain.repository.GameSummaryRepository
+import dev.vozniack.soodoku.core.domain.repository.GameHistoryRepository
 import dev.vozniack.soodoku.core.domain.repository.MoveRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
@@ -39,13 +39,13 @@ class GameServiceTest @Autowired constructor(
     private val gameService: GameService,
     private val gameRepository: GameRepository,
     private val moveRepository: MoveRepository,
-    private val gameSummaryRepository: GameSummaryRepository,
+    private val gameHistoryRepository: GameHistoryRepository,
     private val userRepository: UserRepository
 ) : AbstractUnitTest() {
 
     @AfterEach
     fun `clean up`() {
-        gameSummaryRepository.deleteAll()
+        gameHistoryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()
     }
@@ -296,7 +296,7 @@ class GameServiceTest @Autowired constructor(
         assertNotNull(savedGame)
         assertNotNull(savedGame.finishedAt)
 
-        Thread.sleep(128).run { assertEquals(0, gameSummaryRepository.count()) }
+        Thread.sleep(128).run { assertEquals(0, gameHistoryRepository.count()) }
     }
 
     @Test
@@ -324,7 +324,7 @@ class GameServiceTest @Autowired constructor(
         assertNotNull(savedGame)
         assertNotNull(savedGame.finishedAt)
 
-        Thread.sleep(128).run { assertEquals(1, gameSummaryRepository.count()) }
+        Thread.sleep(128).run { assertEquals(1, gameHistoryRepository.count()) }
     }
 
     @Test
@@ -844,7 +844,7 @@ class GameServiceTest @Autowired constructor(
         assertNotNull(savedGame)
         assertNotNull(savedGame.finishedAt)
 
-        Thread.sleep(128).run { assertEquals(0, gameSummaryRepository.count()) }
+        Thread.sleep(128).run { assertEquals(0, gameHistoryRepository.count()) }
     }
 
     @Test
@@ -862,7 +862,7 @@ class GameServiceTest @Autowired constructor(
         assertNotNull(savedGame)
         assertNotNull(savedGame.finishedAt)
 
-        Thread.sleep(128).run { assertEquals(1, gameSummaryRepository.count()) }
+        Thread.sleep(128).run { assertEquals(1, gameHistoryRepository.count()) }
     }
 
     @Test
@@ -876,7 +876,7 @@ class GameServiceTest @Autowired constructor(
         assertEquals(gameDto.id, endedGameDto.id)
         assertNotNull(savedGame.finishedAt)
 
-        Thread.sleep(128).run { assertEquals(0, gameSummaryRepository.count()) }
+        Thread.sleep(128).run { assertEquals(0, gameHistoryRepository.count()) }
     }
 
     @Test
@@ -893,7 +893,7 @@ class GameServiceTest @Autowired constructor(
         assertEquals(gameDto.id, endedGameDto.id)
         assertNotNull(savedGame.finishedAt)
 
-        Thread.sleep(128).run { assertEquals(1, gameSummaryRepository.count()) }
+        Thread.sleep(128).run { assertEquals(1, gameHistoryRepository.count()) }
     }
 
     @Test

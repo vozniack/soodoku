@@ -84,7 +84,7 @@ export class MyGamesComponent implements OnInit {
 
     this.isLoading = true;
 
-    this.gameService.getGames(this.page, this.size).pipe(
+    this.gameService.getOngoing(this.page, this.size).pipe(
       tap(slice => {
         this.games.push(...slice.content);
         this.page += 1;

@@ -1,11 +1,11 @@
 package dev.vozniack.soodoku.core.service
 
-import dev.vozniack.soodoku.core.api.dto.GameSummaryDto
+import dev.vozniack.soodoku.core.api.dto.GameHistoryDto
 import dev.vozniack.soodoku.core.api.mapper.toDto
 import dev.vozniack.soodoku.core.domain.entity.Game
-import dev.vozniack.soodoku.core.domain.entity.GameSummary
+import dev.vozniack.soodoku.core.domain.entity.GameHistory
 import dev.vozniack.soodoku.core.domain.extension.toSoodoku
-import dev.vozniack.soodoku.core.domain.repository.GameSummaryRepository
+import dev.vozniack.soodoku.core.domain.repository.GameHistoryRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
 import dev.vozniack.soodoku.core.domain.types.MoveType
 import dev.vozniack.soodoku.core.internal.logging.KLogging
@@ -21,10 +21,10 @@ import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 
 @Service
-class GameSummaryService(private val gameSummaryRepository: GameSummaryRepository) {
+class GameHistoryService(private val gameHistoryRepository: GameHistoryRepository) {
 
-    fun getSummary(difficulty: Difficulty?, victory: Boolean?, pageable: Pageable): Slice<GameSummaryDto> {
-        val spec = Specification<GameSummary> { root, _, cb ->
+    fun get(difficulty: Difficulty?, victory: Boolean?, pageable: Pageable): Slice<GameHistoryDto> {
+        val spec = Specification<GameHistory> { root, _, cb ->
             val predicates = mutableListOf<Predicate>()
 
             difficulty?.let {
@@ -38,14 +38,14 @@ class GameSummaryService(private val gameSummaryRepository: GameSummaryRepositor
             cb.and(*predicates.toTypedArray())
         }
 
-        return gameSummaryRepository.findAll(spec, pageable).map { it.toDto() }
+        return gameHistoryRepository.findAll(spec, pageable).map { it.toDto() }
     }
 
     @Retryable(value = [Exception::class], maxAttempts = 3, backoff = Backoff(delay = 2048))
-    fun summarize(game: Game) {
+    fun save(game: Game) {
         game.takeIf { it.user != null && game.finishedAt != null }?.let {
-            gameSummaryRepository.save(
-                GameSummary(
+            gameHistoryRepository.save(
+                GameHistory(
                     game = it,
                     user = it.user!!,
                     difficulty = it.difficulty,
@@ -58,11 +58,11 @@ class GameSummaryService(private val gameSummaryRepository: GameSummaryRepositor
                     finishedAt = game.finishedAt!!
                 )
             )
-        } ?: logger.debug { "Skipping summary for game ${game.id}" }
+        } ?: logger.debug { "Skipping saving history for game ${game.id}" }
     }
 
     fun delete(gameId: UUID) {
-        gameSummaryRepository.deleteByGameId(gameId)
+        gameHistoryRepository.deleteByGameId(gameId)
     }
 
     companion object : KLogging()
