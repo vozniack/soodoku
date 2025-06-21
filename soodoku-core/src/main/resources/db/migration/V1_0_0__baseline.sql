@@ -54,6 +54,27 @@ CREATE TABLE moves
     CONSTRAINT fk_moves_game FOREIGN KEY (game_id) REFERENCES games (id)
 );
 
+CREATE TABLE game_summaries
+(
+    id            UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    game_id       UUID        NOT NULL UNIQUE,
+    user_id       UUID        NOT NULL,
+
+    difficulty    VARCHAR(16) NOT NULL,
+
+    duration      BIGINT      NOT NULL,
+
+    missing_cells INT         NOT NULL,
+    total_moves   INT         NOT NULL,
+    used_hints    INT         NOT NULL,
+
+    victory       BOOLEAN     NOT NULL,
+
+    CONSTRAINT fk_game_summaries_game FOREIGN KEY (game_id) REFERENCES games (id),
+    CONSTRAINT fk_game_summaries_user FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
 INSERT INTO users (email, password, username, language, theme)
 VALUES ('rajeshkootrappali@bbt.com',
         '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO',

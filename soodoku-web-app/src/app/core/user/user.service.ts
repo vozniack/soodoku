@@ -2,8 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Game } from '../../modules/game/game.interface';
-import { Slice } from '../../shared/models/slice';
 import {
   User,
   UserUpdateLanguageRequest,
@@ -24,14 +22,6 @@ export class UserService {
 
   getLoggedUser(): Observable<User> {
     return this.httpClient.get<User>(`${this.baseUrl}`);
-  }
-
-  getLastGame(): Observable<Game> {
-    return this.httpClient.get<Game>(`${this.baseUrl}/lastGame`);
-  }
-
-  getGames(finished: boolean, page: number, size: number): Observable<Slice<Game>> {
-    return this.httpClient.get<Slice<Game>>(`${this.baseUrl}/games?finished=${finished}&page=${page}&size=${size}`);
   }
 
   updateUsername(id: string, request: UserUpdateUsernameRequest): Observable<User> {

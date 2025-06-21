@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Slice } from '../../shared/models/slice';
 import { Game } from './game.interface';
 
 @Injectable({
@@ -14,8 +15,16 @@ export class GameService {
   constructor(private httpClient: HttpClient) {
   }
 
-  get(id: string): Observable<Game> {
+  getGame(id: string): Observable<Game> {
     return this.httpClient.get<Game>(`${this.baseUrl}/${id}`);
+  }
+
+  getGames(page: number, size: number): Observable<Slice<Game>> {
+    return this.httpClient.get<Slice<Game>>(`${this.baseUrl}?page=${page}&size=${size}`);
+  }
+
+  getLast(): Observable<Game> {
+    return this.httpClient.get<Game>(`${this.baseUrl}/last`);
   }
 
   new(difficulty: string): Observable<Game> {

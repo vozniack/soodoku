@@ -6,6 +6,8 @@ import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
 import dev.vozniack.soodoku.core.api.dto.NoteRequestDto
 import dev.vozniack.soodoku.core.service.GameService
 import java.util.UUID
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -21,6 +23,12 @@ class GameController(private val gameService: GameService) {
 
     @GetMapping("/{id}")
     fun get(@PathVariable id: UUID): GameDto = gameService.get(id)
+
+    @GetMapping
+    fun get(pageable: Pageable): Slice<GameDto> = gameService.get(pageable)
+
+    @GetMapping("/last")
+    fun getLast(): GameDto? = gameService.getLast()
 
     @PostMapping
     fun new(@RequestBody newGameRequestDto: NewGameRequestDto): GameDto = gameService.new(newGameRequestDto)

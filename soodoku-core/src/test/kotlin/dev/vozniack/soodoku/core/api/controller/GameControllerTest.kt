@@ -1,21 +1,27 @@
 package dev.vozniack.soodoku.core.api.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.vozniack.soodoku.core.AbstractWebMvcTest
 import dev.vozniack.soodoku.core.api.dto.GameDto
 import dev.vozniack.soodoku.core.api.dto.NewGameRequestDto
 import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
+import dev.vozniack.soodoku.core.domain.extension.toGame
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
+import dev.vozniack.soodoku.core.domain.repository.GameSummaryRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
 import dev.vozniack.soodoku.core.mock.mockNoteRequestDto
 import dev.vozniack.soodoku.core.mock.mockUser
 import dev.vozniack.soodoku.core.service.GameService
+import dev.vozniack.soodoku.lib.Soodoku
+import java.time.LocalDateTime
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -31,12 +37,25 @@ import org.springframework.web.context.WebApplicationContext
 class GameControllerTest @Autowired constructor(
     context: WebApplicationContext,
     private val gameRepository: GameRepository,
+    private val gameSummaryRepository: GameSummaryRepository,
     private val userRepository: UserRepository,
     private val gameService: GameService,
 ) : AbstractWebMvcTest(context) {
 
+    private val objectMapper = jacksonObjectMapper()
+
+    @BeforeEach
+    fun `clear up before`() {
+        gameSummaryRepository.deleteAll()
+        gameRepository.deleteAll()
+        userRepository.deleteAll()
+
+        SecurityContextHolder.clearContext()
+    }
+
     @AfterEach
-    fun `clean up`() {
+    fun `clean up after`() {
+        gameSummaryRepository.deleteAll()
         gameRepository.deleteAll()
         userRepository.deleteAll()
 
@@ -47,7 +66,7 @@ class GameControllerTest @Autowired constructor(
     fun `get game with anonymous user`() {
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 get("/api/games/${gameDto.id}")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -67,7 +86,7 @@ class GameControllerTest @Autowired constructor(
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 get("/api/games/${gameDto.id}")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -99,14 +118,79 @@ class GameControllerTest @Autowired constructor(
     }
 
     @Test
+    fun `get games with logged user`() {
+        val user = userRepository.save(mockUser())
+
+        gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+        gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3)
+                .apply { finishedAt = LocalDateTime.now() }
+        )
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(null, Difficulty.EASY, 3)
+        )
+
+        gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(null, Difficulty.EASY, 3)
+                .apply { finishedAt = LocalDateTime.now() }
+        )
+
+        authenticate(user.email)
+
+        val response = mockMvc.perform(
+            get("/api/games").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk).andReturn().response.contentAsString
+
+        val content: List<GameDto> = objectMapper.readValue(
+            objectMapper.readTree(response)["content"].toString(),
+            object : TypeReference<List<GameDto>>() {}
+        )
+
+        assertEquals(2, content.size)
+    }
+
+    @Test
+    fun `get games with not logged user`() {
+        mockMvc.perform(
+            get("/api/games").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `get last game with logged user`() {
+        val user = userRepository.save(mockUser())
+        val game = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+
+        authenticate(user.email)
+
+        val response: GameDto = objectMapper.readValue(
+            mockMvc.perform(
+                get("/api/games/last").contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertEquals(game.id, response.id)
+    }
+
+    @Test
+    fun `get last game with not logged user`() {
+        mockMvc.perform(
+            get("/api/games/last").contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
     fun `create new game with anonymous user`() {
         val request = NewGameRequestDto(Difficulty.EASY)
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 post("/api/games")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(jacksonObjectMapper().writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
@@ -124,11 +208,11 @@ class GameControllerTest @Autowired constructor(
 
         val request = NewGameRequestDto(Difficulty.EASY)
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 post("/api/games")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(jacksonObjectMapper().writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
@@ -147,11 +231,11 @@ class GameControllerTest @Autowired constructor(
 
         val request = MoveRequestDto(row, col, 5)
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 put("/api/games/${gameDto.id}/move")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(jacksonObjectMapper().writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
@@ -177,11 +261,11 @@ class GameControllerTest @Autowired constructor(
 
         val request = MoveRequestDto(row, col, 5)
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 put("/api/games/${gameDto.id}/move")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(jacksonObjectMapper().writeValueAsString(request))
+                    .content(objectMapper.writeValueAsString(request))
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
@@ -214,7 +298,7 @@ class GameControllerTest @Autowired constructor(
         mockMvc.perform(
             put("/api/games/${gameDto.id}/move")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jacksonObjectMapper().writeValueAsString(request))
+                .content(objectMapper.writeValueAsString(request))
         ).andExpect(status().isUnauthorized)
     }
 
@@ -230,7 +314,7 @@ class GameControllerTest @Autowired constructor(
 
         gameService.move(gameDto.id, MoveRequestDto(row = row, col = col, value = 5))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 put("/api/games/${gameDto.id}/revert")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -258,7 +342,7 @@ class GameControllerTest @Autowired constructor(
 
         gameService.move(gameDto.id, MoveRequestDto(row = row, col = col, value = 5))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 put("/api/games/${gameDto.id}/revert")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -301,11 +385,11 @@ class GameControllerTest @Autowired constructor(
     fun `make a note with anonymous user`() {
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 put("/api/games/${gameDto.id}/note")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(jacksonObjectMapper().writeValueAsString(mockNoteRequestDto()))
+                    .content(objectMapper.writeValueAsString(mockNoteRequestDto()))
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
@@ -322,11 +406,11 @@ class GameControllerTest @Autowired constructor(
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 put("/api/games/${gameDto.id}/note")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(jacksonObjectMapper().writeValueAsString(mockNoteRequestDto()))
+                    .content(objectMapper.writeValueAsString(mockNoteRequestDto()))
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
@@ -351,7 +435,7 @@ class GameControllerTest @Autowired constructor(
         mockMvc.perform(
             put("/api/games/${gameDto.id}/note")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jacksonObjectMapper().writeValueAsString(mockNoteRequestDto()))
+                .content(objectMapper.writeValueAsString(mockNoteRequestDto()))
         ).andExpect(status().isUnauthorized)
     }
 
@@ -359,7 +443,7 @@ class GameControllerTest @Autowired constructor(
     fun `delete notes with anonymous user`() {
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 delete("/api/games/${gameDto.id}/note")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -379,7 +463,7 @@ class GameControllerTest @Autowired constructor(
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 delete("/api/games/${gameDto.id}/note")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -414,7 +498,7 @@ class GameControllerTest @Autowired constructor(
     fun `use hint with anonymous user`() {
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 put("/api/games/${gameDto.id}/hint")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -434,7 +518,7 @@ class GameControllerTest @Autowired constructor(
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 put("/api/games/${gameDto.id}/hint")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -469,7 +553,7 @@ class GameControllerTest @Autowired constructor(
     fun `end game with anonymous user`() {
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 put("/api/games/${gameDto.id}/end")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -489,7 +573,7 @@ class GameControllerTest @Autowired constructor(
 
         val gameDto = gameService.new(NewGameRequestDto(Difficulty.EASY))
 
-        val response: GameDto = jacksonObjectMapper().readValue(
+        val response: GameDto = objectMapper.readValue(
             mockMvc.perform(
                 put("/api/games/${gameDto.id}/end")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -497,6 +581,8 @@ class GameControllerTest @Autowired constructor(
         )
 
         assertEquals(gameDto.id, response.id)
+
+        Thread.sleep(128) // waiting for coroutines to create game summary
     }
 
     @Test

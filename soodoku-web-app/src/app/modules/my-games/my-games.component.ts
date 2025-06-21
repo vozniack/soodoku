@@ -6,7 +6,6 @@ import { catchError, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../core/breakpoint/breakpoint.interface';
 import { ToolbarComponent } from '../../core/toolbar/toolbar.component';
-import { UserService } from '../../core/user/user.service';
 import { View } from '../../core/view/view.const';
 import { fadeInAnimation } from '../../shared/animations/fade-in-animation';
 import { ButtonGroupComponent } from '../../shared/components/button-group/button-group.component';
@@ -18,6 +17,7 @@ import { InfiniteScrollDirective } from '../../shared/directives/infinite-scroll
 import { ACTION_SET_VIEW } from '../../store/app/app.actions';
 import { SELECT_APP_BREAKPOINT } from '../../store/app/app.selectors';
 import { Game } from '../game/game.interface';
+import { GameService } from '../game/game.service';
 
 @Component({
   selector: 'soo-my-games',
@@ -50,7 +50,7 @@ export class MyGamesComponent implements OnInit {
   isLast = false;
   isLoading = false;
 
-  constructor(private store: Store, private userService: UserService) {
+  constructor(private store: Store, private gameService: GameService) {
     this.store.select(SELECT_APP_BREAKPOINT).pipe(
       takeUntilDestroyed(),
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)
@@ -84,7 +84,7 @@ export class MyGamesComponent implements OnInit {
 
     this.isLoading = true;
 
-    this.userService.getGames(this.gameType.value, this.page, this.size).pipe(
+    this.gameService.getGames(this.page, this.size).pipe(
       tap(slice => {
         this.games.push(...slice.content);
         this.page += 1;
