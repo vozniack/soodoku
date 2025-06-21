@@ -1,63 +1,67 @@
-<div class="column-container gap">
-  <soo-input
-    [control]="getControl('email')"
-    [id]="'email'"
-    [name]="'email'"
-    [placeholder]="'Email address'"
-    [placeholderShrink]="false"
-    [icon]="'mail'"
-    [maxWidth]="'448px'"
-    [style]="'tonal'">
-  </soo-input>
+<ng-container *ngIf="signupForm != undefined">
+  <form class="column-container gap" @fadeInAnimation>
+    <soo-input
+      [control]="getControl('email')"
+      [id]="'email'"
+      [name]="'email'"
+      [placeholder]="'Email address'"
+      [placeholderShrink]="false"
+      [icon]="'mail'"
+      [maxWidth]="'448px'"
+      [style]="'tonal'">
+    </soo-input>
 
-  <soo-input
-    [control]="getControl('username')"
-    [id]="'username'"
-    [name]="'username'"
-    [placeholder]="'Username'"
-    [placeholderShrink]="false"
-    [icon]="'person'"
-    [style]="'tonal'"
-    [maxWidth]="'448px'">
-  </soo-input>
+    <soo-input
+      [control]="getControl('username')"
+      [id]="'username'"
+      [name]="'username'"
+      [placeholder]="'Username'"
+      [placeholderShrink]="false"
+      [icon]="'person'"
+      [style]="'tonal'"
+      [maxWidth]="'448px'">
+    </soo-input>
 
-  <soo-divider></soo-divider>
+    <soo-divider></soo-divider>
 
-  <soo-input
-    [control]="getControl('password')"
-    [id]="'password'"
-    [name]="'password'"
-    [type]="'password'"
-    [placeholder]="'Password'"
-    [placeholderShrink]="false"
-    [password]="true"
-    [style]="'tonal'"
-    [maxWidth]="'448px'">
-  </soo-input>
+    <soo-input
+      [control]="getControl('password')"
+      [id]="'password'"
+      [name]="'password'"
+      [type]="'password'"
+      [placeholder]="'Password'"
+      [placeholderShrink]="false"
+      [password]="true"
+      [style]="'tonal'"
+      [maxWidth]="'448px'">
+    </soo-input>
 
-  <soo-input
-    [control]="getControl('repeat')"
-    [id]="'password-repeat'"
-    [name]="'password-repeat'"
-    [type]="'password'"
-    [placeholder]="'Repeat password'"
-    [placeholderShrink]="false"
-    [password]="true"
-    [style]="'tonal'"
-    [maxWidth]="'448px'">
-  </soo-input>
+    <soo-input
+      [control]="getControl('repeat')"
+      [id]="'password-repeat'"
+      [name]="'password-repeat'"
+      [type]="'password'"
+      [placeholder]="'Repeat password'"
+      [placeholderShrink]="false"
+      [password]="true"
+      [style]="'tonal'"
+      [maxWidth]="'448px'">
+    </soo-input>
 
-  <soo-button
-    [text]="'Already have an account? Log in!'"
-    [style]="'flat'"
-    [size]="'small'"
-    (click)="onSwitchMode()">
-  </soo-button>
+    <span class="password-hint">Password should consist of at least 6 characters and contain one capital letter, one number and one special character.</span>
 
-  <soo-button
-    (click)="signup()"
-    [disabled]="signupForm.invalid"
-    [text]="'Signup'"
-    [maxWidth]="'448px'">
-  </soo-button>
-</div>
+    <soo-button
+      [disabled]="signupForm.invalid"
+      [text]="'Signup'"
+      [maxWidth]="'448px'"
+      (click)="signup()">
+    </soo-button>
+
+    <soo-button
+      [text]="'Already have an account? Log in!'"
+      [style]="'flat'"
+      [size]="'small'"
+      (click)="onSwitchMode()">
+    </soo-button>
+  </form>
+</ng-container>

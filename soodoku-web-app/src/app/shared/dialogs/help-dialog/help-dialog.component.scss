@@ -1,0 +1,13 @@
+@import 'theme.scss';
+
+.help-dialog {
+  color: $secondary;
+
+  > * {
+    width: 100%;
+  }
+
+  span {
+    font-size: 12px;
+  }
+}

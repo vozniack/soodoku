@@ -61,6 +61,8 @@
         [maxWidth]="'448px'">
       </soo-input>
 
+      <span class="password-hint">Password should consist of at least 6 characters and contain one capital letter, one number and one special character.</span>
+
       <soo-button
         (click)="updatePassword()"
         [disabled]="passwordForm.invalid"

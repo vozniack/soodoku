@@ -1,1 +1,9 @@
 @import 'theme.scss';
+
+.password-hint {
+  margin: 8px 0;
+
+  font-size: 10px;
+  text-align: justify;
+  max-width: 356px;
+}

@@ -7,7 +7,7 @@ import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../../core/breakpoint/breakpoint.interface';
 import { SELECT_APP_BREAKPOINT } from '../../../store/app/app.selectors';
 import { ACTION_GAME_MOVE, ACTION_GAME_NOTE } from '../../../store/app/game/game.actions';
-import { GameState } from '../../../store/app/game/game.state';
+import { GameMode, GameState } from '../../../store/app/game/game.state';
 import { Cell } from '../game-board/game-board.interface';
 import { Note } from '../game.interface';
 
@@ -19,6 +19,8 @@ import { Note } from '../game.interface';
   styleUrl: './game-numbers.component.scss'
 })
 export class GameNumbersComponent {
+
+  GameMode = GameMode;
 
   @Input() gameState$!: Observable<GameState>;
 
@@ -48,5 +50,9 @@ export class GameNumbersComponent {
 
     const note = notes.find(n => n.row === focus.row && n.col === focus.col);
     return note?.values.includes(sign + value) ?? false;
+  }
+
+  sketching(mode?: GameMode): boolean {
+    return mode == GameMode.SKETCH;
   }
 }

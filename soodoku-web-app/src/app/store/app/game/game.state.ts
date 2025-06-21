@@ -3,7 +3,10 @@ import { Game } from '../../../modules/game/game.interface';
 
 export interface GameState {
   game?: Game;
+  mode?: GameMode;
   focus?: Cell;
+}
 
-  sketch: boolean;
+export enum GameMode {
+  PLAY = 'play', SKETCH = 'sketch', VIEW = 'view'
 }

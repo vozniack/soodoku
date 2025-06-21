@@ -31,6 +31,8 @@
   </soo-button>
 </ng-container>
 
-<div class="desktop-game-control column-container" *ngIf="breakpoint == 'xl'" @fadeInAnimation>
-  <soo-game-control [gameState$]="gameState$"></soo-game-control>
-</div>
+<ng-container *ngIf="gameState$ | async as gameState">
+  <div class="desktop-game-control column-container {{gameState.mode}}" *ngIf="breakpoint == 'xl'" @fadeInAnimation>
+    <soo-game-control [gameState$]="gameState$"></soo-game-control>
+  </div>
+</ng-container>

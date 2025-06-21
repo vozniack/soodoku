@@ -20,3 +20,9 @@
     background: color-mix(in srgb, $secondary-container 50%, transparent);
   }
 }
+
+.password-hint {
+  font-size: 10px;
+  text-align: justify;
+  max-width: 356px;
+}
