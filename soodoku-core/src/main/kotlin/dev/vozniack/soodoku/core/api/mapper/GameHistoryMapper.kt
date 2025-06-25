@@ -7,6 +7,7 @@ import dev.vozniack.soodoku.core.util.toISOTime
 fun GameHistory.toDto(): GameHistoryDto = GameHistoryDto(
     userId = user.id,
     gameId = game.id,
+    type = type,
     difficulty = difficulty,
     duration = duration,
     missingCells = missingCells,

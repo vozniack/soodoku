@@ -3,19 +3,21 @@ package dev.vozniack.soodoku.core.domain.extension
 import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.User
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.GameType
 import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.extension.flatBoard
 import dev.vozniack.soodoku.lib.extension.flatLocks
 import dev.vozniack.soodoku.lib.extension.status
 import java.time.LocalDateTime
 
-fun Soodoku.toGame(user: User? = null, difficulty: Difficulty, hints: Int): Game = status().let {
+fun Soodoku.toGame(user: User? = null, type: GameType, difficulty: Difficulty, hints: Int): Game = status().let {
     Game(
+        type = type,
+        difficulty = difficulty,
         initialBoard = it.board.flatBoard(),
         solvedBoard = it.solved.flatBoard(),
         currentBoard = it.board.flatBoard(),
         locks = it.locks.flatLocks(),
-        difficulty = difficulty,
         hints = hints,
         user = user
     )

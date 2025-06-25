@@ -66,7 +66,12 @@ class GameService(
         val status: Soodoku.Status = soodoku.status()
 
         val game: Game = gameRepository.save(
-            soodoku.toGame(user = user, difficulty = newGameRequestDto.difficulty, hints = 3)
+            soodoku.toGame(
+                user = user,
+                type = newGameRequestDto.type,
+                difficulty = newGameRequestDto.difficulty,
+                hints = 3
+            )
         )
 
         gameRepository.save(game.also { it.sessions.add(GameSession(game = it, startedAt = it.startedAt)) })

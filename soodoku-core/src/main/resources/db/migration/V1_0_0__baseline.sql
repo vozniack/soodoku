@@ -16,13 +16,14 @@ CREATE TABLE games
 (
     id            UUID         NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
+    type          VARCHAR(16)  NOT NULL,
+    difficulty    VARCHAR(16)  NOT NULL,
+
     initial_board VARCHAR(128) NOT NULL,
     solved_board  VARCHAR(128) NOT NULL,
     current_board VARCHAR(128) NOT NULL,
     locks         VARCHAR(512) NOT NULL,
     notes         VARCHAR(2048),
-
-    difficulty    VARCHAR(16)  NOT NULL,
 
     hints         INT          NOT NULL,
 
@@ -72,6 +73,7 @@ CREATE TABLE game_history
     game_id       UUID        NOT NULL UNIQUE,
     user_id       UUID        NOT NULL,
 
+    type          VARCHAR(16) NOT NULL,
     difficulty    VARCHAR(16) NOT NULL,
 
     duration      BIGINT      NOT NULL,

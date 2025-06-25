@@ -10,6 +10,7 @@ import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.GameHistoryRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.GameType
 import dev.vozniack.soodoku.core.fixture.findEmptyCell
 import dev.vozniack.soodoku.core.fixture.mockGameHistory
 import dev.vozniack.soodoku.core.fixture.mockMoveRequestDto
@@ -47,8 +48,13 @@ class GameHistoryServiceTest @Autowired constructor(
     fun `get history when no filter is applied`() {
         val user = userRepository.save(mockUser())
 
-        val game1 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
-        val game2 = gameRepository.save(Soodoku(Soodoku.Difficulty.HARD).toGame(user, Difficulty.HARD, 3))
+        val game1 = gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(user, GameType.RANDOM, Difficulty.EASY, 3)
+        )
+
+        val game2 = gameRepository.save(
+            Soodoku(Soodoku.Difficulty.HARD).toGame(user, GameType.RANDOM, Difficulty.HARD, 3)
+        )
 
         gameHistoryRepository.saveAll(
             listOf(
@@ -70,8 +76,13 @@ class GameHistoryServiceTest @Autowired constructor(
     fun `get history with filtering by difficulty`() {
         val user = userRepository.save(mockUser())
 
-        val gameEasy = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
-        val gameHard = gameRepository.save(Soodoku(Soodoku.Difficulty.HARD).toGame(user, Difficulty.HARD, 3))
+        val gameEasy = gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(user, GameType.RANDOM, Difficulty.EASY, 3)
+        )
+
+        val gameHard = gameRepository.save(
+            Soodoku(Soodoku.Difficulty.HARD).toGame(user, GameType.RANDOM, Difficulty.HARD, 3)
+        )
 
         gameHistoryRepository.saveAll(
             listOf(
@@ -92,8 +103,13 @@ class GameHistoryServiceTest @Autowired constructor(
     fun `get history with filtering by victory`() {
         val user = userRepository.save(mockUser())
 
-        val game1 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
-        val game2 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+        val game1 = gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(user, GameType.RANDOM, Difficulty.EASY, 3)
+        )
+
+        val game2 = gameRepository.save(
+            Soodoku(Soodoku.Difficulty.HARD).toGame(user, GameType.RANDOM, Difficulty.HARD, 3)
+        )
 
         gameHistoryRepository.saveAll(
             listOf(
@@ -114,8 +130,13 @@ class GameHistoryServiceTest @Autowired constructor(
     fun `get history with sorting by total moves descending`() {
         val user = userRepository.save(mockUser())
 
-        val game1 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
-        val game2 = gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+        val game1 = gameRepository.save(
+            Soodoku(Soodoku.Difficulty.EASY).toGame(user, GameType.RANDOM, Difficulty.EASY, 3)
+        )
+
+        val game2 = gameRepository.save(
+            Soodoku(Soodoku.Difficulty.HARD).toGame(user, GameType.RANDOM, Difficulty.HARD, 3)
+        )
 
         gameHistoryRepository.saveAll(
             listOf(
@@ -158,6 +179,7 @@ class GameHistoryServiceTest @Autowired constructor(
         assertEquals(user.id, gameHistory.user.id)
         assertEquals(game.id, gameHistory.game.id)
 
+        assertEquals(game.type, gameHistory.type)
         assertEquals(game.difficulty, gameHistory.difficulty)
 
         assertTrue(gameHistory.duration > 0)
