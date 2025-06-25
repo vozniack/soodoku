@@ -15,7 +15,7 @@ export class HomeSectionComponent {
   @Input() text!: string;
   @Input() icon!: string;
 
-  @Input() size = 32;
+  @Input() size = 36;
 
   @Input() disabled = false;
 }

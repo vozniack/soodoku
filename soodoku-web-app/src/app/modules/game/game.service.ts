@@ -23,6 +23,14 @@ export class GameService {
     return this.httpClient.post<Game>(`${this.baseUrl}`, {difficulty: difficulty});
   }
 
+  pause(id: string): Observable<Game> {
+    return this.httpClient.put<Game>(`${this.baseUrl}/${id}/pause`, {});
+  }
+
+  resume(id: string): Observable<Game> {
+    return this.httpClient.put<Game>(`${this.baseUrl}/${id}/resume`, {});
+  }
+
   move(id: string, row: number, col: number, value: number): Observable<Game> {
     return this.httpClient.put<Game>(`${this.baseUrl}/${id}/move`, {row: row, col: col, value: value});
   }

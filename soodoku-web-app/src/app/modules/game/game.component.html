@@ -22,13 +22,11 @@
 </div>
 
 <ng-container *ngIf="gameState$ | async as gameState">
-  <soo-button *ngIf="gameState.game?.finishedAt != undefined"
-              [text]="'Back to home'"
-              [style]="'flat'"
-              [width]="'152px'"
-              (click)="home()"
-              @fadeInAnimation>
-  </soo-button>
+  <div class="row-container center gap" *ngIf="gameState.game?.finished" @fadeInAnimation>
+    <soo-button [text]="'New game'" [iconLeft]="'play_arrow'" (click)="new()"></soo-button>
+    <soo-button [text]="'Back to home'" [iconRight]="'exit_to_app'" (click)="home()">
+    </soo-button>
+  </div>
 </ng-container>
 
 <ng-container *ngIf="gameState$ | async as gameState">

@@ -21,7 +21,7 @@ import { IconComponent } from '../icon/icon.component';
 })
 export class AvatarComponent {
 
-  @Input() withUsername = true;
+  @Input() withUsername = false;
 
   breakpoint!: Breakpoint;
   username!: string;

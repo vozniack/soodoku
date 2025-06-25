@@ -7,6 +7,7 @@ import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.extension.flatBoard
 import dev.vozniack.soodoku.lib.extension.flatLocks
 import dev.vozniack.soodoku.lib.extension.status
+import java.time.LocalDateTime
 
 fun Soodoku.toGame(user: User? = null, difficulty: Difficulty, hints: Int): Game = status().let {
     Game(
@@ -36,4 +37,16 @@ fun Game.parseNotes(): MutableMap<Pair<Int, Int>, List<String>> =
 
 fun Map<Pair<Int, Int>, List<String>>.serializeNotes(): String = entries.joinToString(";") { (pos, values) ->
     "${pos.first},${pos.second}," + values.joinToString(",")
+}
+
+fun Game.isEnd(status: Soodoku.Status): Boolean = currentBoard.count { it == '0' } == 0 && status.conflicts.isEmpty()
+
+fun Game.end(): Game = let {
+    LocalDateTime.now().let { now ->
+        apply { finishedAt = now }.also {
+            sessions.filter { it.pausedAt == null }.maxByOrNull { it.startedAt }?.let { it.pausedAt = now }
+        }
+    }
+
+    this
 }

@@ -2,14 +2,16 @@ import { AsyncPipe, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { filter, Observable } from 'rxjs';
+import { filter, from, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Breakpoint } from '../../core/breakpoint/breakpoint.interface';
+import { DialogService } from '../../core/dialog/dialog.service';
 import { ToolbarComponent } from '../../core/toolbar/toolbar.component';
 import { View } from '../../core/view/view.const';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { fadeInAnimation } from '../../shared/animations/fade-in-animation';
+import { DifficultyDialogComponent } from '../../shared/dialogs/difficulty-dialog/difficulty-dialog.component';
 import { ACTION_SET_VIEW } from '../../store/app/app.actions';
 import { SELECT_APP_BREAKPOINT } from '../../store/app/app.selectors';
 import { SELECT_GAME_STATE } from '../../store/app/game/game.selectors';
@@ -33,7 +35,7 @@ export class GameComponent {
 
   gameState$!: Observable<GameState>;
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private dialogService: DialogService) {
     this.store.select(SELECT_APP_BREAKPOINT).pipe(
       takeUntilDestroyed(),
       tap((breakpoint: Breakpoint) => this.breakpoint = breakpoint)
@@ -43,6 +45,10 @@ export class GameComponent {
       takeUntilDestroyed(),
       filter(gameState => gameState?.game?.id !== undefined)
     );
+  }
+
+  new(): void {
+    from(this.dialogService.open(DifficultyDialogComponent)).subscribe();
   }
 
   home(): void {

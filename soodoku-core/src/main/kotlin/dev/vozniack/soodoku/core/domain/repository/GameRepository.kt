@@ -14,7 +14,7 @@ interface GameRepository : CrudRepository<Game, UUID> {
         value = """
             SELECT * FROM games
             WHERE user_id = :userId AND finished_at IS NULL
-            ORDER BY COALESCE(updated_at, created_at) DESC
+            ORDER BY COALESCE(updated_at, started_at) DESC
         """, nativeQuery = true
     )
     fun findOngoingGames(@Param("userId") userId: UUID, pageable: Pageable): Slice<Game>

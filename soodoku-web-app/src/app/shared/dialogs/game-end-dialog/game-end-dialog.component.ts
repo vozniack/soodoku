@@ -8,7 +8,7 @@ import { SELECT_GAME_STATE } from '../../../store/app/game/game.selectors';
 import { GameState } from '../../../store/app/game/game.state';
 import { ButtonComponent } from '../../components/button/button.component';
 import { IconComponent } from '../../components/icon/icon.component';
-import { formatDurationBetween } from '../../functions/time.fuction';
+import { formatDuration } from '../../functions/time.fuction';
 
 @Component({
   selector: 'soo-game-end-dialog',
@@ -42,6 +42,6 @@ export class GameEndDialogComponent {
   }
 
   duration(): string {
-    return formatDurationBetween(this.game.createdAt, this.game.finishedAt!!);
+    return formatDuration(this.game.sessions);
   }
 }

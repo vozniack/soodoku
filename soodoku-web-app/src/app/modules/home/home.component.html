@@ -3,15 +3,15 @@
 
   <div class="row-container space-between gap-small">
     <span class="logged-as">logged as</span>
-    <soo-toolbar></soo-toolbar>
+    <soo-toolbar [withUsername]="true"></soo-toolbar>
   </div>
 
-  <soo-divider [width]="'90%'" [maxWidth]="'512px'"></soo-divider>
+  <soo-divider [maxWidth]="'356px'"></soo-divider>
 
   <div class="sections column-container gap ">
     <soo-home-section [text]="'New game'"
                       [icon]="'play_arrow'"
-                      [size]="40"
+                      [size]="48"
                       (click)="newGame()">
     </soo-home-section>
 

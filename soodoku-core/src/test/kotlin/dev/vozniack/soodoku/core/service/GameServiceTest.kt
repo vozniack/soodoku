@@ -6,7 +6,7 @@ import dev.vozniack.soodoku.core.domain.extension.toGame
 import dev.vozniack.soodoku.core.domain.extension.toSoodoku
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.GameHistoryRepository
-import dev.vozniack.soodoku.core.domain.repository.MoveRepository
+import dev.vozniack.soodoku.core.domain.repository.GameMoveRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
 import dev.vozniack.soodoku.core.domain.types.MoveType
@@ -39,7 +39,7 @@ import org.springframework.data.domain.PageRequest
 class GameServiceTest @Autowired constructor(
     private val gameService: GameService,
     private val gameRepository: GameRepository,
-    private val moveRepository: MoveRepository,
+    private val gameMoveRepository: GameMoveRepository,
     private val gameHistoryRepository: GameHistoryRepository,
     private val userRepository: UserRepository
 ) : AbstractUnitTest() {
@@ -133,7 +133,7 @@ class GameServiceTest @Autowired constructor(
 
         assertEquals(0, gameDto.moves.size)
 
-        assertNotNull(gameDto.createdAt)
+        assertNotNull(gameDto.startedAt)
         assertNull(gameDto.updatedAt)
         assertNull(gameDto.finishedAt)
     }
@@ -161,7 +161,7 @@ class GameServiceTest @Autowired constructor(
 
         assertEquals(0, gameDto.moves.size)
 
-        assertNotNull(gameDto.createdAt)
+        assertNotNull(gameDto.startedAt)
         assertNull(gameDto.updatedAt)
         assertNull(gameDto.finishedAt)
     }
@@ -923,7 +923,7 @@ class GameServiceTest @Autowired constructor(
 
         assertTrue(gameRepository.findById(updatedGameDto.id).isEmpty)
 
-        assertEquals(0, moveRepository.count())
+        assertEquals(0, gameMoveRepository.count())
     }
 
     @Test
@@ -945,7 +945,7 @@ class GameServiceTest @Autowired constructor(
 
         assertTrue(gameRepository.findById(updatedGameDto.id).isEmpty)
 
-        assertEquals(0, moveRepository.count())
+        assertEquals(0, gameMoveRepository.count())
     }
 
     @Test

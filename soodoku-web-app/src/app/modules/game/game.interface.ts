@@ -13,11 +13,15 @@ export interface Game {
   hints: number,
   missing: number,
 
+  sessions: Session[],
   moves: Move[],
 
-  createdAt: string,
+  startedAt: string,
   updatedAt?: string,
-  finishedAt?: string
+  finishedAt?: string,
+
+  paused: boolean,
+  finished: boolean
 }
 
 export interface Conflict {
@@ -32,6 +36,11 @@ export interface Note {
   col: number,
 
   values: string[]
+}
+
+export interface Session {
+  startedAt: string,
+  pausedAt: string
 }
 
 export interface Move {

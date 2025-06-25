@@ -49,12 +49,14 @@ class GameHistoryService(private val gameHistoryRepository: GameHistoryRepositor
                     game = it,
                     user = it.user!!,
                     difficulty = it.difficulty,
-                    duration = between(it.createdAt, it.finishedAt).seconds,
+                    duration = it.sessions.filter { session -> session.pausedAt != null }
+                        .sumOf { session -> between(session.startedAt, session.pausedAt).seconds },
                     missingCells = it.currentBoard.count { cell -> cell == '0' },
                     totalMoves = it.moves.size,
                     usedHints = it.moves.count { move -> move.type == MoveType.HINT },
-                    victory = it.currentBoard.count { cell -> cell == '0' } == 0 && it.toSoodoku().status().conflicts.isEmpty(),
-                    createdAt = game.createdAt,
+                    victory = it.currentBoard.count { cell -> cell == '0' } == 0 && it.toSoodoku()
+                        .status().conflicts.isEmpty(),
+                    startedAt = game.startedAt,
                     finishedAt = game.finishedAt!!
                 )
             )

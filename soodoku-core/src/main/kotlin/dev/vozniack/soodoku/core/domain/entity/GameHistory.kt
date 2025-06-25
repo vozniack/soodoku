@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Entity
-@Table(name = "games_history")
+@Table(name = "game_history")
 data class GameHistory(
 
     @Id
@@ -37,6 +37,6 @@ data class GameHistory(
 
     @Column(nullable = false) val victory: Boolean,
 
-    @Column(nullable = false) var createdAt: LocalDateTime,
+    @Column(nullable = false) var startedAt: LocalDateTime,
     @Column(nullable = false) var finishedAt: LocalDateTime,
 )

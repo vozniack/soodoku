@@ -3,7 +3,7 @@
     <div class="game-board">
       <ng-container *ngFor="let row of gameState.game.board; let rowIndex = index">
         <ng-container *ngFor="let cell of row; let colIndex = index">
-          <ng-container *ngIf="gameState.game.finishedAt == undefined">
+          <ng-container *ngIf="!gameState.game.finished">
             <button class="cell {{breakpoint}}"
                     [class.active]="isActive(gameState.game, rowIndex, colIndex, gameState.focus)"
                     [class.active-related]="isActiveRelated(rowIndex, colIndex, gameState.focus)"
@@ -31,7 +31,7 @@
             </button>
           </ng-container>
 
-          <ng-container *ngIf="gameState.game.finishedAt != undefined">
+          <ng-container *ngIf="gameState.game.finished">
             <span class="cell {{breakpoint}}"
                   [class.correct]="isCorrect(gameState.game, rowIndex, colIndex)"
                   [class.incorrect]="isIncorrect(gameState.game, rowIndex, colIndex)">

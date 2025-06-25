@@ -20,11 +20,15 @@ data class GameDto(
     val missing: Int,
     val hints: Int,
 
-    val moves: List<MoveDto>,
+    val sessions: List<GameSessionDto>,
+    val moves: List<GameMoveDto>,
 
-    val createdAt: String,
+    val startedAt: String,
     val updatedAt: String?,
-    val finishedAt: String?
+    val finishedAt: String?,
+
+    val paused: Boolean,
+    val finished: Boolean
 )
 
 data class ConflictDto(
@@ -35,7 +39,12 @@ data class ConflictDto(
     val cells: List<List<Int>>
 )
 
-data class MoveDto(
+data class GameSessionDto(
+    val startedAt: String,
+    val pausedAt: String?
+)
+
+data class GameMoveDto(
     val row: Int,
     val col: Int,
 

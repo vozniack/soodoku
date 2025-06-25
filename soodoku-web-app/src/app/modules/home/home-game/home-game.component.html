@@ -1,8 +1,8 @@
 <ng-container *ngIf="game$ | async as game">
   <div class="home-game column-container center gap" @fadeInAnimation>
-    <soo-divider></soo-divider>
+    <soo-divider [maxWidth]="'356px'"></soo-divider>
 
-    <span>Hey, you have ongoing game!</span>
+    <span>Hey, your last game is still ongoing!</span>
 
     <soo-game-tile [game]="game"></soo-game-tile>
   </div>
