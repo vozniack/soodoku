@@ -2,6 +2,7 @@ package dev.vozniack.soodoku.core.api.dto
 
 import dev.vozniack.soodoku.core.domain.types.ConflictType
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.GameType
 import dev.vozniack.soodoku.core.domain.types.MoveType
 import java.util.UUID
 
@@ -9,13 +10,14 @@ data class GameDto(
     val id: UUID,
     val userId: UUID? = null,
 
+    val type: GameType,
+    val difficulty: Difficulty,
+
     val board: Array<IntArray>,
     val solved: Array<IntArray>? = null,
     val locks: List<List<Int>>,
     val conflicts: List<ConflictDto>,
     val notes: List<NoteDto>,
-
-    val difficulty: Difficulty,
 
     val missing: Int,
     val hints: Int,
@@ -63,6 +65,7 @@ data class NoteDto(
 )
 
 data class NewGameRequestDto(
+    val type: GameType,
     val difficulty: Difficulty,
 )
 

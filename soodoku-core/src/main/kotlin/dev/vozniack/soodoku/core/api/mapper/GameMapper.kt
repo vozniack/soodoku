@@ -17,6 +17,9 @@ infix fun Game.toDtoWithStatus(status: Soodoku.Status): GameDto = GameDto(
     id = id,
     userId = user?.id,
 
+    type = type,
+    difficulty = difficulty,
+
     board = currentBoard.mapBoard(),
     solved = finishedAt?.let { this.solvedBoard.mapBoard() },
     locks = locks.mapLocks().map { listOf(it.first, it.second) },
@@ -24,8 +27,6 @@ infix fun Game.toDtoWithStatus(status: Soodoku.Status): GameDto = GameDto(
     notes = parseNotes().map { (pos, values) ->
         NoteDto(row = pos.first, col = pos.second, values = values.toTypedArray())
     },
-
-    difficulty = difficulty,
 
     missing = currentBoard.count { it == '0' },
     hints = hints,

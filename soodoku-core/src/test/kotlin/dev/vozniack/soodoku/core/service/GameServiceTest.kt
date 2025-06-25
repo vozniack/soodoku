@@ -9,6 +9,7 @@ import dev.vozniack.soodoku.core.domain.repository.GameHistoryRepository
 import dev.vozniack.soodoku.core.domain.repository.GameMoveRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.GameType
 import dev.vozniack.soodoku.core.domain.types.MoveType
 import dev.vozniack.soodoku.core.fixture.findEmptyCell
 import dev.vozniack.soodoku.core.fixture.mockMoveRequestDto
@@ -53,7 +54,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `get game with anonymous user`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val fetchedGame = gameService.get(gameDto.id)
         assertNotNull(fetchedGame)
@@ -65,7 +66,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val fetchedGame = gameService.get(gameDto.id)
         assertNotNull(fetchedGame)
@@ -91,20 +92,20 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
-        gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3))
+        gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, GameType.RANDOM, Difficulty.EASY, 3))
+        gameRepository.save(Soodoku(Soodoku.Difficulty.EASY).toGame(user, GameType.RANDOM, Difficulty.EASY, 3))
 
         gameRepository.save(
-            Soodoku(Soodoku.Difficulty.EASY).toGame(user, Difficulty.EASY, 3)
+            Soodoku(Soodoku.Difficulty.EASY).toGame(user, GameType.RANDOM, Difficulty.EASY, 3)
                 .apply { finishedAt = LocalDateTime.now() }
         )
 
         gameRepository.save(
-            Soodoku(Soodoku.Difficulty.EASY).toGame(null, Difficulty.EASY, 3)
+            Soodoku(Soodoku.Difficulty.EASY).toGame(null, GameType.RANDOM, Difficulty.EASY, 3)
         )
 
         gameRepository.save(
-            Soodoku(Soodoku.Difficulty.EASY).toGame(null, Difficulty.EASY, 3)
+            Soodoku(Soodoku.Difficulty.EASY).toGame(null, GameType.RANDOM, Difficulty.EASY, 3)
                 .apply { finishedAt = LocalDateTime.now() }
         )
 
@@ -115,7 +116,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `create new game with anonymous user`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val savedGame = gameRepository.findById(gameDto.id).orElse(null)
         assertNotNull(savedGame)
@@ -143,7 +144,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val savedGame = gameRepository.findById(gameDto.id).orElse(null)
         assertNotNull(savedGame)
@@ -168,7 +169,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `pause game with anonymous user`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val pausedGameDto = gameService.pause(gameDto.id)
 
@@ -185,7 +186,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val pausedGameDto = gameService.pause(gameDto.id)
 
@@ -202,7 +203,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         authenticate("jane.doe@soodoku.com")
 
@@ -213,7 +214,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `pause game which is already paused`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
         gameService.pause(gameDto.id)
 
         assertThrows<ConflictException> {
@@ -223,7 +224,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `resume game with anonymous user`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameService.pause(gameDto.id)
         val resumedGameDto = gameService.resume(gameDto.id)
@@ -245,7 +246,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameService.pause(gameDto.id)
         val resumedGameDto = gameService.resume(gameDto.id)
@@ -267,7 +268,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
         gameService.pause(gameDto.id)
 
         authenticate("jane.doe@soodoku.com")
@@ -279,7 +280,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `resume game which is not paused`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         assertThrows<ConflictException> {
             gameService.resume(gameDto.id)
@@ -288,7 +289,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `make a move with anonymous user`() {
-        val initialGameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val initialGameDto = gameService.new(mockNewGameRequestDto())
 
         val (row, col) = initialGameDto.board
             .withIndex()
@@ -323,7 +324,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val initialGameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val initialGameDto = gameService.new(mockNewGameRequestDto())
 
         val (row, col) = initialGameDto.board
             .withIndex()
@@ -360,7 +361,7 @@ class GameServiceTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val initialGameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val initialGameDto = gameService.new(mockNewGameRequestDto())
 
         val (row, col) = initialGameDto.board
             .withIndex()
@@ -377,7 +378,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `make a move when game is paused`() {
-        val initialGameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val initialGameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(initialGameDto.id).ifPresent {
             gameRepository.save(it.let { game ->
@@ -401,7 +402,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `make a move when game is finished`() {
-        val initialGameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val initialGameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(initialGameDto.id).ifPresent {
             gameRepository.save(it.apply { finishedAt = LocalDateTime.now() })
@@ -420,7 +421,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `make a move and finish the game with anonymous user`() {
-        val initialGameDto = gameService.new(mockNewGameRequestDto(Difficulty.DEV_FILLED))
+        val initialGameDto = gameService.new(mockNewGameRequestDto(difficulty = Difficulty.DEV_FILLED))
 
         val game = gameRepository.findById(initialGameDto.id).get()
 
@@ -449,7 +450,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val initialGameDto = gameService.new(mockNewGameRequestDto(Difficulty.DEV_FILLED))
+        val initialGameDto = gameService.new(mockNewGameRequestDto(difficulty = Difficulty.DEV_FILLED))
 
         val game = gameRepository.findById(initialGameDto.id).get()
 
@@ -475,7 +476,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `make a move for incorrect cell`() {
-        val initialGameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val initialGameDto = gameService.new(mockNewGameRequestDto())
 
         assertThrows<ConflictException> {
             gameService.move(initialGameDto.id, mockMoveRequestDto(row = 9, col = 1, value = 5))
@@ -484,7 +485,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `revert last move with anonymous user`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
         val (row, col) = gameDto.findEmptyCell()
 
         val updatedGameDto = gameService.move(gameDto.id, mockMoveRequestDto(row, col, 5))
@@ -527,7 +528,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
         val (row, col) = gameDto.findEmptyCell()
 
         val updatedGameDto = gameService.move(gameDto.id, mockMoveRequestDto(row, col, 5))
@@ -572,7 +573,7 @@ class GameServiceTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
         val (row, col) = gameDto.findEmptyCell()
 
         val updatedGameDto = gameService.move(gameDto.id, mockMoveRequestDto(row, col, 5))
@@ -589,7 +590,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `revert last move when game is paused`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(gameDto.id).ifPresent {
             gameRepository.save(it.let { game ->
@@ -607,7 +608,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `revert last move when game is finished`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(gameDto.id).ifPresent {
             gameRepository.save(it.apply { finishedAt = LocalDateTime.now() })
@@ -620,7 +621,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `revert last move when game has no moves`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         assertEquals(0, gameDto.moves.size)
 
@@ -631,7 +632,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `make a note with anonymous user`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val firstNoteRow = 1
         val firstNoteCol = 3
@@ -688,7 +689,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val firstNoteRow = 1
         val firstNoteCol = 3
@@ -745,7 +746,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         authenticate("jane.doe@soodoku.com")
 
@@ -756,7 +757,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `make a note when game is paused`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(gameDto.id).ifPresent {
             gameRepository.save(it.let { game ->
@@ -774,7 +775,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `make a note when game is finished`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(gameDto.id).ifPresent {
             gameRepository.save(it.apply { finishedAt = LocalDateTime.now() })
@@ -787,7 +788,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `delete notes with anonymous user`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val savedGame = gameRepository.findById(gameDto.id).orElse(null)
         assertNotNull(savedGame)
@@ -808,7 +809,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val savedGame = gameRepository.findById(gameDto.id).orElse(null)
         assertNotNull(savedGame)
@@ -829,7 +830,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val savedGame = gameRepository.findById(gameDto.id).orElse(null)
         assertNotNull(savedGame)
@@ -849,7 +850,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `delete notes when game is paused`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(gameDto.id).ifPresent {
             gameRepository.save(it.let { game ->
@@ -867,7 +868,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `delete notes when game is finished`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(gameDto.id).ifPresent {
             gameRepository.save(it.apply { finishedAt = LocalDateTime.now() })
@@ -880,7 +881,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `use hint with anonymous user`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val initialHints = gameDto.hints
         val flatBoardBefore = gameDto.board.flatMap { it.toList() }
@@ -918,7 +919,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         val initialHints = gameDto.hints
         val flatBoardBefore = gameDto.board.flatMap { it.toList() }
@@ -958,7 +959,7 @@ class GameServiceTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         authenticate("jane.doe@soodoku.com")
 
@@ -969,7 +970,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `use hint when game is filled`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
         val game = gameRepository.findById(gameDto.id).orElseThrow()
 
         val soodoku = game.toSoodoku()
@@ -984,7 +985,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `use hint when game is paused`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(gameDto.id).ifPresent {
             gameRepository.save(it.let { game ->
@@ -1002,7 +1003,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `use hint when game is finished`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(gameDto.id).ifPresent {
             gameRepository.save(it.apply { finishedAt = LocalDateTime.now() })
@@ -1015,7 +1016,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `use hint when there are no hints`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(gameDto.id).ifPresent {
             gameRepository.save(it.apply { hints = 0 })
@@ -1028,7 +1029,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `use hint and clean up the notes`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.DEV_FILLED))
+        val gameDto = gameService.new(mockNewGameRequestDto(difficulty = Difficulty.DEV_FILLED))
         val (row, col) = gameDto.findEmptyCell()
 
         gameService.note(gameDto.id, mockNoteRequestDto(row, col, listOf("+1", "-2", "+8")))
@@ -1044,7 +1045,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `use hint and finish the game with anonymous user`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.DEV_FILLED))
+        val gameDto = gameService.new(mockNewGameRequestDto(difficulty = Difficulty.DEV_FILLED))
         val updatedGameDto = gameService.hint(gameDto.id)
 
         assertEquals(gameDto.id, updatedGameDto.id)
@@ -1062,7 +1063,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.DEV_FILLED))
+        val gameDto = gameService.new(mockNewGameRequestDto(difficulty = Difficulty.DEV_FILLED))
         val updatedGameDto = gameService.hint(gameDto.id)
 
         assertEquals(gameDto.id, updatedGameDto.id)
@@ -1077,7 +1078,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `end game with anonymous user`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
         val endedGameDto = gameService.end(gameDto.id)
 
         val savedGame = gameRepository.findById(endedGameDto.id).orElse(null)
@@ -1094,7 +1095,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
         val endedGameDto = gameService.end(gameDto.id)
 
         val savedGame = gameRepository.findById(endedGameDto.id).orElse(null)
@@ -1113,7 +1114,7 @@ class GameServiceTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         authenticate("jane.doe@soodoku.com")
 
@@ -1127,7 +1128,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
 
         gameRepository.findById(gameDto.id).ifPresent {
             gameRepository.save(it.apply { finishedAt = LocalDateTime.now() })
@@ -1140,7 +1141,7 @@ class GameServiceTest @Autowired constructor(
 
     @Test
     fun `delete game and its moves with anonymous user`() {
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
         val (row, col) = gameDto.findEmptyCell()
 
         val updatedGameDto = gameService.move(gameDto.id, mockMoveRequestDto(row = row, col = col, value = 5))
@@ -1162,7 +1163,7 @@ class GameServiceTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
         val (row, col) = gameDto.findEmptyCell()
 
         val updatedGameDto = gameService.move(gameDto.id, mockMoveRequestDto(row = row, col = col, value = 5))
@@ -1186,7 +1187,7 @@ class GameServiceTest @Autowired constructor(
 
         authenticate(user.email)
 
-        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        val gameDto = gameService.new(mockNewGameRequestDto())
         val (row, col) = gameDto.findEmptyCell()
 
         val updatedGameDto = gameService.move(gameDto.id, mockMoveRequestDto(row = row, col = col, value = 5))

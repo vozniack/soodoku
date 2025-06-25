@@ -5,6 +5,7 @@ import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.GameMove
 import dev.vozniack.soodoku.core.domain.types.ConflictType
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.GameType
 import dev.vozniack.soodoku.core.fixture.mockUser
 import dev.vozniack.soodoku.core.util.toISOTime
 import dev.vozniack.soodoku.lib.Soodoku
@@ -28,11 +29,12 @@ class GameMapperTest : AbstractUnitTest() {
         val user = mockUser()
 
         val game = Game(
+            type = GameType.RANDOM,
+            difficulty = Difficulty.EASY,
             initialBoard = status.board.flatBoard(),
             solvedBoard = status.solved.flatBoard(),
             currentBoard = status.board.flatBoard(),
             locks = status.locks.flatLocks(),
-            difficulty = Difficulty.EASY,
             hints = 2,
             user = user
         )
@@ -41,6 +43,10 @@ class GameMapperTest : AbstractUnitTest() {
 
         assertEquals(game.id, gameDto.id)
         assertEquals(user.id, gameDto.userId)
+
+        assertEquals(game.type.name, gameDto.type.name)
+        assertEquals(game.difficulty.name, gameDto.difficulty.name)
+
         assertEquals(9, gameDto.board.size)
         assertEquals(9, gameDto.board[0].size)
 
@@ -48,8 +54,6 @@ class GameMapperTest : AbstractUnitTest() {
         gameDto.locks.forEach { cell -> assertEquals(2, cell.size) }
 
         assertTrue(gameDto.conflicts.isEmpty())
-
-        assertEquals(Soodoku.Difficulty.EASY.name, gameDto.difficulty.name)
 
         assertEquals(game.hints, gameDto.hints)
 
@@ -72,11 +76,12 @@ class GameMapperTest : AbstractUnitTest() {
         val user = mockUser()
 
         val game = Game(
+            type = GameType.RANDOM,
+            difficulty = Difficulty.EASY,
             initialBoard = emptyBoard,
             solvedBoard = solvedBoard,
             currentBoard = emptyBoard,
             locks = emptyLocks,
-            difficulty = Difficulty.EASY,
             hints = 3,
             user = user
         )

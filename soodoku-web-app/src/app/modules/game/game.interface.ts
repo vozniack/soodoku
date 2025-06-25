@@ -2,13 +2,14 @@ export interface Game {
   id: string,
   userId?: string,
 
+  type: string,
+  difficulty: string,
+
   board: number[][],
   solved?: number[][],
   locks: [number, number][],
   conflicts: Conflict[],
   notes: Note[],
-
-  difficulty: string,
 
   hints: number,
   missing: number,

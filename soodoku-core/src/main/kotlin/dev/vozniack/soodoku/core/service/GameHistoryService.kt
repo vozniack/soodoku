@@ -48,6 +48,7 @@ class GameHistoryService(private val gameHistoryRepository: GameHistoryRepositor
                 GameHistory(
                     game = it,
                     user = it.user!!,
+                    type = it.type,
                     difficulty = it.difficulty,
                     duration = it.sessions.filter { session -> session.pausedAt != null }
                         .sumOf { session -> between(session.startedAt, session.pausedAt).seconds },

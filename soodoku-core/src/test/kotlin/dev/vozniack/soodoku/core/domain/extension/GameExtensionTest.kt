@@ -4,6 +4,7 @@ import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.User
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.GameType
 import dev.vozniack.soodoku.core.fixture.mockUser
 import dev.vozniack.soodoku.lib.Soodoku
 import dev.vozniack.soodoku.lib.extension.flatBoard
@@ -23,7 +24,7 @@ class GameExtensionTest : AbstractUnitTest() {
         val soodoku = Soodoku(Soodoku.Difficulty.EASY)
         val status: Soodoku.Status = soodoku.status()
 
-        val game: Game = soodoku.toGame(user = user, difficulty = Difficulty.EASY, hints = 3)
+        val game: Game = soodoku.toGame(user = user, type = GameType.RANDOM, difficulty = Difficulty.EASY, hints = 3)
 
         assertEquals(status.board.flatBoard(), game.initialBoard)
         assertEquals(status.solved.flatBoard(), game.solvedBoard)
@@ -36,7 +37,10 @@ class GameExtensionTest : AbstractUnitTest() {
 
     @Test
     fun `parse game to soodoku`() {
-        val game: Game = Soodoku(Soodoku.Difficulty.EASY).toGame(difficulty = Difficulty.EASY, hints = 3)
+        val game: Game = Soodoku(Soodoku.Difficulty.EASY).toGame(
+            type = GameType.RANDOM, difficulty = Difficulty.EASY, hints = 3
+        )
+
         val soodoku: Soodoku = game.toSoodoku()
 
         assertNotNull(soodoku)
@@ -44,8 +48,9 @@ class GameExtensionTest : AbstractUnitTest() {
 
     @Test
     fun `parse notes when notes are null`() {
-        val game: Game = Soodoku(Soodoku.Difficulty.EASY).toGame(difficulty = Difficulty.EASY, hints = 3)
-            .apply { notes = null }
+        val game: Game = Soodoku(Soodoku.Difficulty.EASY).toGame(
+            type = GameType.RANDOM, difficulty = Difficulty.EASY, hints = 3
+        ).apply { notes = null }
 
         val parsed = game.parseNotes()
 
@@ -54,8 +59,9 @@ class GameExtensionTest : AbstractUnitTest() {
 
     @Test
     fun `parse notes when notes are blank`() {
-        val game: Game = Soodoku(Soodoku.Difficulty.EASY).toGame(difficulty = Difficulty.EASY, hints = 3)
-            .apply { notes = "   " }
+        val game: Game = Soodoku(Soodoku.Difficulty.EASY).toGame(
+            type = GameType.RANDOM, difficulty = Difficulty.EASY, hints = 3
+        ).apply { notes = "   " }
 
         val parsed = game.parseNotes()
 
@@ -64,8 +70,9 @@ class GameExtensionTest : AbstractUnitTest() {
 
     @Test
     fun `parse correct notes`() {
-        val game: Game = Soodoku(Soodoku.Difficulty.EASY).toGame(difficulty = Difficulty.EASY, hints = 3)
-            .apply { notes = "1,2,+3,-5;+4,7,+1" }
+        val game: Game = Soodoku(Soodoku.Difficulty.EASY).toGame(
+            type = GameType.RANDOM, difficulty = Difficulty.EASY, hints = 3
+        ).apply { notes = "1,2,+3,-5;+4,7,+1" }
 
         val parsed = game.parseNotes()
 
@@ -76,8 +83,9 @@ class GameExtensionTest : AbstractUnitTest() {
 
     @Test
     fun `parse correct and malformed notes`() {
-        val game: Game = Soodoku(Soodoku.Difficulty.EASY).toGame(difficulty = Difficulty.EASY, hints = 3)
-            .apply { notes = "1,2,+3,-5;bad,entry;4,notANumber,+1" }
+        val game: Game = Soodoku(Soodoku.Difficulty.EASY).toGame(
+            type = GameType.RANDOM, difficulty = Difficulty.EASY, hints = 3
+        ).apply { notes = "1,2,+3,-5;bad,entry;4,notANumber,+1" }
 
         val parsed = game.parseNotes()
 

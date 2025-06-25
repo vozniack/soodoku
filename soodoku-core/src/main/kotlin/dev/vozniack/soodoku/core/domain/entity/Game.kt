@@ -1,6 +1,7 @@
 package dev.vozniack.soodoku.core.domain.entity
 
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.GameType
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -22,14 +23,17 @@ data class Game(
     @Id
     @Column(nullable = false) val id: UUID = UUID.randomUUID(),
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false) var type: GameType,
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false) var difficulty: Difficulty,
+
     @Column(nullable = false, length = 128) var initialBoard: String,
     @Column(nullable = false, length = 128) var solvedBoard: String,
     @Column(nullable = false, length = 128) var currentBoard: String,
     @Column(nullable = false, length = 512) var locks: String,
     @Column(nullable = true, length = 2048) var notes: String? = null,
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false) var difficulty: Difficulty,
 
     @Column(nullable = false) var hints: Int,
 

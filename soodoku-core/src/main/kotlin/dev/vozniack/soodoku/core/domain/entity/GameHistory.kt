@@ -1,6 +1,7 @@
 package dev.vozniack.soodoku.core.domain.entity
 
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.GameType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -25,6 +26,9 @@ data class GameHistory(
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) val user: User,
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false) val type: GameType,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false) val difficulty: Difficulty,

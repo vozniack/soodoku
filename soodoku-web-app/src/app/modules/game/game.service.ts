@@ -20,7 +20,7 @@ export class GameService {
   }
 
   new(difficulty: string): Observable<Game> {
-    return this.httpClient.post<Game>(`${this.baseUrl}`, {difficulty: difficulty});
+    return this.httpClient.post<Game>(`${this.baseUrl}`, {type: 'RANDOM', difficulty: difficulty});
   }
 
   pause(id: string): Observable<Game> {

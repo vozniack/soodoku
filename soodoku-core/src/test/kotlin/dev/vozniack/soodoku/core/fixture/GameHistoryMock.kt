@@ -4,11 +4,13 @@ import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.GameHistory
 import dev.vozniack.soodoku.core.domain.entity.User
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.GameType
 import java.time.LocalDateTime
 
 fun mockGameHistory(
     user: User,
     game: Game,
+    type: GameType = GameType.RANDOM,
     difficulty: Difficulty = Difficulty.EASY,
     duration: Long = 2137,
     missingCells: Int = 0,
@@ -20,6 +22,7 @@ fun mockGameHistory(
 ): GameHistory = GameHistory(
     user = user,
     game = game,
+    type = type,
     difficulty = difficulty,
     duration = duration,
     missingCells = missingCells,

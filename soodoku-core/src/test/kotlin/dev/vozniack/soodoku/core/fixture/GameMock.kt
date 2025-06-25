@@ -4,10 +4,12 @@ import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
 import dev.vozniack.soodoku.core.api.dto.NewGameRequestDto
 import dev.vozniack.soodoku.core.api.dto.NoteRequestDto
 import dev.vozniack.soodoku.core.domain.types.Difficulty
+import dev.vozniack.soodoku.core.domain.types.GameType
 
 fun mockNewGameRequestDto(
+    type: GameType = GameType.RANDOM,
     difficulty: Difficulty = Difficulty.EASY
-): NewGameRequestDto = NewGameRequestDto(difficulty = difficulty)
+): NewGameRequestDto = NewGameRequestDto(type = type, difficulty = difficulty)
 
 fun mockMoveRequestDto(
     row: Int = 1, col: Int = 1, value: Int = 1
