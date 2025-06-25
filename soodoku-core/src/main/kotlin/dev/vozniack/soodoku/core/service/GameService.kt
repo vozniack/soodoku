@@ -79,7 +79,6 @@ class GameService(
         val now = LocalDateTime.now()
 
         game.sessions.filter { it.pausedAt == null }.maxByOrNull { it.startedAt }?.let { it.pausedAt = now }
-            ?: throw ConflictException("Can't pause game $id because it's already paused")
 
         return gameRepository.save(game.apply { updatedAt = now }) toDtoWithStatus game.toSoodoku().status()
     }

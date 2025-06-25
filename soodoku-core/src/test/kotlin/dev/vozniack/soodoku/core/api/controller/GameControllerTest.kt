@@ -225,6 +225,105 @@ class GameControllerTest @Autowired constructor(
     }
 
     @Test
+    fun `pause with anonymous user`() {
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        val response: GameDto = objectMapper.readValue(
+            mockMvc.perform(
+                put("/api/games/${gameDto.id}/pause")
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertEquals(gameDto.id, response.id)
+    }
+
+    @Test
+    fun `pause with existing user`() {
+        val user = userRepository.save(mockUser())
+        authenticate(user.email)
+
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        val response: GameDto = objectMapper.readValue(
+            mockMvc.perform(
+                put("/api/games/${gameDto.id}/pause")
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertEquals(gameDto.id, response.id)
+    }
+
+    @Test
+    fun `pause with user different than owner`() {
+        val user = userRepository.save(mockUser())
+        userRepository.save(mockUser("jane.doe@soodoku.com"))
+
+        authenticate(user.email)
+
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        authenticate("jane.doe@soodoku.com")
+
+        mockMvc.perform(
+            put("/api/games/${gameDto.id}/pause")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `resume with anonymous user`() {
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        gameService.pause(gameDto.id)
+
+        val response: GameDto = objectMapper.readValue(
+            mockMvc.perform(
+                put("/api/games/${gameDto.id}/resume")
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertEquals(gameDto.id, response.id)
+    }
+
+    @Test
+    fun `resume with existing user`() {
+        val user = userRepository.save(mockUser())
+        authenticate(user.email)
+
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        gameService.pause(gameDto.id)
+
+        val response: GameDto = objectMapper.readValue(
+            mockMvc.perform(
+                put("/api/games/${gameDto.id}/resume")
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk).andReturn().response.contentAsString
+        )
+
+        assertEquals(gameDto.id, response.id)
+    }
+
+    @Test
+    fun `resume with user different than owner`() {
+        val user = userRepository.save(mockUser())
+        userRepository.save(mockUser("jane.doe@soodoku.com"))
+
+        authenticate(user.email)
+
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        gameService.pause(gameDto.id)
+
+        authenticate("jane.doe@soodoku.com")
+
+        mockMvc.perform(
+            put("/api/games/${gameDto.id}/resume")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnauthorized)
+    }
+
+    @Test
     fun `make a move with anonymous user`() {
         val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
         val (row, col) = gameDto.findEmptyCell()
