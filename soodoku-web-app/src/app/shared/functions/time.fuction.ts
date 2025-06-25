@@ -1,12 +1,15 @@
-export function formatDurationBetween(date1: string, date2: string): string {
-  const parseSafeDate = (input: string) => new Date(input.replace(/(\.\d{3})\d+/, '$1'));
+import { Session } from '../../modules/game/game.interface';
 
-  const d1 = parseSafeDate(date1);
-  const d2 = parseSafeDate(date2);
+export function formatDuration(sessions: Session[]): string {
+  if (!sessions?.length) return '00:00';
 
-  const diffMs = d2.getTime() - d1.getTime();
-  const totalSeconds = Math.floor(Math.abs(diffMs) / 1000);
+  const totalMs = sessions.reduce((acc, session) => {
+    const start = new Date(session.startedAt).getTime();
+    const end = session.pausedAt ? new Date(session.pausedAt).getTime() : start;
+    return acc + (end - start);
+  }, 0);
 
+  const totalSeconds = Math.floor(totalMs / 1000);
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;

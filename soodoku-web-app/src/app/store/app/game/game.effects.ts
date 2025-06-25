@@ -16,6 +16,7 @@ import {
   ACTION_GAME_NEW,
   ACTION_GAME_NOTE,
   ACTION_GAME_NOTES_WIPE,
+  ACTION_GAME_PAUSE, ACTION_GAME_RESUME,
   ACTION_GAME_REVERT,
   ACTION_GAME_SET,
   ACTION_GAME_SURRENDER,
@@ -53,8 +54,34 @@ export class GameEffects {
       ofType(ACTION_GAME_SET),
       withLatestFrom(this.store$.select(SELECT_GAME_STATE)),
       filter(([_, gameState]) => !!gameState.game),
-      filter(([_, gameState]) => gameState.game.finishedAt != undefined),
+      filter(([_, gameState]) => gameState.game.finished),
       map(() => ACTION_GAME_END())
+    )
+  );
+
+  pause$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ACTION_GAME_PAUSE),
+      withLatestFrom(this.store$.select(SELECT_GAME_STATE)),
+      filter(([_, gameState]) => !!gameState.game),
+      switchMap(([_, gameState]) =>
+        this.gameService$.pause(gameState.game!.id).pipe(
+          map((updatedGame: Game) => buildSetGameAction(updatedGame, gameState))
+        )
+      )
+    )
+  );
+
+  resume$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ACTION_GAME_RESUME),
+      withLatestFrom(this.store$.select(SELECT_GAME_STATE)),
+      filter(([_, gameState]) => !!gameState.game),
+      switchMap(([_, gameState]) =>
+        this.gameService$.resume(gameState.game!.id).pipe(
+          map((updatedGame: Game) => buildSetGameAction(updatedGame, gameState))
+        )
+      )
     )
   );
 

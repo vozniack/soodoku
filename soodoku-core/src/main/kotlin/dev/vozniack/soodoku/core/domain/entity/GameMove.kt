@@ -13,8 +13,8 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Entity
-@Table(name = "moves")
-data class Move(
+@Table(name = "game_moves")
+data class GameMove(
 
     @Id
     @Column(nullable = false) val id: UUID = UUID.randomUUID(),

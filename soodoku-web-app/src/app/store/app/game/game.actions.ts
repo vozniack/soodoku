@@ -19,6 +19,14 @@ export const ACTION_GAME_NEW = createAction(
   '[Game] Create new game', props<{ difficulty: string }>()
 );
 
+export const ACTION_GAME_PAUSE = createAction(
+  '[Game] Pause game'
+);
+
+export const ACTION_GAME_RESUME = createAction(
+  '[Game] Resume game'
+);
+
 export const ACTION_GAME_MOVE = createAction(
   '[Game] Move (fill cell)', props<{ value: number }>()
 );

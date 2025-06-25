@@ -74,7 +74,7 @@ export class GameControlComponent {
         closing: false,
         inputs: {
           title: 'Surrender? Are you sure?',
-          description: 'You will not be able to return to this game.'
+          description: 'You will not be able to continue this game.'
         }
       })
     ).pipe(

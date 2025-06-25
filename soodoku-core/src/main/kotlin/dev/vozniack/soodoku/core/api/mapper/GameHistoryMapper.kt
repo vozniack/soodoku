@@ -13,6 +13,6 @@ fun GameHistory.toDto(): GameHistoryDto = GameHistoryDto(
     totalMoves = totalMoves,
     usedHints = usedHints,
     victory = victory,
-    createdAt = createdAt.toISOTime(),
+    startedAt = startedAt.toISOTime(),
     finishedAt = finishedAt.toISOTime()
 )

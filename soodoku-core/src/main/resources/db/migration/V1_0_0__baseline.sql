@@ -26,7 +26,7 @@ CREATE TABLE games
 
     hints         INT          NOT NULL,
 
-    created_at    TIMESTAMP    NOT NULL             DEFAULT now(),
+    started_at    TIMESTAMP    NOT NULL             DEFAULT now(),
     updated_at    TIMESTAMP    NULL,
     finished_at   TIMESTAMP    NULL,
 
@@ -35,7 +35,7 @@ CREATE TABLE games
     CONSTRAINT fk_games_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
-CREATE TABLE moves
+CREATE TABLE game_moves
 (
     id          UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -51,10 +51,21 @@ CREATE TABLE moves
     before      INT         NOT NULL,
     after       INT         NOT NULL,
 
-    CONSTRAINT fk_moves_game FOREIGN KEY (game_id) REFERENCES games (id)
+    CONSTRAINT fk_game_moves_game FOREIGN KEY (game_id) REFERENCES games (id)
 );
 
-CREATE TABLE games_history
+CREATE TABLE game_sessions
+(
+    id         UUID      NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    game_id    UUID      NOT NULL,
+    started_at TIMESTAMP NOT NULL             DEFAULT now(),
+    paused_at  TIMESTAMP NULL,
+
+    CONSTRAINT fk_game_sessions_game FOREIGN KEY (game_id) REFERENCES games (id) ON DELETE CASCADE
+);
+
+CREATE TABLE game_history
 (
     id            UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -71,12 +82,14 @@ CREATE TABLE games_history
 
     victory       BOOLEAN     NOT NULL,
 
-    created_at    TIMESTAMP   NOT NULL,
+    started_at    TIMESTAMP   NOT NULL,
     finished_at   TIMESTAMP   NOT NULL,
 
     CONSTRAINT fk_game_history_game FOREIGN KEY (game_id) REFERENCES games (id),
     CONSTRAINT fk_game_history_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
+
+CREATE INDEX idx_game_sessions_game_id ON game_sessions (game_id);
 
 INSERT INTO users (email, password, username, language, theme)
 VALUES ('rajeshkootrappali@bbt.com',

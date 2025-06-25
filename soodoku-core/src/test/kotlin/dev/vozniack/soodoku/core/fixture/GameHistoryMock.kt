@@ -15,7 +15,7 @@ fun mockGameHistory(
     totalMoves: Int = 40,
     usedHints: Int = 2,
     victory: Boolean = true,
-    createdAt: LocalDateTime = LocalDateTime.now().minusHours(2),
+    startedAt: LocalDateTime = LocalDateTime.now().minusHours(2),
     finishedAt: LocalDateTime = LocalDateTime.now()
 ): GameHistory = GameHistory(
     user = user,
@@ -26,6 +26,6 @@ fun mockGameHistory(
     totalMoves = totalMoves,
     usedHints = usedHints,
     victory = victory,
-    createdAt = createdAt,
+    startedAt = startedAt,
     finishedAt = finishedAt
 )

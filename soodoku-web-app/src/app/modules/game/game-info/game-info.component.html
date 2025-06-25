@@ -1,13 +1,18 @@
 <ng-container *ngIf="gameState$ | async as gameState">
   <ng-container *ngIf="gameState.game !== undefined">
     <div class="game-info-wrapper row-container" [class.space-between]="breakpoint == 'xs'">
-      <soo-button [text]="'New game'" [iconLeft]="'play_arrow'" (click)="newGame()"></soo-button>
 
-      <div class="game-details row-container" [class.centered]="breakpoint != 'xs'">
+      <soo-button [disabled]="gameState.game.finished"
+                  [text]="gameState.game.paused ? 'Resume' : 'Pause'"
+                  [iconLeft]="gameState.game.paused ? 'play_arrow' : 'pause'"
+                  (click)="pauseOrResume(gameState.game.paused)">
+      </soo-button>
+
+      <div class="game-details row-container {{breakpoint}}">
         <span class="separated">Missing: {{ gameState.game!!.missing }}</span>
 
-        <span class="separated" *ngIf="gameState.game.finishedAt == undefined">{{ elapsedTime$ | async }}</span>
-        <span class="separated" *ngIf="gameState.game.finishedAt != undefined">{{ duration(gameState.game) }}</span>
+        <span class="separated" *ngIf="!gameState.game.finished">{{ elapsedTime$ | async }}</span>
+        <span class="separated" *ngIf="gameState.game.finished">{{ duration(gameState.game) }}</span>
 
         <span>Moves: {{ gameState.game.moves.length }}</span>
       </div>

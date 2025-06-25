@@ -4,6 +4,7 @@ import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.api.dto.GameDto
 import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.entity.GameHistory
+import dev.vozniack.soodoku.core.domain.extension.end
 import dev.vozniack.soodoku.core.domain.extension.toGame
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.GameHistoryRepository
@@ -144,9 +145,7 @@ class GameHistoryServiceTest @Autowired constructor(
 
         Thread.sleep(1024) // sleep to increase game duration
 
-        game = gameRepository.save(game.apply {
-            finishedAt = LocalDateTime.now()
-        })
+        game = gameRepository.save(game.end())
 
         Thread.sleep(128)
 
@@ -169,7 +168,7 @@ class GameHistoryServiceTest @Autowired constructor(
 
         assertFalse(gameHistory.victory)
 
-        assertEquals(game.createdAt.truncate(), gameHistory.createdAt.truncate())
+        assertEquals(game.startedAt.truncate(), gameHistory.startedAt.truncate())
         assertEquals(game.finishedAt!!.truncate(), gameHistory.finishedAt.truncate())
     }
 

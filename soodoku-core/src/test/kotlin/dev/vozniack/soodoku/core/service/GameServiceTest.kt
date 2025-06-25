@@ -6,7 +6,7 @@ import dev.vozniack.soodoku.core.domain.extension.toGame
 import dev.vozniack.soodoku.core.domain.extension.toSoodoku
 import dev.vozniack.soodoku.core.domain.repository.GameRepository
 import dev.vozniack.soodoku.core.domain.repository.GameHistoryRepository
-import dev.vozniack.soodoku.core.domain.repository.MoveRepository
+import dev.vozniack.soodoku.core.domain.repository.GameMoveRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
 import dev.vozniack.soodoku.core.domain.types.Difficulty
 import dev.vozniack.soodoku.core.domain.types.MoveType
@@ -39,7 +39,7 @@ import org.springframework.data.domain.PageRequest
 class GameServiceTest @Autowired constructor(
     private val gameService: GameService,
     private val gameRepository: GameRepository,
-    private val moveRepository: MoveRepository,
+    private val gameMoveRepository: GameMoveRepository,
     private val gameHistoryRepository: GameHistoryRepository,
     private val userRepository: UserRepository
 ) : AbstractUnitTest() {
@@ -133,7 +133,7 @@ class GameServiceTest @Autowired constructor(
 
         assertEquals(0, gameDto.moves.size)
 
-        assertNotNull(gameDto.createdAt)
+        assertNotNull(gameDto.startedAt)
         assertNull(gameDto.updatedAt)
         assertNull(gameDto.finishedAt)
     }
@@ -161,9 +161,129 @@ class GameServiceTest @Autowired constructor(
 
         assertEquals(0, gameDto.moves.size)
 
-        assertNotNull(gameDto.createdAt)
+        assertNotNull(gameDto.startedAt)
         assertNull(gameDto.updatedAt)
         assertNull(gameDto.finishedAt)
+    }
+
+    @Test
+    fun `pause game with anonymous user`() {
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        val pausedGameDto = gameService.pause(gameDto.id)
+
+        assertTrue(pausedGameDto.paused)
+        assertEquals(1, pausedGameDto.sessions.size)
+
+        val session = pausedGameDto.sessions.first()
+        assertNotNull(session.startedAt)
+        assertNotNull(session.pausedAt)
+    }
+
+    @Test
+    fun `pause game with existing user`() {
+        val user = userRepository.save(mockUser())
+        authenticate(user.email)
+
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        val pausedGameDto = gameService.pause(gameDto.id)
+
+        assertTrue(pausedGameDto.paused)
+        assertEquals(1, pausedGameDto.sessions.size)
+
+        val session = pausedGameDto.sessions.first()
+        assertNotNull(session.startedAt)
+        assertNotNull(session.pausedAt)
+    }
+
+    @Test
+    fun `pause game with user different than owner`() {
+        val user = userRepository.save(mockUser())
+        authenticate(user.email)
+
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        authenticate("jane.doe@soodoku.com")
+
+        assertThrows<UnauthorizedException> {
+            gameService.pause(gameDto.id)
+        }
+    }
+
+    @Test
+    fun `pause game which is already paused`() {
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        gameService.pause(gameDto.id)
+
+        assertThrows<ConflictException> {
+            gameService.pause(gameDto.id)
+        }
+    }
+
+    @Test
+    fun `resume game with anonymous user`() {
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        gameService.pause(gameDto.id)
+        val resumedGameDto = gameService.resume(gameDto.id)
+
+        assertFalse(resumedGameDto.paused)
+        assertEquals(2, resumedGameDto.sessions.size)
+
+        val firstSession = resumedGameDto.sessions.first()
+        assertNotNull(firstSession.startedAt)
+        assertNotNull(firstSession.pausedAt)
+
+        val secondSession = resumedGameDto.sessions[1]
+        assertNotNull(secondSession.startedAt)
+        assertNull(secondSession.pausedAt)
+    }
+
+    @Test
+    fun `resume game with existing user`() {
+        val user = userRepository.save(mockUser())
+        authenticate(user.email)
+
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        gameService.pause(gameDto.id)
+        val resumedGameDto = gameService.resume(gameDto.id)
+
+        assertFalse(resumedGameDto.paused)
+        assertEquals(2, resumedGameDto.sessions.size)
+
+        val firstSession = resumedGameDto.sessions.first()
+        assertNotNull(firstSession.startedAt)
+        assertNotNull(firstSession.pausedAt)
+
+        val secondSession = resumedGameDto.sessions[1]
+        assertNotNull(secondSession.startedAt)
+        assertNull(secondSession.pausedAt)
+    }
+
+    @Test
+    fun `resume game with user different than owner`() {
+        val user = userRepository.save(mockUser())
+        authenticate(user.email)
+
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+        gameService.pause(gameDto.id)
+
+        authenticate("jane.doe@soodoku.com")
+
+        assertThrows<UnauthorizedException> {
+            gameService.resume(gameDto.id)
+        }
+    }
+
+    @Test
+    fun `resume game which is not paused`() {
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        assertThrows<ConflictException> {
+            gameService.resume(gameDto.id)
+        }
     }
 
     @Test
@@ -256,6 +376,30 @@ class GameServiceTest @Autowired constructor(
     }
 
     @Test
+    fun `make a move when game is paused`() {
+        val initialGameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        gameRepository.findById(initialGameDto.id).ifPresent {
+            gameRepository.save(it.let { game ->
+                game.sessions.filter { session -> session.pausedAt == null }
+                    .maxByOrNull { session -> session.startedAt }
+                    ?.let { session -> session.pausedAt = LocalDateTime.now() }
+                game
+            })
+        }
+
+        val (row, col) = initialGameDto.board
+            .withIndex()
+            .flatMap { (r, rowArr) -> rowArr.withIndex().map { (c, v) -> Triple(r, c, v) } }
+            .first { it.third == 0 }
+            .let { it.first to it.second }
+
+        assertThrows<ConflictException> {
+            gameService.move(initialGameDto.id, mockMoveRequestDto(row = row, col = col, value = 5))
+        }
+    }
+
+    @Test
     fun `make a move when game is finished`() {
         val initialGameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
@@ -288,7 +432,8 @@ class GameServiceTest @Autowired constructor(
 
         val value = game.solvedBoard.mapBoard()[row][col]
 
-        val updatedGameDto = gameService.move(initialGameDto.id, mockMoveRequestDto(row = row, col = col, value = value))
+        val updatedGameDto =
+            gameService.move(initialGameDto.id, mockMoveRequestDto(row = row, col = col, value = value))
         assertEquals(initialGameDto.id, updatedGameDto.id)
 
         val savedGame = gameRepository.findById(updatedGameDto.id).orElse(null)
@@ -316,7 +461,8 @@ class GameServiceTest @Autowired constructor(
 
         val value = game.solvedBoard.mapBoard()[row][col]
 
-        val updatedGameDto = gameService.move(initialGameDto.id, mockMoveRequestDto(row = row, col = col, value = value))
+        val updatedGameDto =
+            gameService.move(initialGameDto.id, mockMoveRequestDto(row = row, col = col, value = value))
         assertEquals(initialGameDto.id, updatedGameDto.id)
 
         val savedGame = gameRepository.findById(updatedGameDto.id).orElse(null)
@@ -437,6 +583,24 @@ class GameServiceTest @Autowired constructor(
         authenticate("jane.doe@soodoku.com")
 
         assertThrows<UnauthorizedException> {
+            gameService.revert(gameDto.id)
+        }
+    }
+
+    @Test
+    fun `revert last move when game is paused`() {
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        gameRepository.findById(gameDto.id).ifPresent {
+            gameRepository.save(it.let { game ->
+                game.sessions.filter { session -> session.pausedAt == null }
+                    .maxByOrNull { session -> session.startedAt }
+                    ?.let { session -> session.pausedAt = LocalDateTime.now() }
+                game
+            })
+        }
+
+        assertThrows<ConflictException> {
             gameService.revert(gameDto.id)
         }
     }
@@ -591,6 +755,24 @@ class GameServiceTest @Autowired constructor(
     }
 
     @Test
+    fun `make a note when game is paused`() {
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        gameRepository.findById(gameDto.id).ifPresent {
+            gameRepository.save(it.let { game ->
+                game.sessions.filter { session -> session.pausedAt == null }
+                    .maxByOrNull { session -> session.startedAt }
+                    ?.let { session -> session.pausedAt = LocalDateTime.now() }
+                game
+            })
+        }
+
+        assertThrows<ConflictException> {
+            gameService.note(gameDto.id, mockNoteRequestDto(1, 1, listOf("+1", "-1")))
+        }
+    }
+
+    @Test
     fun `make a note when game is finished`() {
         val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
 
@@ -661,6 +843,37 @@ class GameServiceTest @Autowired constructor(
         authenticate("jane.doe@soodoku.com")
 
         assertThrows<UnauthorizedException> {
+            gameService.deleteNotes(gameDto.id)
+        }
+    }
+
+    @Test
+    fun `delete notes when game is paused`() {
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        gameRepository.findById(gameDto.id).ifPresent {
+            gameRepository.save(it.let { game ->
+                game.sessions.filter { session -> session.pausedAt == null }
+                    .maxByOrNull { session -> session.startedAt }
+                    ?.let { session -> session.pausedAt = LocalDateTime.now() }
+                game
+            })
+        }
+
+        assertThrows<ConflictException> {
+            gameService.deleteNotes(gameDto.id)
+        }
+    }
+
+    @Test
+    fun `delete notes when game is finished`() {
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        gameRepository.findById(gameDto.id).ifPresent {
+            gameRepository.save(it.apply { finishedAt = LocalDateTime.now() })
+        }
+
+        assertThrows<ConflictException> {
             gameService.deleteNotes(gameDto.id)
         }
     }
@@ -763,6 +976,24 @@ class GameServiceTest @Autowired constructor(
         val status = soodoku.let { it.solve(); it.status() }
 
         gameRepository.save(game.apply { currentBoard = status.board.flatBoard() })
+
+        assertThrows<ConflictException> {
+            gameService.hint(gameDto.id)
+        }
+    }
+
+    @Test
+    fun `use hint when game is paused`() {
+        val gameDto = gameService.new(mockNewGameRequestDto(Difficulty.EASY))
+
+        gameRepository.findById(gameDto.id).ifPresent {
+            gameRepository.save(it.let { game ->
+                game.sessions.filter { session -> session.pausedAt == null }
+                    .maxByOrNull { session -> session.startedAt }
+                    ?.let { session -> session.pausedAt = LocalDateTime.now() }
+                game
+            })
+        }
 
         assertThrows<ConflictException> {
             gameService.hint(gameDto.id)
@@ -923,7 +1154,7 @@ class GameServiceTest @Autowired constructor(
 
         assertTrue(gameRepository.findById(updatedGameDto.id).isEmpty)
 
-        assertEquals(0, moveRepository.count())
+        assertEquals(0, gameMoveRepository.count())
     }
 
     @Test
@@ -945,7 +1176,7 @@ class GameServiceTest @Autowired constructor(
 
         assertTrue(gameRepository.findById(updatedGameDto.id).isEmpty)
 
-        assertEquals(0, moveRepository.count())
+        assertEquals(0, gameMoveRepository.count())
     }
 
     @Test

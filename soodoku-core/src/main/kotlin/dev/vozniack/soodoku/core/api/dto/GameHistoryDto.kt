@@ -17,6 +17,6 @@ data class GameHistoryDto(
 
     val victory: Boolean,
 
-    val createdAt: String,
+    val startedAt: String,
     val finishedAt: String
 )

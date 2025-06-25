@@ -29,11 +29,11 @@ export class GameTileComponent {
   }
 
   getTime(): string {
-    return this.game.updatedAt ?? this.game.createdAt;
+    return this.game.updatedAt ?? this.game.startedAt;
   }
 
   getState(): string {
-    return this.game.finishedAt == null ? 'ongoing' : this.game.missing == 0 ? 'won' : 'lost';
+    return !this.game.finished ? 'ongoing' : this.game.missing == 0 ? 'won' : 'lost';
   }
 
   getIcon(): string {

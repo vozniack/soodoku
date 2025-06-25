@@ -41,6 +41,12 @@ class GameController(private val gameService: GameService, private val gameHisto
     @PostMapping
     fun new(@RequestBody newGameRequestDto: NewGameRequestDto): GameDto = gameService.new(newGameRequestDto)
 
+    @PutMapping("/{id}/pause")
+    fun pause(@PathVariable id: UUID): GameDto = gameService.pause(id)
+
+    @PutMapping("/{id}/resume")
+    fun resume(@PathVariable id: UUID): GameDto = gameService.resume(id)
+
     @PutMapping("/{id}/move")
     fun move(@PathVariable id: UUID, @RequestBody move: MoveRequestDto): GameDto = gameService.move(id, move)
 

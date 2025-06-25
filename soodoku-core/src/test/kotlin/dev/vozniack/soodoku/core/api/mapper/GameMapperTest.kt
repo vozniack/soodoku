@@ -2,7 +2,7 @@ package dev.vozniack.soodoku.core.api.mapper
 
 import dev.vozniack.soodoku.core.AbstractUnitTest
 import dev.vozniack.soodoku.core.domain.entity.Game
-import dev.vozniack.soodoku.core.domain.entity.Move
+import dev.vozniack.soodoku.core.domain.entity.GameMove
 import dev.vozniack.soodoku.core.domain.types.ConflictType
 import dev.vozniack.soodoku.core.domain.types.Difficulty
 import dev.vozniack.soodoku.core.fixture.mockUser
@@ -56,7 +56,7 @@ class GameMapperTest : AbstractUnitTest() {
         assertEquals(game.currentBoard.count { it == '0' }, gameDto.missing)
         assertEquals(game.moves.size, gameDto.moves.size)
 
-        assertEquals(game.createdAt.toISOTime(), gameDto.createdAt)
+        assertEquals(game.startedAt.toISOTime(), gameDto.startedAt)
         assertNull(game.updatedAt?.toISOTime())
         assertNull(game.finishedAt?.toISOTime())
     }
@@ -93,7 +93,7 @@ class GameMapperTest : AbstractUnitTest() {
             currentBoard = status.board.flatBoard()
             updatedAt = LocalDateTime.now()
         }.also {
-            it.moves.add(Move(game = it, row = row, col = col1, before = 0, after = value))
+            it.moves.add(GameMove(game = it, row = row, col = col1, before = 0, after = value))
         }
 
         soodoku.move(row, col2, value)
@@ -103,7 +103,7 @@ class GameMapperTest : AbstractUnitTest() {
             currentBoard = status.board.flatBoard()
             updatedAt = LocalDateTime.now()
         }.also {
-            it.moves.add(Move(game = it, row = row, col = col2, before = 0, after = value))
+            it.moves.add(GameMove(game = it, row = row, col = col2, before = 0, after = value))
         }
 
         val gameDto = game toDtoWithStatus status

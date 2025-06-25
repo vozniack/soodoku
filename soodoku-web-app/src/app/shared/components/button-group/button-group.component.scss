@@ -1,7 +1,7 @@
 @import 'theme.scss';
 
 .segmented-button {
-  border: 1px solid color-mix(in srgb, $primary 25%, transparent);
+  background: color-mix(in srgb, $secondary-container 25%, transparent);
 
   &:first-child {
     overflow: hidden;
@@ -16,7 +16,9 @@
   }
 
   .segment {
-    padding: 6px 12px;
+    max-height: 32px;
+
+    padding: 8px 12px;
     font-size: 12px;
 
     color: $primary;
@@ -28,7 +30,6 @@
     -webkit-tap-highlight-color: transparent;
 
     &.border {
-      border-left: 1px solid color-mix(in srgb, $primary 25%, transparent);
     }
 
     span {

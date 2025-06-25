@@ -1,9 +1,16 @@
 import { BehaviorSubject } from 'rxjs';
+import { Session } from '../game.interface';
 
-export function updateElapsedTime(createdAt: string, elapsedTime$: BehaviorSubject<string>) {
-  const diffMs = Date.now() - new Date(createdAt).getTime();
+export function updateElapsedTime(sessions: Session[], elapsedTime$: BehaviorSubject<string>) {
+  const now = Date.now();
 
-  const totalSeconds = Math.floor(diffMs / 1000);
+  const totalMs = sessions.reduce((acc, session) => {
+    const started = new Date(session.startedAt).getTime();
+    const paused = session.pausedAt ? new Date(session.pausedAt).getTime() : now;
+    return acc + (paused - started);
+  }, 0);
+
+  const totalSeconds = Math.floor(totalMs / 1000);
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;

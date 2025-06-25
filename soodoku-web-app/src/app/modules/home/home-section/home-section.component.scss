@@ -6,13 +6,12 @@
 
   margin: auto;
 
-  width: 90%;
+  width: 100%;
   max-width: 356px;
 
   border-radius: 8px;
 
   background: color-mix(in srgb, $primary-container 50%, transparent);
-  border: 1px solid color-mix(in srgb, $primary 25%, transparent);
 
   cursor: pointer;
   transition: background-color 0.1s ease-in-out;
@@ -22,8 +21,11 @@
 
   .button {
     width: 64px;
-    height: 48px;
+    height: 64px;
     padding: 4px;
+
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
 
     background: color-mix(in srgb, $secondary 10%, transparent);
 

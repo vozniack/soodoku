@@ -6,8 +6,11 @@ import dev.vozniack.soodoku.core.api.dto.MoveRequestDto
 import dev.vozniack.soodoku.core.api.dto.NoteRequestDto
 import dev.vozniack.soodoku.core.api.mapper.toDtoWithStatus
 import dev.vozniack.soodoku.core.domain.entity.Game
-import dev.vozniack.soodoku.core.domain.entity.Move
+import dev.vozniack.soodoku.core.domain.entity.GameMove
+import dev.vozniack.soodoku.core.domain.entity.GameSession
 import dev.vozniack.soodoku.core.domain.entity.User
+import dev.vozniack.soodoku.core.domain.extension.end
+import dev.vozniack.soodoku.core.domain.extension.isEnd
 import dev.vozniack.soodoku.core.domain.extension.parseNotes
 import dev.vozniack.soodoku.core.domain.extension.serializeNotes
 import dev.vozniack.soodoku.core.domain.extension.toGame
@@ -42,7 +45,7 @@ class GameService(
 ) {
 
     fun get(id: UUID): GameDto {
-        val game: Game = getGame(id)
+        val game: Game = getGame(id = id, allowPaused = true, allowFinished = true)
 
         return game toDtoWithStatus game.toSoodoku().status()
     }
@@ -62,13 +65,39 @@ class GameService(
         val soodoku = Soodoku(Soodoku.Difficulty.valueOf(newGameRequestDto.difficulty.name))
         val status: Soodoku.Status = soodoku.status()
 
-        return gameRepository.save(
+        val game: Game = gameRepository.save(
             soodoku.toGame(user = user, difficulty = newGameRequestDto.difficulty, hints = 3)
-        ) toDtoWithStatus status
+        )
+
+        gameRepository.save(game.also { it.sessions.add(GameSession(game = it, startedAt = it.startedAt)) })
+
+        return game toDtoWithStatus status
+    }
+
+    fun pause(id: UUID): GameDto {
+        val game: Game = getGame(id = id)
+        val now = LocalDateTime.now()
+
+        game.sessions.filter { it.pausedAt == null }.maxByOrNull { it.startedAt }?.let { it.pausedAt = now }
+
+        return gameRepository.save(game.apply { updatedAt = now }) toDtoWithStatus game.toSoodoku().status()
+    }
+
+    fun resume(id: UUID): GameDto {
+        val game: Game = getGame(id = id, allowPaused = true)
+        val now = LocalDateTime.now()
+
+        if (game.sessions.any { it.pausedAt == null }) {
+            throw ConflictException("Can't resume game $id because it's not paused")
+        }
+
+        game.sessions.add(GameSession(game = game, startedAt = now))
+
+        return gameRepository.save(game.apply { updatedAt = now }) toDtoWithStatus game.toSoodoku().status()
     }
 
     fun move(id: UUID, move: MoveRequestDto): GameDto {
-        var game: Game = getGame(id)
+        var game: Game = getGame(id = id)
 
         val soodoku = game.toSoodoku()
 
@@ -86,7 +115,7 @@ class GameService(
             currentBoard = status.board.flatBoard()
             updatedAt = LocalDateTime.now()
         }.also {
-            it.moves.add(Move(game = it, row = move.row, col = move.col, before = valueBefore, after = move.value))
+            it.moves.add(GameMove(game = it, row = move.row, col = move.col, before = valueBefore, after = move.value))
         }
 
         game = gameRepository.save(game checkEndGameWith status)
@@ -94,7 +123,7 @@ class GameService(
     }
 
     fun revert(id: UUID): GameDto {
-        val game: Game = getGame(id)
+        val game: Game = getGame(id = id)
 
         if (game.moves.isEmpty()) {
             throw ConflictException("Nothing to revert")
@@ -118,7 +147,7 @@ class GameService(
             }
 
             it.moves.add(
-                Move(
+                GameMove(
                     game = it,
                     type = MoveType.REVERT,
                     row = lastMove.row,
@@ -133,19 +162,19 @@ class GameService(
     }
 
     fun note(id: UUID, request: NoteRequestDto): GameDto {
-        val game: Game = getGame(id)
+        val game: Game = getGame(id = id)
 
-        val notes = game.parseNotes()
+        val parsedNotes = game.parseNotes()
         val key = request.row to request.col
 
         if (request.values.isEmpty()) {
-            notes.remove(key)
+            parsedNotes.remove(key)
         } else {
-            notes[key] = request.values.toList()
+            parsedNotes[key] = request.values.toList()
         }
 
         game.apply {
-            this.notes = notes.serializeNotes()
+            notes = parsedNotes.serializeNotes()
             updatedAt = LocalDateTime.now()
         }
 
@@ -156,7 +185,7 @@ class GameService(
         val game: Game = getGame(id)
 
         game.apply {
-            this.notes = null
+            notes = null
             updatedAt = LocalDateTime.now()
         }
 
@@ -164,7 +193,7 @@ class GameService(
     }
 
     fun hint(id: UUID): GameDto {
-        var game: Game = getGame(id)
+        var game: Game = getGame(id = id)
 
         if (game.hints < 1) {
             throw ConflictException("You don't have more hints for game $id!")
@@ -189,19 +218,19 @@ class GameService(
             soodoku.move(row, col, hint)
         }
 
-        val notes = game.parseNotes()
-        notes.remove(row to col)
+        val parsedNotes = game.parseNotes()
+        parsedNotes.remove(row to col)
 
         status = soodoku.status()
 
         game.apply {
             currentBoard = status.board.flatBoard()
-            this.notes = notes.serializeNotes()
+            notes = parsedNotes.serializeNotes()
             hints -= 1
             updatedAt = LocalDateTime.now()
         }.also {
             it.moves.add(
-                Move(
+                GameMove(
                     game = it,
                     type = MoveType.HINT,
                     row = row,
@@ -217,13 +246,9 @@ class GameService(
     }
 
     fun end(id: UUID): GameDto {
-        var game: Game = getGame(id)
+        var game: Game = getGame(id = id, allowPaused = true)
 
-        game.apply {
-            finishedAt = LocalDateTime.now()
-        }
-
-        game = gameRepository.save(game)
+        game = gameRepository.save(game.end())
         saveHistory(game)
 
         return game toDtoWithStatus game.toSoodoku().status()
@@ -235,12 +260,16 @@ class GameService(
         gameRepository.delete(getGame(id, true))
     }
 
-    private fun getGame(id: UUID, allowFinished: Boolean = false): Game =
+    private fun getGame(id: UUID, allowPaused: Boolean = false, allowFinished: Boolean = false): Game =
         gameRepository.findById(id).takeIf { it.isPresent }?.get()?.let { game ->
             game.takeIf { it.user != null }?.let {
                 if (it.user != userService.currentlyLoggedUser()) {
                     throw UnauthorizedException("You don't have access to this game")
                 }
+            }
+
+            if (!allowPaused && !(game.sessions.any { it.pausedAt == null })) {
+                throw ConflictException("Game $id is paused")
             }
 
             if (!allowFinished && game.finishedAt != null) {
@@ -250,14 +279,8 @@ class GameService(
             game
         } ?: throw NotFoundException("Not found game with id $id")
 
-    private infix fun Game.checkEndGameWith(status: Soodoku.Status): Game = also {
-        if (currentBoard.count { it == '0' } == 0 && status.conflicts.isEmpty()) {
-            apply {
-                finishedAt = LocalDateTime.now()
-                saveHistory(it)
-            }
-        }
-    }
+    private infix fun Game.checkEndGameWith(status: Soodoku.Status): Game =
+        isEnd(status).takeIf { it }?.let { end(); saveHistory(this); this } ?: this
 
     private fun saveHistory(game: Game) = coroutineScope.launch {
         runCatching { gameHistoryService.save(game) }.onFailure {

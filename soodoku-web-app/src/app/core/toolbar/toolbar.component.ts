@@ -20,7 +20,7 @@ import { DialogService } from '../dialog/dialog.service';
 })
 export class ToolbarComponent {
 
-  @Input() withUsername = true;
+  @Input() withUsername = false;
 
   breakpoint!: Breakpoint;
 

@@ -1,11 +1,11 @@
 <ng-container *ngIf="gameState$ | async as gameState">
-  <ng-container *ngIf="gameState.game !== undefined && gameState.game.finishedAt == undefined">
+  <ng-container *ngIf="gameState.game !== undefined && !gameState.game.finished">
     <div class="game-numbers-wrapper {{ breakpoint }}">
-      <ng-container *ngFor="let number of numbers; let i = index">
+      <ng-container *ngFor="let number of numbers">
         <button class="number {{breakpoint}}"
                 [class.note-positive]="hasNotes(number, sketching(gameState.mode), '+', gameState.game.notes, gameState.focus)"
                 [class.note-negative]="hasNotes(number, sketching(gameState.mode), '-', gameState.game.notes, gameState.focus)"
-                [disabled]="(gameState.focus === undefined || gameState.focus.value === number) && !sketching(gameState.mode)"
+                [disabled]="(gameState.focus === undefined || gameState.focus.value === number) && !sketching(gameState.mode) || gameState.game.paused"
                 (click)="gameState.mode == GameMode.SKETCH ? note(number) : move(number)">
           <span>{{ number }}</span>
         </button>

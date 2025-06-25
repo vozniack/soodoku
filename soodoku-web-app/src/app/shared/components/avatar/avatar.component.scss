@@ -26,7 +26,19 @@
     font-size: 10px;
   }
 
-  &.username {
+  &:not(.with-username) {
+    margin-right: 6px;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        .avatar {
+          background-color: $primary-container;
+        }
+      }
+    }
+  }
+
+  &.with-username {
     margin-right: 6px;
 
     border-radius: 8px;
@@ -57,6 +69,8 @@
     overflow: hidden;
 
     background: $primary 100%;
+
+    transition: background-color 0.1s ease-in-out;
 
     img {
       width: 100%;

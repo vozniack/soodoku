@@ -2,7 +2,8 @@ package dev.vozniack.soodoku.core.api.mapper
 
 import dev.vozniack.soodoku.core.api.dto.ConflictDto
 import dev.vozniack.soodoku.core.api.dto.GameDto
-import dev.vozniack.soodoku.core.api.dto.MoveDto
+import dev.vozniack.soodoku.core.api.dto.GameMoveDto
+import dev.vozniack.soodoku.core.api.dto.GameSessionDto
 import dev.vozniack.soodoku.core.api.dto.NoteDto
 import dev.vozniack.soodoku.core.domain.entity.Game
 import dev.vozniack.soodoku.core.domain.extension.parseNotes
@@ -29,11 +30,14 @@ infix fun Game.toDtoWithStatus(status: Soodoku.Status): GameDto = GameDto(
     missing = currentBoard.count { it == '0' },
     hints = hints,
 
-    moves = moves.map { MoveDto(it.row, it.col, it.before, it.after, it.type, it.revertedAt != null) },
+    sessions = sessions.map { GameSessionDto(it.startedAt.toISOTime(), it.pausedAt?.toISOTime()) },
+    moves = moves.map { GameMoveDto(it.row, it.col, it.before, it.after, it.type, it.revertedAt != null) },
 
-    createdAt = createdAt.toISOTime(),
+    startedAt = startedAt.toISOTime(),
     updatedAt = updatedAt?.toISOTime(),
-    finishedAt = finishedAt?.toISOTime()
+    finishedAt = finishedAt?.toISOTime(),
+    paused = !(sessions.any { it.pausedAt == null }),
+    finished = finishedAt != null
 )
 
 private fun Soodoku.Conflict.toDto(): ConflictDto = ConflictDto(

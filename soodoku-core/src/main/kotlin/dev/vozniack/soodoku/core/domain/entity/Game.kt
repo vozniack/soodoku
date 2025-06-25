@@ -33,7 +33,7 @@ data class Game(
 
     @Column(nullable = false) var hints: Int,
 
-    @Column(nullable = false) val createdAt: LocalDateTime = LocalDateTime.now(),
+    @Column(nullable = false) val startedAt: LocalDateTime = LocalDateTime.now(),
     @Column(nullable = true) var updatedAt: LocalDateTime? = null,
     @Column(nullable = true) var finishedAt: LocalDateTime? = null,
 
@@ -41,5 +41,8 @@ data class Game(
     @JoinColumn(name = "user_id", nullable = true) var user: User? = null,
 
     @OneToMany(mappedBy = "game", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
-    var moves: MutableList<Move> = mutableListOf()
+    val sessions: MutableList<GameSession> = mutableListOf(),
+
+    @OneToMany(mappedBy = "game", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
+    var moves: MutableList<GameMove> = mutableListOf(),
 )
