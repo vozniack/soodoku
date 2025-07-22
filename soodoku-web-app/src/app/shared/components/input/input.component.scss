@@ -22,13 +22,13 @@
 
     transition: border-color 0.1s ease-in-out, background-color 0.1s ease-in-out, color 0.1s ease-in-out;
 
-    border: 1px solid color-mix(in srgb, $secondary 10%, transparent);
-    background-color: color-mix(in srgb, $secondary-container 25%, transparent);
+    border: 1px solid $border;
+    background: $input-background;
 
     &:not(.disabled) {
       &:hover, &:focus {
-        border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
-        background-color: color-mix(in srgb, $primary 10%, transparent);
+        border-color: $border-hover;
+        background-color: $input-background-hover;
       }
     }
 
@@ -80,7 +80,7 @@
 
       font-family: 'Montserrat', sans-serif;
       font-size: 12px;
-      color: $neutral;
+      color: $primary;
 
       box-sizing: border-box;
       background: none;
@@ -91,13 +91,13 @@
       }
 
       &:disabled {
-        color: color-mix(in srgb, $neutral 50%, transparent);
+        color: color-mix(in srgb, $primary 50%, transparent);
       }
 
       &::placeholder {
         font-size: 10px;
         font-weight: 500;
-        color: color-mix(in srgb, $neutral 50%, transparent);
+        color: color-mix(in srgb, $primary 50%, transparent);
       }
 
       ::-webkit-outer-spin-button, ::-webkit-inner-spin-button {

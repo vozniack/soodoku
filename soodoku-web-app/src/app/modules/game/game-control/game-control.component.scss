@@ -7,7 +7,7 @@
     position: relative;
 
     color: $primary;
-    background: color-mix(in srgb, $secondary-container 50%, transparent);
+    background: $button-background;
 
     border: none;
     border-radius: 8px;
@@ -21,17 +21,18 @@
       @media (hover: hover) and (pointer: fine) {
         &:hover {
           cursor: pointer;
-          background: $primary-container;
+
+          background: $button-background-hover;
         }
       }
 
       &:active {
-        background: $primary-container;
+        background: $button-background-hover;
       }
     }
 
     &.active {
-      background: $primary-container;
+      background: $button-background-hover;
     }
 
     &:disabled {

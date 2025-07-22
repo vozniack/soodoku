@@ -4,8 +4,8 @@
   padding: 4px 12px;
   border-radius: 8px;
 
-  color: $primary;
-  background: color-mix(in srgb, $secondary-container 50%, transparent);
+  color: $button-text;
+  background: $button-background;
 
   cursor: pointer;
   transition: background-color 0.1s ease-in-out;
@@ -35,7 +35,8 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: $primary-container;
+      color: $button-text-hover;
+      background: $button-background-hover;
 
       .difficulty {
         background-color: $primary-container;
@@ -44,18 +45,6 @@
       soo-icon {
         transform: scale(1.1);
       }
-    }
-  }
-
-  &:active {
-    background-color: $primary-container;
-
-    .difficulty {
-      background-color: $primary-container;
-    }
-
-    soo-icon {
-      transform: scale(1.1);
     }
   }
 }

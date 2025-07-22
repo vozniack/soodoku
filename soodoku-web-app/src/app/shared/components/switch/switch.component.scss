@@ -33,8 +33,9 @@
 
     inset: 0;
 
-    background-color: color-mix(in srgb, $secondary-container 25%, transparent);
-    border: 1px solid color-mix(in srgb, $secondary 10%, transparent);
+    color: $button-text;
+    background: $button-background;
+    border: 1px solid $border;
 
     border-radius: 8px;
 
@@ -72,11 +73,15 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background: $secondary-container;
+      color: $button-text-hover;
+      background: $button-background-hover;
+      border-color: $border-hover;
     }
+  }
 
-    &:active {
-      background: $secondary-container;
-    }
+  &:active {
+    color: $button-text-hover;
+    background: $button-background-hover;
+    border-color: $border-hover;
   }
 }

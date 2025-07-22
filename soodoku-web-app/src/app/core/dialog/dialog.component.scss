@@ -34,7 +34,7 @@
     min-width: 368px;
     max-width: 512px;
 
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition: background-color 0.1s ease-in-out, transform 0.3s ease, opacity 0.3s ease;
     transform: translateY(0);
 
     background: $surface;
