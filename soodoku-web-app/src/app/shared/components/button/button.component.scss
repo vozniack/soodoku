@@ -62,44 +62,47 @@
   /* Styles */
 
   &.tonal {
-    color: $primary;
-    background: color-mix(in srgb, $secondary-container 50%, transparent);
+    color: $button-text;
+    background: color-mix(in srgb, $button-background, transparent);
 
     @media (hover: hover) and (pointer: fine) {
       &:not(:disabled):hover {
-        background-color: $primary-container;
+        color: $button-text-hover;
+        background-color: $button-background-hover;
       }
     }
 
     &:not(:disabled):active {
-      background: $primary-container;
+      background: $button-background-hover;
     }
 
     &:disabled {
       cursor: default;
 
-      color: color-mix(in srgb, $primary 50%, transparent);
-      background: color-mix(in srgb, $secondary-container 25%, transparent);
+      color: $button-text-disabled;
+      background-color: $button-background-disabled;
     }
   }
 
   &.flat {
-    color: $primary;
+    color: $button-text;
     background: none;
 
     @media (hover: hover) and (pointer: fine) {
       &:not(:disabled):hover {
-        background: color-mix(in srgb, $secondary-container 50%, transparent);
+        color: $button-text-hover;
+        background-color: $button-background-hover;
       }
     }
 
     &:not(:disabled):active {
-      background: $secondary-container 50%;
+      background: $button-background-hover;
     }
 
     &:disabled {
       cursor: default;
-      color: color-mix(in srgb, $primary 50%, transparent);
+
+      color: $button-text-disabled;
     }
   }
 }

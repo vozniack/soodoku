@@ -135,7 +135,7 @@
 
     &.active {
       color: $primary;
-      background: $primary-container;
+      background: color-mix(in srgb, $primary-container 75%, transparent);
       border-color: color-mix(in srgb, $primary 50%, transparent);
     }
 

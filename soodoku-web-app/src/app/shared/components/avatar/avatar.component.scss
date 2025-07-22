@@ -42,11 +42,11 @@
     margin-right: 6px;
 
     border-radius: 8px;
-    background: color-mix(in srgb, $secondary-container 50%, transparent);
+    background: $button-background;
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background-color: $primary-container;
+        background-color: $button-background-hover;
       }
     }
 

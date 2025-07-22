@@ -11,7 +11,7 @@
 
   border-radius: 8px;
 
-  background: color-mix(in srgb, $primary-container 50%, transparent);
+  background: $button-background;
 
   cursor: pointer;
   transition: background-color 0.1s ease-in-out;
@@ -27,7 +27,9 @@
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
 
-    background: color-mix(in srgb, $secondary 10%, transparent);
+    background: color-mix(in srgb, $secondary-container 75%, transparent);
+
+    transition: background-color 0.1s ease-in-out;
 
     soo-icon {
       transition: transform 0.1s ease-in-out;
@@ -42,7 +44,11 @@
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       &:not(.disabled) {
-        background: $primary-container;
+        background: color-mix(in srgb, $primary-container 50%, transparent);
+
+        .button {
+          background: color-mix(in srgb, $primary-container 75%, transparent);
+        }
 
         soo-icon {
           transform: scale(1.1);

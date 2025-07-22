@@ -22,42 +22,63 @@ $surface-container: var(--surface-container);
 
 $neutral: var(--neutral);
 
+// Button variables
+
+$button-background: color-mix(in srgb, $secondary-container 50%, transparent);
+$button-background-hover: color-mix(in srgb, $primary-container 60%, transparent);
+$button-background-disabled: color-mix(in srgb, $secondary-container 25%, transparent);
+
+$button-text: $secondary;
+$button-text-hover: $primary;
+$button-text-disabled: color-mix(in srgb, $primary 50%, transparent);
+
+// Input variables
+
+$input-background: color-mix(in srgb, $secondary-container 25%, transparent);
+$input-background-hover: color-mix(in srgb, $primary-container 25%, transparent);
+$input-background-disabled: color-mix(in srgb, $secondary-container 10%, transparent);
+
+// Common variables
+
+$border: color-mix(in srgb, $secondary 10%, transparent);
+$border-hover: color-mix(in srgb, $primary 10%, transparent);
+
 // Actual themes
 
 [theme="light"] {
-  --primary: #715c0c;
-  --primary-container: #fee086;
+  --primary: #745B48;
+  --primary-container: #E3CFC0;
 
-  --secondary: #685e40;
-  --secondary-container: #f1e1bb;
+  --secondary: #8A7764;
+  --secondary-container: #F0E5DB;
 
-  --success: #46664b;
-  --success-container: #c7ecca;
+  --success: #5F7E71;
+  --success-container: #D5E8E0;
 
-  --error: #ba1a1a;
-  --error-container: #ffdad6;
+  --error: #B35D50;
+  --error-container: #F8DEDB;
 
-  --surface: #fff8f0;
-  --surface-container: #f5eddf;
+  --surface: #FFFDFB;
+  --surface-container: #F2EAE3;
 
-  --neutral: #7d7667;
+  --neutral: #958779;
 }
 
 [theme="dark"] {
-  --primary: #e1c46d;
-  --primary-container: #564500;
+  --primary: #D7BDAA;
+  --primary-container: #3F2F24;
 
-  --secondary: #d4c5a1;
-  --secondary-container: #50462a;
+  --secondary: #CBB8A8;
+  --secondary-container: #2A1F18;
 
-  --success: #accfaf;
-  --success-container: #2e4e35;
+  --success: #A4CFC1;
+  --success-container: #2D4239;
 
-  --error: #ffb4ab;
-  --error-container: #93000a;
+  --error: #E4A9A2;
+  --error-container: #642C27;
 
-  --surface: #18120b;
-  --surface-container: #251f17;
+  --surface: #1B1511;
+  --surface-container: #271F1A;
 
-  --neutral: #979080;
+  --neutral: #AA9F94;
 }
