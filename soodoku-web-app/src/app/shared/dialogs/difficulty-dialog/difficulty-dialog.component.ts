@@ -6,13 +6,14 @@ import { ACTION_GAME_NEW } from '../../../store/app/game/game.actions';
 import { SELECT_USER_STATE } from '../../../store/app/user/user.selector';
 import { UserState } from '../../../store/app/user/user.state';
 import { ButtonComponent } from '../../components/button/button.component';
+import { DividerComponent } from '../../components/divider/divider.component';
 
 @Component({
   selector: 'soo-difficulty-dialog',
   standalone: true,
   templateUrl: './difficulty-dialog.component.html',
   styleUrl: './difficulty-dialog.component.scss',
-  imports: [ButtonComponent, NgIf,]
+  imports: [ButtonComponent, NgIf, DividerComponent,]
 })
 export class DifficultyDialogComponent {
 

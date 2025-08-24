@@ -7,9 +7,19 @@
   </span>
 
   <div class="column-container gap">
+    <soo-divider [text]="'CAMPAIGN'"></soo-divider>
+    <soo-button [text]="'Start campaign'"></soo-button>
+
+    <soo-divider [text]="'RANDOM'"></soo-divider>
+
     <soo-button [text]="'Easy'" (click)="select('EASY')"></soo-button>
     <soo-button [text]="'Medium'" (click)="select('MEDIUM')"></soo-button>
     <soo-button [text]="'Hard'" (click)="select('HARD')"></soo-button>
+
+    <soo-divider [text]="'COMPETITION'"></soo-divider>
+    <soo-button [text]="'Play with friends'"></soo-button>
+
+    <soo-divider [text]="'DEV'"></soo-divider>
 
     <soo-button [text]="'Empty'" (click)="select('DEV_EMPTY')"></soo-button>
     <soo-button [text]="'Filled'" (click)="select('DEV_FILLED')"></soo-button>
