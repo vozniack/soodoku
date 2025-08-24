@@ -1,6 +1,16 @@
-<div class="divider"
-     [ngClass]="{'vertical': vertical}"
-     [style.width]="vertical ? '1px' : width"
-     [style.height]="vertical ? height : '1px'"
-     [style.max-width]="vertical ? '' : maxWidth">
+<div class="divider-container" [ngClass]="{'vertical': vertical, 'with-text': text}">
+  <ng-container *ngIf="text && !vertical; else onlyDivider">
+    <div class="line"></div>
+    <span class="text">{{ text }}</span>
+    <div class="line"></div>
+  </ng-container>
+
+  <ng-template #onlyDivider>
+    <div class="divider"
+         [ngClass]="{'vertical': vertical}"
+         [style.width]="vertical ? '1px' : width"
+         [style.height]="vertical ? height : '1px'"
+         [style.max-width]="vertical ? '' : maxWidth">
+    </div>
+  </ng-template>
 </div>
