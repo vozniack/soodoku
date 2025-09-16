@@ -1,5 +1,7 @@
 /* Schema */
 
+/* User related tables */
+
 CREATE TABLE users
 (
     id       UUID         NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -11,6 +13,37 @@ CREATE TABLE users
     language VARCHAR(5)   NOT NULL,
     theme    VARCHAR(16)  NOT NULL
 );
+
+/* Friend related tables */
+
+CREATE TABLE friends
+(
+    id        UUID PRIMARY KEY   DEFAULT gen_random_uuid(),
+
+    user_id   UUID      NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    friend_id UUID      NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+
+    since     TIMESTAMP NOT NULL DEFAULT now(),
+
+    CONSTRAINT uq_user_friend UNIQUE (user_id, friend_id)
+);
+
+CREATE TABLE friend_invitations
+(
+    id           UUID PRIMARY KEY     DEFAULT gen_random_uuid(),
+
+    sender_id    UUID        NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    receiver_id  UUID        NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+
+    status       VARCHAR(16) NOT NULL,
+
+    created_at   TIMESTAMP   NOT NULL DEFAULT now(),
+    responded_at TIMESTAMP   NULL,
+
+    CONSTRAINT uq_friend_invitation UNIQUE (sender_id, receiver_id)
+);
+
+/* Game related tables */
 
 CREATE TABLE games
 (
@@ -31,16 +64,14 @@ CREATE TABLE games
     updated_at    TIMESTAMP    NULL,
     finished_at   TIMESTAMP    NULL,
 
-    user_id       UUID         NULL,
-
-    CONSTRAINT fk_games_user FOREIGN KEY (user_id) REFERENCES users (id)
+    user_id       UUID         NULL REFERENCES users (id)
 );
 
 CREATE TABLE game_moves
 (
     id          UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
-    game_id     UUID        NOT NULL,
+    game_id     UUID        NOT NULL REFERENCES games (id),
     type        VARCHAR(16) NOT NULL,
 
     created_at  TIMESTAMP   NOT NULL             DEFAULT now(),
@@ -50,28 +81,24 @@ CREATE TABLE game_moves
     col_index   INT         NOT NULL,
 
     before      INT         NOT NULL,
-    after       INT         NOT NULL,
-
-    CONSTRAINT fk_game_moves_game FOREIGN KEY (game_id) REFERENCES games (id)
+    after       INT         NOT NULL
 );
 
 CREATE TABLE game_sessions
 (
     id         UUID      NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
-    game_id    UUID      NOT NULL,
+    game_id    UUID      NOT NULL REFERENCES games (id) ON DELETE CASCADE,
     started_at TIMESTAMP NOT NULL             DEFAULT now(),
-    paused_at  TIMESTAMP NULL,
-
-    CONSTRAINT fk_game_sessions_game FOREIGN KEY (game_id) REFERENCES games (id) ON DELETE CASCADE
+    paused_at  TIMESTAMP NULL
 );
 
 CREATE TABLE game_history
 (
     id            UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 
-    game_id       UUID        NOT NULL UNIQUE,
-    user_id       UUID        NOT NULL,
+    game_id       UUID        NOT NULL UNIQUE REFERENCES games (id),
+    user_id       UUID        NOT NULL REFERENCES users (id),
 
     type          VARCHAR(16) NOT NULL,
     difficulty    VARCHAR(16) NOT NULL,
@@ -85,10 +112,7 @@ CREATE TABLE game_history
     victory       BOOLEAN     NOT NULL,
 
     started_at    TIMESTAMP   NOT NULL,
-    finished_at   TIMESTAMP   NOT NULL,
-
-    CONSTRAINT fk_game_history_game FOREIGN KEY (game_id) REFERENCES games (id),
-    CONSTRAINT fk_game_history_user FOREIGN KEY (user_id) REFERENCES users (id)
+    finished_at   TIMESTAMP   NOT NULL
 );
 
 CREATE INDEX idx_game_sessions_game_id ON game_sessions (game_id);
