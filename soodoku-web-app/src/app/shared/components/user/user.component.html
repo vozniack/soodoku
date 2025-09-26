@@ -1,0 +1,15 @@
+<button class="user-wrapper" [class.active]="active" [class.selectable]="selectable">
+  <div class="avatar">
+    <soo-icon [name]="'person'" [size]="24"></soo-icon>
+
+    <button *ngIf="removable" class="avatar-badge removable" (click)="setToRemove()" @fadeInAnimation>
+      <soo-icon name="clear" [size]="12"></soo-icon>
+    </button>
+
+    <button *ngIf="selectable && active" class="avatar-badge selectable" (click)="setToRemove()" @fadeInAnimation>
+      <soo-icon name="check" [size]="12"></soo-icon>
+    </button>
+  </div>
+
+  <span class="username">{{ username }}</span>
+</button>

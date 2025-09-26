@@ -1,9 +1,9 @@
 package dev.vozniack.soodoku.core.util
 
 import dev.vozniack.soodoku.core.AbstractUnitTest
-import kotlin.test.Test
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class SyntaxExtensionTest : AbstractUnitTest() {

@@ -11,8 +11,8 @@ import dev.vozniack.soodoku.core.fixture.mockLoginRequest
 import dev.vozniack.soodoku.core.fixture.mockRefreshRequest
 import dev.vozniack.soodoku.core.fixture.mockSignupRequest
 import dev.vozniack.soodoku.core.fixture.mockUser
-import kotlin.test.assertEquals
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

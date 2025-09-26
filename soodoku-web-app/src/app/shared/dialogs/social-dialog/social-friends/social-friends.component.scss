@@ -1,0 +1,38 @@
+@import 'theme.scss';
+
+.friends-list {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+
+  scrollbar-width: thin;
+  scrollbar-color: $primary transparent;
+
+  &::-webkit-scrollbar {
+    height: 2px;
+    border-radius: 50%;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $primary;
+  }
+
+  soo-user {
+    margin-bottom: 4px;
+    scroll-snap-align: start;
+  }
+}
+
+.friend-removal {
+  span {
+    text-align: center;
+    font-size: 12px;
+  }
+}

@@ -21,8 +21,8 @@ import dev.vozniack.soodoku.core.fixture.mockUser
 import dev.vozniack.soodoku.core.service.GameService
 import dev.vozniack.soodoku.lib.Soodoku
 import java.time.LocalDateTime
-import kotlin.test.assertEquals
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

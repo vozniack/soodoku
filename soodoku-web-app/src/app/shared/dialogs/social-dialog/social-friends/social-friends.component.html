@@ -1,0 +1,39 @@
+<div class="column-container gap">
+  <soo-divider [text]="'FRIENDS'"></soo-divider>
+
+  <div class="row-container gap">
+    <soo-input
+      [id]="'friends-search'"
+      [name]="'friends-search'"
+      [placeholder]="'Search'"
+      [placeholderShrink]="false"
+      [icon]="'search'"
+      [style]="'tonal'"
+      [autocomplete]="'off'"
+      (input)="onSearch($event)"
+      [style.flex]="100">
+    </soo-input>
+
+    <soo-button [icon]="editMode ? 'edit_off' : 'edit'" (click)="switchEditMode()"></soo-button>
+  </div>
+
+  <div class="friends-list row-container gap-small">
+    <ng-container *ngFor="let friend of filteredFriends$ | async">
+      <soo-user [username]="friend.friend.username"
+                [active]="active == friend"
+                [removable]="editMode"
+                (toRemove)="setActive(friend)"
+                @fadeInAnimation>
+      </soo-user>
+    </ng-container>
+  </div>
+
+  <div class="friend-removal column-container gap-small" *ngIf="active" @fadeInAnimation>
+    <span>Do you want to remove <b [innerText]="active.friend.username"></b> from your friends?</span>
+
+    <div class="row-container gap">
+      <soo-button [text]="'No'" [size]="'small'" [style.flex]="100" (click)="clear()"></soo-button>
+      <soo-button [text]="'Yes'" [size]="'small'" [style.flex]="100" (click)="remove()"></soo-button>
+    </div>
+  </div>
+</div>
