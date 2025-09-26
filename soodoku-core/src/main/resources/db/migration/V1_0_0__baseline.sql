@@ -9,9 +9,9 @@ CREATE TABLE users
     email    VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255),
 
-    username VARCHAR(255) NOT NULL,
-    language VARCHAR(5)   NOT NULL,
-    theme    VARCHAR(16)  NOT NULL
+    username VARCHAR(255) NOT NULL UNIQUE,
+    language VARCHAR(5)   NOT NULL             DEFAULT 'en_EN',
+    theme    VARCHAR(16)  NOT NULL             DEFAULT 'light'
 );
 
 /* Friend related tables */
@@ -38,10 +38,10 @@ CREATE TABLE friend_invitations
     status       VARCHAR(16) NOT NULL,
 
     created_at   TIMESTAMP   NOT NULL DEFAULT now(),
-    responded_at TIMESTAMP   NULL,
-
-    CONSTRAINT uq_friend_invitation UNIQUE (sender_id, receiver_id)
+    responded_at TIMESTAMP   NULL
 );
+
+CREATE UNIQUE INDEX uq_friend_invitation_pending ON friend_invitations (sender_id, receiver_id) WHERE status = 'PENDING';
 
 /* Game related tables */
 
@@ -117,7 +117,14 @@ CREATE TABLE game_history
 
 CREATE INDEX idx_game_sessions_game_id ON game_sessions (game_id);
 
-INSERT INTO users (email, password, username, language, theme)
-VALUES ('rajeshkootrappali@bbt.com',
-        '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO',
-        'koothrappali9000', 'en_EN', 'light');
+INSERT INTO users (email, password, username)
+VALUES ('rajeshkootrappali@bbt.com', '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO',
+        'koothrappali9000'),
+       ('sheldon.cooper@bbt.com', '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO',
+        'mr_sheldon'),
+       ('leonard.hofstadter@bbt.com', '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO',
+        'leohof'),
+       ('penny.teller@bbt.com', '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO',
+        'penny'),
+       ('howard.wolowitz@bbt.com', '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO',
+        'volovitz');

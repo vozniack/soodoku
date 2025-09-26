@@ -5,13 +5,13 @@ import java.util.UUID
 data class FriendInvitationDto(
     val id: UUID,
 
-    val senderEmail: String,
-    val receiverEmail: String,
+    val sender: UserSimpleDto,
+    val receiver: UserSimpleDto,
 
     val createdAt: String,
     val respondedAt: String? = null
 )
 
 data class FriendInvitationRequestDto(
-    val receiverEmail: String
+    val receiverUsername: String
 )

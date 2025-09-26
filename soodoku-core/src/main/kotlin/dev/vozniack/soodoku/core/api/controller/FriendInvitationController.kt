@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/friends/invitations")
-class FriendInvitationsController(private val friendInvitationService: FriendInvitationService) {
+class FriendInvitationController(private val friendInvitationService: FriendInvitationService) {
 
     @GetMapping("/sent")
     fun getSent(): List<FriendInvitationDto> =

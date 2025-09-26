@@ -8,6 +8,8 @@ import org.springframework.data.repository.CrudRepository
 
 interface FriendRepository : CrudRepository<Friend, UUID> {
 
+    fun findAllByUser(user: User): List<Friend>
+
     @Query(
         """
         SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END
@@ -17,4 +19,6 @@ interface FriendRepository : CrudRepository<Friend, UUID> {
     """
     )
     fun friendshipExists(user: User, friend: User): Boolean
+
+    fun deleteByUserAndFriend(user: User, friend: User)
 }

@@ -20,27 +20,22 @@ class FriendInvitationService(
     private val friendService: FriendService
 ) {
 
-    fun getSent(): List<FriendInvitationDto> {
-        val user: User = getCurrentlyLoggedUser()
+    fun getSent(): List<FriendInvitationDto> = friendInvitationRepository.findAllBySenderAndStatus(
+        getCurrentlyLoggedUser(), InvitationStatus.PENDING
+    ).map { it.toDto() }
 
-        return friendInvitationRepository.findAllBySender(user).map { it.toDto() }
-    }
-
-    fun getReceived(): List<FriendInvitationDto> {
-        val user: User = getCurrentlyLoggedUser()
-
-        return friendInvitationRepository.findAllByReceiver(user).map { it.toDto() }
-    }
+    fun getReceived(): List<FriendInvitationDto> = friendInvitationRepository.findAllByReceiverAndStatus(
+        getCurrentlyLoggedUser(), InvitationStatus.PENDING
+    ).map { it.toDto() }
 
     fun invite(request: FriendInvitationRequestDto): FriendInvitationDto {
         val sender: User = getCurrentlyLoggedUser()
 
-        val receiver: User = userService.findByEmail(request.receiverEmail)
-            ?: throw NotFoundException("Not found user ${request.receiverEmail}")
+        val receiver: User = userService.findByUsername(request.receiverUsername)
+            ?: throw NotFoundException("Not found user ${request.receiverUsername}")
 
-        friendInvitationRepository.findBySenderAndReceiver(sender, receiver)
-            ?.takeIf { it.status == InvitationStatus.PENDING }
-            ?.let { throw ConflictException("User ${sender.email} already invited user ${receiver.email}") }
+        friendInvitationRepository.findBySenderAndReceiverAndStatus(sender, receiver, InvitationStatus.PENDING)
+            ?.let { throw ConflictException("User ${sender.username} already invited user ${receiver.username}") }
 
         return friendInvitationRepository.save(
             FriendInvitation(sender = sender, receiver = receiver)
@@ -54,9 +49,9 @@ class FriendInvitationService(
             NotFoundException("Not found invitation with id $id")
         }?.takeIf { it.receiver.id == user.id } ?: throw ConflictException("You don't have access to this resource")
 
-        friendInvitationRepository.findBySenderAndReceiver(invitation.receiver, invitation.sender)
-            ?.takeIf { it.status == InvitationStatus.PENDING }
-            ?.let { friendInvitationRepository.delete(it) }
+        friendInvitationRepository.findBySenderAndReceiverAndStatus(
+            invitation.receiver, invitation.sender, InvitationStatus.PENDING
+        )?.let { friendInvitationRepository.delete(it) }
 
         friendService.create(invitation)
 
@@ -74,9 +69,9 @@ class FriendInvitationService(
 
         invitation = friendInvitationRepository.save(invitation.apply { status = InvitationStatus.REJECTED })
 
-        friendInvitationRepository.findBySenderAndReceiver(invitation.receiver, invitation.sender)
-            ?.takeIf { it.status == InvitationStatus.PENDING }
-            ?.let { friendInvitationRepository.delete(it) }
+        friendInvitationRepository.findBySenderAndReceiverAndStatus(
+            invitation.receiver, invitation.sender, InvitationStatus.PENDING
+        )?.let { friendInvitationRepository.delete(it) }
 
         return invitation.toDto()
     }

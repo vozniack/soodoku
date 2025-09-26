@@ -12,6 +12,10 @@ data class UserDto(
     val theme: String
 )
 
+data class UserSimpleDto(
+    val username: String,
+)
+
 data class UserUsernameUpdateDto(
     val username: String
 )

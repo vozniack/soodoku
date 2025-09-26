@@ -83,7 +83,7 @@ class FriendInvitationControllerTest @Autowired constructor(
     @Test
     fun `invite user`() {
         val sender = userRepository.save(mockUser())
-        val receiver = userRepository.save(mockUser("jane.doe@soodoku.com"))
+        val receiver = userRepository.save(mockUser(email = "jane.doe@soodoku.com", username = "janedoe"))
 
         authenticate(sender.email)
 
@@ -95,8 +95,8 @@ class FriendInvitationControllerTest @Autowired constructor(
             ).andExpect(status().isOk).andReturn().response.contentAsString
         )
 
-        assertEquals(sender.email, response.senderEmail)
-        assertEquals(receiver.email, response.receiverEmail)
+        assertEquals(sender.username, response.sender.username)
+        assertEquals(receiver.username, response.receiver.username)
     }
 
     @Test

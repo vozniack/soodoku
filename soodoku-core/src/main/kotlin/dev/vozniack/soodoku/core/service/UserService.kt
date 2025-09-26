@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(private val userRepository: UserRepository, private val passwordEncoder: PasswordEncoder) {
 
-    fun findByEmail(email: String): User? = userRepository.findByEmail(email)
+    fun findByUsername(username: String): User? = userRepository.findByUsername(username)
 
     fun currentlyLoggedUser(): User? = SecurityContextHolder.getContext().authentication
         ?.takeIf { it.name != "anonymousUser" }

@@ -28,8 +28,8 @@ class FriendInvitationMapperTest {
         val invitationDto: FriendInvitationDto = invitation.toDto()
 
         assertEquals(invitation.id, invitationDto.id)
-        assertEquals(invitation.sender.email, invitationDto.senderEmail)
-        assertEquals(invitation.receiver.email, invitationDto.receiverEmail)
+        assertEquals(invitation.sender.username, invitationDto.sender.username)
+        assertEquals(invitation.receiver.username, invitationDto.receiver.username)
         assertNotNull(invitationDto.createdAt)
         assertNotNull(invitationDto.respondedAt)
     }

@@ -39,7 +39,7 @@ class AuthValidatorTest : AbstractUnitTest() {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["", " ", "john.doesecuro.com", "john.doe@securo"])
+    @ValueSource(strings = ["", " ", "john.doesoodoku.com", "john.doe@soodoku"])
     fun `validate signup request with invalid email format`(email: String) {
         assertThrows<BadRequestException> {
             mockSignupRequest(email = email).validate()

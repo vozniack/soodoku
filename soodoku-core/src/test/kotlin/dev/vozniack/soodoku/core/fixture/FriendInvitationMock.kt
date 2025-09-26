@@ -2,7 +2,7 @@ package dev.vozniack.soodoku.core.fixture
 
 import dev.vozniack.soodoku.core.api.dto.FriendInvitationRequestDto
 
-fun mockFriendInvitationRequestDto(receiverEmail: String = "jane.doe@soodoku.com"): FriendInvitationRequestDto =
+fun mockFriendInvitationRequestDto(receiverUsername: String = "janedoe"): FriendInvitationRequestDto =
     FriendInvitationRequestDto(
-        receiverEmail = receiverEmail
+        receiverUsername = receiverUsername
     )

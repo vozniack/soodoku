@@ -85,11 +85,11 @@ class FriendInvitationServiceTest @Autowired constructor(
     @Test
     fun `invite user`() {
         val sender = userRepository.save(mockUser())
-        val receiver = userRepository.save(mockUser("jane.doe@soodoku.com"))
+        val receiver = userRepository.save(mockUser(email = "jane.doe@soodoku.com", username = "janedoe"))
 
         authenticate(sender.email)
 
-        friendInvitationService.invite(mockFriendInvitationRequestDto(receiverEmail = receiver.email))
+        friendInvitationService.invite(mockFriendInvitationRequestDto(receiverUsername = receiver.username))
 
         val invitations = friendInvitationRepository.findAll()
         assertEquals(1, invitations.count())
@@ -101,21 +101,21 @@ class FriendInvitationServiceTest @Autowired constructor(
         authenticate(sender.email)
 
         assertThrows<NotFoundException> {
-            friendInvitationService.invite(mockFriendInvitationRequestDto(receiverEmail = "someguy@soodoku.com"))
+            friendInvitationService.invite(mockFriendInvitationRequestDto(receiverUsername = "someguy"))
         }
     }
 
     @Test
     fun `invite user which is already invited`() {
         val sender = userRepository.save(mockUser())
-        val receiver = userRepository.save(mockUser("jane.doe@soodoku.com"))
+        val receiver = userRepository.save(mockUser(email = "jane.doe@soodoku.com", username = "janedoe"))
 
         authenticate(sender.email)
 
-        friendInvitationService.invite(mockFriendInvitationRequestDto(receiverEmail = receiver.email))
+        friendInvitationService.invite(mockFriendInvitationRequestDto(receiverUsername = receiver.username))
 
         assertThrows<ConflictException> {
-            friendInvitationService.invite(mockFriendInvitationRequestDto(receiverEmail = receiver.email))
+            friendInvitationService.invite(mockFriendInvitationRequestDto(receiverUsername = receiver.username))
         }
 
         val invitations = friendInvitationRepository.findAll()

@@ -6,8 +6,8 @@ import dev.vozniack.soodoku.core.util.toISOTime
 
 fun FriendInvitation.toDto(): FriendInvitationDto = FriendInvitationDto(
     id = id,
-    senderEmail = sender.email,
-    receiverEmail = receiver.email,
+    sender = sender.toSimpleDto(),
+    receiver = receiver.toSimpleDto(),
     createdAt = createdAt.toISOTime(),
     respondedAt = respondedAt?.toISOTime()
 )
