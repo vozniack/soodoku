@@ -1,0 +1,40 @@
+@import 'theme.scss';
+
+.invitations {
+
+  span {
+    font-size: 12px;
+  }
+
+  .invitation {
+    flex: 100;
+
+    padding: 4px 12px;
+
+    border: 1px solid color-mix(in srgb, $secondary 25%, transparent);
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+
+    transition: border-color ease-in-out 0.1s;
+
+    .username {
+      font-weight: bold;
+    }
+
+    .created {
+      font-size: 8px;
+    }
+
+    &:hover {
+      border-color: $secondary;
+    }
+
+    soo-icon {
+      margin-top: 4px;
+    }
+  }
+}

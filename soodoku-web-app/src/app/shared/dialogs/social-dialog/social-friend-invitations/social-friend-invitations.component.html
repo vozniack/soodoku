@@ -1,0 +1,53 @@
+<div class="column-container gap">
+
+  <ng-container *ngIf="receivedInvitations.length > 0">
+    <soo-divider [text]="'RECEIVED INVITATIONS'"></soo-divider>
+
+    <div class="invitations column-container gap">
+      <div class="column-container gap-small">
+        <ng-container *ngFor="let invitation of receivedInvitations">
+          <div class="invitation row-container space-between">
+            <div class="row-container gap">
+              <soo-icon [name]="'drafts'" [size]="18"></soo-icon>
+
+              <div class="column-container">
+                <span class="username">{{ invitation.sender.username }}</span>
+                <span class="created">Received: {{ invitation.createdAt | date: 'HH:mm:ss dd.MM.YYYY' }}</span>
+              </div>
+            </div>
+
+            <div class="row-container">
+              <soo-button [icon]="'check'" [style]="'flat'" (click)="accept(invitation.id)"></soo-button>
+              <soo-button [icon]="'close'" [style]="'flat'" (click)="reject(invitation.id)"></soo-button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="sentInvitations.length > 0">
+    <soo-divider [text]="'SENT INVITATIONS'"></soo-divider>
+
+    <div class="invitations column-container gap">
+      <div class="column-container gap-small">
+        <ng-container *ngFor="let invitation of sentInvitations">
+          <div class="invitation row-container space-between" @fadeInAnimation>
+            <div class="row-container gap">
+              <soo-icon [name]="'forward_to_inbox'" [size]="18"></soo-icon>
+
+              <div class="column-container">
+                <span class="username">{{ invitation.receiver.username }}</span>
+                <span class="created">Sent: {{ invitation.createdAt | date: 'HH:mm:ss dd.MM.YYYY' }}</span>
+              </div>
+            </div>
+
+            <div class="row-container">
+              <soo-button [icon]="'close'" [style]="'flat'" (click)="delete(invitation.id)"></soo-button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>

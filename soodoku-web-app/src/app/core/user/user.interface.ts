@@ -7,6 +7,10 @@ export interface User {
   theme: string
 }
 
+export interface UserSimple {
+  username: string;
+}
+
 export interface UserUpdateUsernameRequest {
   username: string;
 }

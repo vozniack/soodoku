@@ -1,6 +1,10 @@
 <div class="toolbar row-container">
   <soo-avatar [withUsername]="withUsername"></soo-avatar>
 
+  <button class="settings-button" (click)="openFriends()" *ngIf="user != undefined">
+    <soo-icon [name]="'group'" [size]="20" [weight]="100"></soo-icon>
+  </button>
+
   <button class="settings-button" (click)="openSettings()">
     <soo-icon [name]="'settings'" [size]="20" [weight]="100"></soo-icon>
   </button>

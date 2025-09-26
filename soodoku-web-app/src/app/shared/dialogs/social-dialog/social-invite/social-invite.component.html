@@ -1,0 +1,30 @@
+<div class="column-container gap">
+  <soo-divider [text]="'INVITE'"></soo-divider>
+
+  <div class="row-container gap">
+    <soo-input
+      [control]="searchControl"
+      [id]="'invite-search'"
+      [name]="'invite-search'"
+      [placeholder]="'Search for friends'"
+      [placeholderShrink]="false"
+      [icon]="'search'"
+      [style]="'tonal'"
+      [autocomplete]="'off'"
+      [style.flex]="100">
+    </soo-input>
+
+    <soo-button [icon]="'group_add'" [disabled]="activeCandidates.length < 1" (click)="invite()"></soo-button>
+  </div>
+
+  <div class="friends-list row-container gap-small">
+    <ng-container *ngFor="let friendCandidate of friendCandidates$ | async">
+      <soo-user [username]="friendCandidate.username"
+                [active]="isActive(friendCandidate)"
+                [selectable]="true"
+                (click)="activate(friendCandidate)"
+                @fadeInAnimation>
+      </soo-user>
+    </ng-container>
+  </div>
+</div>

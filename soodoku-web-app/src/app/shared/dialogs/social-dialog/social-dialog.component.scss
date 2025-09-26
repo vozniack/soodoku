@@ -1,0 +1,13 @@
+@import 'theme.scss';
+
+.social-dialog {
+  color: $primary;
+
+  > * {
+    width: 100%;
+  }
+
+  span {
+    font-size: 12px;
+  }
+}
