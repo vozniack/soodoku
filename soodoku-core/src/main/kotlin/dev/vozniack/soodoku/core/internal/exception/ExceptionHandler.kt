@@ -1,6 +1,7 @@
 package dev.vozniack.soodoku.core.internal.exception
 
-import dev.vozniack.soodoku.core.internal.logging.KLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -10,43 +11,59 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 class ResponseExceptionHandler : ResponseEntityExceptionHandler() {
 
-    @ExceptionHandler(value = [BadRequestException::class])
-    fun handleBadRequestException(exception: BadRequestException): ResponseEntity<ExceptionResponse> =
-        HttpStatus.BAD_REQUEST.toResponseEntity(exception.message).also {
-            ResponseExceptionHandler.logger.warn { exception.toLogMessage() }
+    @ExceptionHandler(BadRequestException::class)
+    fun handleBadRequest(
+        exception: BadRequestException, request: HttpServletRequest
+    ): ResponseEntity<ExceptionResponse>? = handle(exception, HttpStatus.BAD_REQUEST, request) {
+        Companion.logger.warn { it.toLogMessage() }
+    }
+
+    @ExceptionHandler(UnauthorizedException::class)
+    fun handleUnauthorized(
+        exception: UnauthorizedException, request: HttpServletRequest
+    ): ResponseEntity<ExceptionResponse>? = handle(exception, HttpStatus.UNAUTHORIZED, request) {
+        Companion.logger.warn { it.toLogMessage() }
+    }
+
+    @ExceptionHandler(ForbiddenException::class)
+    fun handleForbidden(
+        exception: ForbiddenException, request: HttpServletRequest
+    ): ResponseEntity<ExceptionResponse>? = handle(exception, HttpStatus.FORBIDDEN, request) {
+        Companion.logger.warn { it.toLogMessage() }
+    }
+
+    @ExceptionHandler(NotFoundException::class)
+    fun handleNotFound(
+        exception: NotFoundException, request: HttpServletRequest
+    ): ResponseEntity<ExceptionResponse>? = handle(exception, HttpStatus.NOT_FOUND, request) {
+        Companion.logger.warn { it.toLogMessage() }
+    }
+
+    @ExceptionHandler(ConflictException::class)
+    fun handleConflict(
+        exception: ConflictException, request: HttpServletRequest
+    ): ResponseEntity<ExceptionResponse>? = handle(exception, HttpStatus.CONFLICT, request) {
+        Companion.logger.error { it.toLogMessage() }
+    }
+
+    @ExceptionHandler(Exception::class)
+    fun handleGeneral(
+        exception: Exception, request: HttpServletRequest
+    ): ResponseEntity<ExceptionResponse>? = handle(exception, HttpStatus.INTERNAL_SERVER_ERROR, request) {
+        Companion.logger.error { it.stackTraceToString() }
+    }
+
+    private fun handle(
+        exception: Exception, status: HttpStatus, request: HttpServletRequest, log: (Exception) -> Unit
+    ): ResponseEntity<ExceptionResponse>? =
+        status.takeUnless { request.getHeader("Accept")?.contains("text/event-stream") == true }?.let {
+            it.toResponseEntity(exception.message).also { log(exception) }
         }
 
-    @ExceptionHandler(value = [UnauthorizedException::class])
-    fun handleUnauthorizedException(exception: UnauthorizedException): ResponseEntity<ExceptionResponse> =
-        HttpStatus.UNAUTHORIZED.toResponseEntity(exception.message).also {
-            ResponseExceptionHandler.logger.warn { exception.toLogMessage() }
-        }
+    private fun Exception.toLogMessage(): String =
+        "${this.javaClass.simpleName}: ${this.message} {${this.stackTrace.firstOrNull()}}"
 
-    @ExceptionHandler(value = [ForbiddenException::class])
-    fun handleForbiddenException(exception: ForbiddenException): ResponseEntity<ExceptionResponse> =
-        HttpStatus.FORBIDDEN.toResponseEntity(exception.message).also {
-            ResponseExceptionHandler.logger.warn { exception.toLogMessage() }
-        }
-
-    @ExceptionHandler(value = [NotFoundException::class])
-    fun handleNotFoundException(exception: NotFoundException): ResponseEntity<ExceptionResponse> =
-        HttpStatus.NOT_FOUND.toResponseEntity(exception.message).also {
-            ResponseExceptionHandler.logger.warn { exception.toLogMessage() }
-        }
-
-    @ExceptionHandler(value = [ConflictException::class])
-    fun handleConflictException(exception: ConflictException): ResponseEntity<ExceptionResponse> =
-        HttpStatus.CONFLICT.toResponseEntity(exception.message).also {
-            ResponseExceptionHandler.logger.error { exception.toLogMessage() }
-        }
-
-    @ExceptionHandler(value = [Exception::class])
-    fun handleGeneralException(exception: Exception): ResponseEntity<ExceptionResponse> =
-        HttpStatus.INTERNAL_SERVER_ERROR.toResponseEntity(exception.message).also {
-            ResponseExceptionHandler.logger.error { exception.stackTraceToString() }
-        }
-
-    private fun Exception.toLogMessage(): String = "${this.javaClass.simpleName}: ${this.message} {${this.stackTrace[0]}}"
-
-    companion object : KLogging()
+    companion object {
+        private val logger = KotlinLogging.logger {}
+    }
 }

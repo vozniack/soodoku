@@ -6,7 +6,7 @@ import { debounceTime, forkJoin, of } from 'rxjs';
 import { distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { UserSimple } from '../../../../core/user/user.interface';
 import { ACTION_SHOW_SNACKBAR } from '../../../../store/app/app.actions';
-import { ACTION_INVITATION_SENT } from '../../../../store/app/friend/friend.actions';
+import { ACTION_FRIEND_INVITATION_SENT } from '../../../../store/app/friend/friend.actions';
 import { fadeInAnimation } from '../../../animations/fade-in-animation';
 import { ButtonComponent } from '../../../components/button/button.component';
 import { DividerComponent } from '../../../components/divider/divider.component';
@@ -70,7 +70,7 @@ export class SocialInviteComponent {
       next: () => {
         this.searchControl.reset();
 
-        this.store.dispatch(ACTION_INVITATION_SENT());
+        this.store.dispatch(ACTION_FRIEND_INVITATION_SENT());
         this.store.dispatch(ACTION_SHOW_SNACKBAR({message: 'Invitation sent', icon: 'forward_to_inbox'}))
       }
     });

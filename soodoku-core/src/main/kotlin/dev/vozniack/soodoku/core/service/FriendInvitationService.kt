@@ -10,6 +10,10 @@ import dev.vozniack.soodoku.core.domain.types.InvitationStatus
 import dev.vozniack.soodoku.core.internal.exception.ConflictException
 import dev.vozniack.soodoku.core.internal.exception.NotFoundException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
+import dev.vozniack.soodoku.core.service.extension.buildFriendInvitationAcceptedEvent
+import dev.vozniack.soodoku.core.service.extension.buildFriendInvitationReceivedEvent
+import dev.vozniack.soodoku.core.service.extension.buildFriendInvitationRejectedEvent
+import dev.vozniack.soodoku.core.service.extension.buildFriendInvitationRemovedEvent
 import java.util.UUID
 import org.springframework.stereotype.Service
 
@@ -17,7 +21,8 @@ import org.springframework.stereotype.Service
 class FriendInvitationService(
     private val friendInvitationRepository: FriendInvitationRepository,
     private val userService: UserService,
-    private val friendService: FriendService
+    private val friendService: FriendService,
+    private val notificationService: NotificationService
 ) {
 
     fun getSent(): List<FriendInvitationDto> = friendInvitationRepository.findAllBySenderAndStatus(
@@ -37,9 +42,11 @@ class FriendInvitationService(
         friendInvitationRepository.findBySenderAndReceiverAndStatus(sender, receiver, InvitationStatus.PENDING)
             ?.let { throw ConflictException("User ${sender.username} already invited user ${receiver.username}") }
 
-        return friendInvitationRepository.save(
-            FriendInvitation(sender = sender, receiver = receiver)
-        ).toDto()
+        val invitation = friendInvitationRepository.save(FriendInvitation(sender = sender, receiver = receiver))
+
+        notificationService.sendSseEvent(invitation.receiver.id, buildFriendInvitationReceivedEvent(invitation))
+
+        return invitation.toDto()
     }
 
     fun accept(id: UUID): FriendInvitationDto {
@@ -57,6 +64,8 @@ class FriendInvitationService(
 
         invitation = friendInvitationRepository.save(invitation.apply { status = InvitationStatus.ACCEPTED })
 
+        notificationService.sendSseEvent(invitation.sender.id, buildFriendInvitationAcceptedEvent(invitation))
+
         return invitation.toDto()
     }
 
@@ -73,6 +82,8 @@ class FriendInvitationService(
             invitation.receiver, invitation.sender, InvitationStatus.PENDING
         )?.let { friendInvitationRepository.delete(it) }
 
+        notificationService.sendSseEvent(invitation.sender.id, buildFriendInvitationRejectedEvent(invitation))
+
         return invitation.toDto()
     }
 
@@ -85,6 +96,8 @@ class FriendInvitationService(
             ?: throw ConflictException("You don't have access to this resource")
 
         friendInvitationRepository.delete(invitation)
+
+        notificationService.sendSseEvent(invitation.receiver.id, buildFriendInvitationRemovedEvent(invitation))
     }
 
     private fun getCurrentlyLoggedUser(): User = userService.currentlyLoggedUser()

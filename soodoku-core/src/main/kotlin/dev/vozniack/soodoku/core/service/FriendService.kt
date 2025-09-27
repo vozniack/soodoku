@@ -13,6 +13,7 @@ import dev.vozniack.soodoku.core.domain.types.InvitationStatus
 import dev.vozniack.soodoku.core.internal.exception.ConflictException
 import dev.vozniack.soodoku.core.internal.exception.NotFoundException
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
+import dev.vozniack.soodoku.core.service.extension.buildFriendRemovedEvent
 import jakarta.transaction.Transactional
 import java.util.UUID
 import org.springframework.stereotype.Service
@@ -23,6 +24,7 @@ class FriendService(
     private val friendInvitationRepository: FriendInvitationRepository,
     private val userRepository: UserRepository,
     private val userService: UserService,
+    private val notificationService: NotificationService
 ) {
 
     fun getFriends(): List<FriendDto> = friendRepository.findAllByUser(getCurrentlyLoggedUser()).map { it.toDto() }
@@ -73,6 +75,8 @@ class FriendService(
 
         friendRepository.deleteByUserAndFriend(friend.user, friend.friend)
         friendRepository.deleteByUserAndFriend(friend.friend, friend.user)
+
+        notificationService.sendSseEvent(friend.friend.id, buildFriendRemovedEvent(friend))
     }
 
     private fun getCurrentlyLoggedUser(): User = userService.currentlyLoggedUser()

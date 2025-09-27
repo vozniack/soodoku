@@ -27,6 +27,7 @@ class WebSecurityConfig(private val jwtConfig: JwtConfig) : WebMvcConfigurer {
         .csrf { it.disable() }
         .authorizeHttpRequests {
             it.requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
+                .requestMatchers("/api/notifications/sse").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                 .requestMatchers("/api/games/**").permitAll()
                 .anyRequest().authenticated()

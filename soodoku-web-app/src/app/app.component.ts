@@ -7,6 +7,7 @@ import { Breakpoint } from './core/breakpoint/breakpoint.interface';
 import { BreakpointService } from './core/breakpoint/breakpoint.service';
 import { LanguageService } from './core/language/language.service';
 import { SnackbarComponent } from './core/snackbar/snackbar.component';
+import { SseService } from './core/sse/sse.service';
 import { ThemeService } from './core/theme/theme.service';
 import { View } from './core/view/view.const';
 import { GameComponent } from './modules/game/game.component';
@@ -29,7 +30,7 @@ export class AppComponent implements AfterViewInit {
   View = View;
   view!: View;
 
-  constructor(private store: Store, private themeService: ThemeService, private languageService: LanguageService, private breakpointService: BreakpointService) {
+  constructor(private store: Store, private themeService: ThemeService, private languageService: LanguageService, private sseService: SseService, private breakpointService: BreakpointService) {
     this.store.pipe(
       takeUntilDestroyed(),
       select(SELECT_APP_VIEW),
