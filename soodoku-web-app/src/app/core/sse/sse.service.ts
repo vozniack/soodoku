@@ -2,16 +2,9 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ACTION_SHOW_SNACKBAR } from '../../store/app/app.actions';
 import { SELECT_AUTH_STATE } from '../../store/app/auth/auth.selectors';
 import { AuthState } from '../../store/app/auth/auth.state';
-import {
-  ACTION_FRIEND_INVITATION_ACCEPTED,
-  ACTION_FRIEND_INVITATION_RECEIVED,
-  ACTION_FRIEND_INVITATION_REJECTED,
-  ACTION_FRIEND_INVITATION_REMOVED,
-  ACTION_FRIEND_REMOVED
-} from '../../store/app/friend/friend.actions';
+import { registerFriendHandlers } from './sse.friend.handler';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +27,17 @@ export class SseService implements OnDestroy {
     this.authSub.unsubscribe();
   }
 
+  public on<T>(eventName: string, handler: (payload: T) => void): void {
+    this.eventSource?.addEventListener(eventName, (event: MessageEvent) => {
+      try {
+        const payload = JSON.parse(event.data) as T;
+        handler(payload);
+      } catch (exception) {
+        console.error(`Failed to parse SSE payload for ${eventName}`, exception);
+      }
+    });
+  }
+
   private handleAuthChange(auth: AuthState): void {
     if (auth?.accessToken) {
       this.openStream(auth.accessToken);
@@ -49,12 +53,7 @@ export class SseService implements OnDestroy {
 
     this.eventSource = new EventSource(`${this.baseUrl}?token=${token}`);
 
-    this.handleFriendInvitationReceivedEvent();
-    this.handleFriendInvitationAcceptedEvent();
-    this.handleFriendInvitationRejectedEvent();
-    this.handleFriendInvitationRemovedEvent();
-
-    this.handleFriendRemovedEvent();
+    registerFriendHandlers(this, this.store);
 
     this.eventSource.onerror = (error) => {
       console.error('SSE connection error', error);
@@ -66,65 +65,5 @@ export class SseService implements OnDestroy {
       this.eventSource.close();
       this.eventSource = undefined;
     }
-  }
-
-  private handleFriendInvitationReceivedEvent(): void {
-    this.eventSource!.addEventListener('FRIEND_INVITATION_RECEIVED', (event: MessageEvent) => {
-      let payload = JSON.parse(event.data);
-
-      this.store.dispatch(ACTION_FRIEND_INVITATION_RECEIVED({invitationId: payload.invitationId}));
-      this.store.dispatch(ACTION_SHOW_SNACKBAR({
-        message: `${payload.senderUsername} has invited you to friends!`,
-        icon: 'notifications'
-      }));
-    });
-  }
-
-  private handleFriendInvitationAcceptedEvent(): void {
-    this.eventSource!.addEventListener('FRIEND_INVITATION_ACCEPTED', (event: MessageEvent) => {
-      let payload = JSON.parse(event.data);
-
-      this.store.dispatch(ACTION_FRIEND_INVITATION_ACCEPTED({invitationId: payload.invitationId}));
-      this.store.dispatch(ACTION_SHOW_SNACKBAR({
-        message: `${payload.receiverUsername} has accepted your friend invitation!`,
-        icon: 'notifications'
-      }));
-    });
-  }
-
-  private handleFriendInvitationRejectedEvent(): void {
-    this.eventSource!.addEventListener('FRIEND_INVITATION_REJECTED', (event: MessageEvent) => {
-      let payload = JSON.parse(event.data);
-
-      this.store.dispatch(ACTION_FRIEND_INVITATION_REJECTED({invitationId: payload.invitationId}));
-      this.store.dispatch(ACTION_SHOW_SNACKBAR({
-        message: `${payload.receiverUsername} has rejected your friend invitation!`,
-        icon: 'notifications'
-      }));
-    });
-  }
-
-  private handleFriendInvitationRemovedEvent(): void {
-    this.eventSource!.addEventListener('FRIEND_INVITATION_REMOVED', (event: MessageEvent) => {
-      let payload = JSON.parse(event.data);
-
-      this.store.dispatch(ACTION_FRIEND_INVITATION_REMOVED({invitationId: payload.invitationId}));
-      this.store.dispatch(ACTION_SHOW_SNACKBAR({
-        message: `${payload.senderUsername} has withdrawn friend invitation!`,
-        icon: 'notifications'
-      }));
-    });
-  }
-
-  private handleFriendRemovedEvent(): void {
-    this.eventSource!.addEventListener('FRIEND_REMOVED', (event: MessageEvent) => {
-      let payload = JSON.parse(event.data);
-
-      this.store.dispatch(ACTION_FRIEND_REMOVED({friendUsername: payload.friendUsername}));
-      this.store.dispatch(ACTION_SHOW_SNACKBAR({
-        message: `${payload.friendUsername} has removed a friendship!`,
-        icon: 'notifications'
-      }));
-    });
   }
 }
