@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 @Service
 class NotificationService {
 
-    private val emitters: MutableMap<UUID, MutableList<SseEmitter>> = ConcurrentHashMap()
+    val emitters: MutableMap<UUID, MutableList<SseEmitter>> = ConcurrentHashMap()
 
     fun subscribeSse(userId: UUID): SseEmitter {
         val emitter = SseEmitter(Long.MAX_VALUE)
@@ -62,7 +62,7 @@ class NotificationService {
 
     private fun SseEmitter.registerCleanup(userEmitters: MutableList<SseEmitter>) {
         val remove = { userEmitters.remove(this) }
-        
+
         onCompletion { remove() }
         onTimeout { remove() }
         onError { remove() }

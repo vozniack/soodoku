@@ -3,7 +3,6 @@ package dev.vozniack.soodoku.core.api.controller
 import dev.vozniack.soodoku.core.internal.exception.UnauthorizedException
 import dev.vozniack.soodoku.core.service.NotificationService
 import dev.vozniack.soodoku.core.service.UserService
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,7 +17,7 @@ class NotificationController(
 ) {
 
     @GetMapping("/sse", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun stream(request: HttpServletRequest): SseEmitter {
+    fun sse(): SseEmitter {
         val userId = userService.currentlyLoggedUser()?.id
             ?: throw UnauthorizedException("You don't have access to this resource")
 

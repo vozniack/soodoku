@@ -1,8 +1,8 @@
 package dev.vozniack.soodoku.core.api.mapper
 
 import dev.vozniack.soodoku.core.api.dto.FriendDto
-import dev.vozniack.soodoku.core.domain.entity.Friend
 import dev.vozniack.soodoku.core.domain.entity.User
+import dev.vozniack.soodoku.core.fixture.mockFriend
 import dev.vozniack.soodoku.core.fixture.mockUser
 import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -16,7 +16,7 @@ class FriendMapperTest {
         val user: User = mockUser("john.doe@soodku.com")
         val secondUser: User = mockUser("jane.doe@soodoku.com")
 
-        val friend = Friend(UUID.randomUUID(), user, secondUser)
+        val friend = mockFriend(UUID.randomUUID(), user, secondUser)
         val friendDto: FriendDto = friend.toDto()
 
         assertEquals(friend.id, friendDto.id)
