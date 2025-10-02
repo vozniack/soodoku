@@ -1,10 +1,16 @@
 import { DatePipe, NgForOf, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
+import { filter, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
-import { ACTION_INVITATION_ACCEPTED, ACTION_INVITATION_SENT } from '../../../../store/app/friend/friend.actions';
+import {
+  ACTION_FRIEND_INVITATION_ACCEPTED,
+  ACTION_FRIEND_INVITATION_RECEIVED,
+  ACTION_FRIEND_INVITATION_REJECTED,
+  ACTION_FRIEND_INVITATION_REMOVED,
+  ACTION_FRIEND_INVITATION_SENT
+} from '../../../../store/app/friend/friend.actions';
 import { fadeInAnimation } from '../../../animations/fade-in-animation';
 import { ButtonComponent } from '../../../components/button/button.component';
 import { DividerComponent } from '../../../components/divider/divider.component';
@@ -20,7 +26,7 @@ import { FriendInvitation } from './social-friend-invitations.interface';
   styleUrl: './social-friend-invitations.component.scss',
   animations: [fadeInAnimation]
 })
-export class SocialFriendInvitationsComponent implements OnInit {
+export class SocialFriendInvitationsComponent implements OnInit, OnDestroy {
 
   sentInvitations: FriendInvitation[] = [];
   receivedInvitations: FriendInvitation[] = [];
@@ -35,16 +41,49 @@ export class SocialFriendInvitationsComponent implements OnInit {
     this.loadSentInvitations();
 
     this.actions$.pipe(
-      ofType(ACTION_INVITATION_SENT),
+      ofType(ACTION_FRIEND_INVITATION_SENT),
       takeUntil(this.destroy$),
       tap(() => this.loadSentInvitations())
     ).subscribe();
+
+    this.actions$.pipe(
+      ofType(ACTION_FRIEND_INVITATION_RECEIVED),
+      takeUntil(this.destroy$),
+      tap(() => this.loadReceivedInvitations())
+    ).subscribe();
+
+    this.actions$.pipe(
+      ofType(ACTION_FRIEND_INVITATION_ACCEPTED, ACTION_FRIEND_INVITATION_REJECTED),
+      takeUntil(this.destroy$),
+      filter((action) => !!action.invitationId),
+      tap((action) => {
+        this.sentInvitations = this.sentInvitations.filter(
+          invitation => invitation.id !== action.invitationId
+        );
+      })
+    ).subscribe();
+
+    this.actions$.pipe(
+      ofType(ACTION_FRIEND_INVITATION_REMOVED),
+      takeUntil(this.destroy$),
+      filter((action) => !!action.invitationId),
+      tap((action) => {
+        this.receivedInvitations = this.receivedInvitations.filter(
+          invitation => invitation.id !== action.invitationId
+        );
+      })
+    ).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   accept(id: string) {
     this.friendService.accept(id).pipe(
       tap(() => {
-        this.store.dispatch(ACTION_INVITATION_ACCEPTED());
+        this.store.dispatch(ACTION_FRIEND_INVITATION_ACCEPTED({invitationId: undefined}));
 
         this.receivedInvitations.splice(
           this.receivedInvitations.findIndex(i => i.id === id), 1

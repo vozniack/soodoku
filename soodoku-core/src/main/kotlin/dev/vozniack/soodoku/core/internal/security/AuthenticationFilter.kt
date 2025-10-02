@@ -29,7 +29,9 @@ class AuthenticationFilter(private val jwtSecret: String) : OncePerRequestFilter
     }
 
     private fun parseJwtToken(request: HttpServletRequest): String? = request.getHeader("Authorization")
-        .takeIf { it != null && it.startsWith("Bearer ") && it.split(" ").size == 2 }?.substring(7)
+        .takeIf { it != null && it.startsWith("Bearer ") && it.split(" ").size == 2 }
+        ?.substring(7)
+        ?: request.getParameter("token")
 
     private fun buildLoggedUser(token: String): UsernamePasswordAuthenticationToken? {
         val parsedToken: Jws<Claims> = Jwts.parser()

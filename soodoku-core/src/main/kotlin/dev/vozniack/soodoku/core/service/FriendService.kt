@@ -2,6 +2,7 @@ package dev.vozniack.soodoku.core.service
 
 import dev.vozniack.soodoku.core.api.dto.FriendDto
 import dev.vozniack.soodoku.core.api.dto.UserSimpleDto
+import dev.vozniack.soodoku.core.api.dto.sse.SseEventDto
 import dev.vozniack.soodoku.core.api.mapper.toDto
 import dev.vozniack.soodoku.core.domain.entity.Friend
 import dev.vozniack.soodoku.core.domain.entity.FriendInvitation
@@ -23,6 +24,7 @@ class FriendService(
     private val friendInvitationRepository: FriendInvitationRepository,
     private val userRepository: UserRepository,
     private val userService: UserService,
+    private val notificationService: NotificationService
 ) {
 
     fun getFriends(): List<FriendDto> = friendRepository.findAllByUser(getCurrentlyLoggedUser()).map { it.toDto() }
@@ -73,6 +75,8 @@ class FriendService(
 
         friendRepository.deleteByUserAndFriend(friend.user, friend.friend)
         friendRepository.deleteByUserAndFriend(friend.friend, friend.user)
+
+        notificationService.sendSseEvent(friend.friend.id, SseEventDto.friendRemoved(friend))
     }
 
     private fun getCurrentlyLoggedUser(): User = userService.currentlyLoggedUser()

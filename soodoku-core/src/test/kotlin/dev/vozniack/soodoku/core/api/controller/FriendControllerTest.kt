@@ -5,11 +5,11 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.vozniack.soodoku.core.AbstractWebMvcTest
 import dev.vozniack.soodoku.core.api.dto.FriendDto
 import dev.vozniack.soodoku.core.api.dto.UserSimpleDto
-import dev.vozniack.soodoku.core.domain.entity.Friend
 import dev.vozniack.soodoku.core.domain.entity.FriendInvitation
 import dev.vozniack.soodoku.core.domain.repository.FriendInvitationRepository
 import dev.vozniack.soodoku.core.domain.repository.FriendRepository
 import dev.vozniack.soodoku.core.domain.repository.UserRepository
+import dev.vozniack.soodoku.core.fixture.mockFriend
 import dev.vozniack.soodoku.core.fixture.mockUser
 import java.util.UUID
 import org.junit.jupiter.api.AfterEach
@@ -43,8 +43,8 @@ class FriendControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         val friendUser = userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        friendRepository.save(Friend(user = user, friend = friendUser))
-        friendRepository.save(Friend(user = friendUser, friend = user))
+        friendRepository.save(mockFriend(user = user, friend = friendUser))
+        friendRepository.save(mockFriend(user = friendUser, friend = user))
 
         authenticate(user.email)
 
@@ -65,8 +65,8 @@ class FriendControllerTest @Autowired constructor(
         val invitedUser = userRepository.save(mockUser("jenny.doe@soodoku.com"))
         val candidateUser = userRepository.save(mockUser("jan.doe@soodoku.com", username = "jandoe"))
 
-        friendRepository.save(Friend(user = user, friend = friendUser))
-        friendRepository.save(Friend(user = friendUser, friend = user))
+        friendRepository.save(mockFriend(user = user, friend = friendUser))
+        friendRepository.save(mockFriend(user = friendUser, friend = user))
 
         friendInvitationRepository.save(FriendInvitation(sender = user, receiver = invitedUser))
 
@@ -89,8 +89,8 @@ class FriendControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         val friendUser = userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        val friend = friendRepository.save(Friend(user = user, friend = friendUser))
-        friendRepository.save(Friend(user = friendUser, friend = user))
+        val friend = friendRepository.save(mockFriend(user = user, friend = friendUser))
+        friendRepository.save(mockFriend(user = friendUser, friend = user))
 
         authenticate(user.email)
 
@@ -107,8 +107,8 @@ class FriendControllerTest @Autowired constructor(
         val user = userRepository.save(mockUser())
         val friendUser = userRepository.save(mockUser("jane.doe@soodoku.com"))
 
-        friendRepository.save(Friend(user = user, friend = friendUser))
-        val friend = friendRepository.save(Friend(user = friendUser, friend = user))
+        friendRepository.save(mockFriend(user = user, friend = friendUser))
+        val friend = friendRepository.save(mockFriend(user = friendUser, friend = user))
 
         authenticate(user.email)
 

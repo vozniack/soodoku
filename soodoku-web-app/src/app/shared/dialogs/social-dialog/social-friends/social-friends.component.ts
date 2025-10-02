@@ -2,10 +2,10 @@ import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, debounceTime, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, filter, Subject } from 'rxjs';
 import { map, takeUntil, tap } from 'rxjs/operators';
 import { ACTION_SHOW_SNACKBAR } from '../../../../store/app/app.actions';
-import { ACTION_INVITATION_ACCEPTED } from '../../../../store/app/friend/friend.actions';
+import { ACTION_FRIEND_INVITATION_ACCEPTED, ACTION_FRIEND_REMOVED } from '../../../../store/app/friend/friend.actions';
 import { fadeInAnimation } from '../../../animations/fade-in-animation';
 import { ButtonComponent } from '../../../components/button/button.component';
 import { DividerComponent } from '../../../components/divider/divider.component';
@@ -40,9 +40,20 @@ export class SocialFriendsComponent implements OnInit {
     this.getFriends();
 
     this.actions$.pipe(
-      ofType(ACTION_INVITATION_ACCEPTED),
+      ofType(ACTION_FRIEND_INVITATION_ACCEPTED),
       takeUntil(this.destroy$),
       tap(() => this.getFriends())
+    ).subscribe();
+
+    this.actions$.pipe(
+      ofType(ACTION_FRIEND_REMOVED),
+      takeUntil(this.destroy$),
+      filter(action => !!action.friendUsername),
+      tap((action) => {
+        this.friends$.next(this.friends$.value.filter(
+          friend => friend.friend.username !== action.friendUsername
+        ));
+      })
     ).subscribe();
   }
 
