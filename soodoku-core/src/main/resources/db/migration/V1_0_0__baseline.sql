@@ -117,6 +117,49 @@ CREATE TABLE game_history
 
 CREATE INDEX idx_game_sessions_game_id ON game_sessions (game_id);
 
+/* Contest related tables */
+
+CREATE TABLE contests
+(
+    id            UUID         NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    created_by    UUID         NULL REFERENCES users (id) ON DELETE SET NULL,
+
+    status        VARCHAR(32)  NOT NULL,
+    difficulty    VARCHAR(16)  NOT NULL,
+
+    initial_board VARCHAR(128) NULL,
+    solved_board  VARCHAR(128) NULL,
+
+    started_at    TIMESTAMP    NOT NULL             DEFAULT now(),
+    updated_at    TIMESTAMP    NULL,
+    finished_at   TIMESTAMP    NULL
+);
+
+CREATE TABLE contest_participants
+(
+    id          UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    status      VARCHAR(32) NOT NULL,
+
+    contest_id  UUID        NOT NULL REFERENCES contests (id) ON DELETE CASCADE,
+    user_id     UUID        NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    game_id     UUID        NULL REFERENCES games (id) ON DELETE SET NULL,
+
+    place       INT         NULL,
+    finished_at TIMESTAMP   NULL,
+
+    CONSTRAINT uq_contest_user UNIQUE (contest_id, user_id)
+);
+
+CREATE INDEX idx_contests_created_by ON contests (created_by);
+
+CREATE INDEX idx_participants_contest ON contest_participants (contest_id);
+
+CREATE INDEX idx_participants_user ON contest_participants (user_id);
+
+/* Test data migration */
+
 INSERT INTO users (email, password, username)
 VALUES ('rajeshkootrappali@bbt.com', '$2y$10$YVNlvW0m/Iug.tWQ28ibpOBZ3XoN0oPpRG.HrrGQv./WU6WdG5tnO',
         'koothrappali9000'),
